@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Index</title>
+  <link rel="stylesheet" href="/style/index.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <style>
+ html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+    .app-frame {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      margin: 0 auto;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+      background: #191919;
+      /* 居中，适配大屏 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
+    }
+    .main-bg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../img/index_bg.png') center center/cover no-repeat;
+      z-index: 1;
+      /* 由app-frame控制圆角 */
+    }
+    .bottom-mask {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #191919;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      z-index: 3;
+      pointer-events: none;
+    }  
+        .nav-circle-btn {
+  position: absolute;
+  z-index: 10;
+  display: block;
+  /* 你可以加transition/hover样式等 */
+}
+.btn-floor {
+  top: 380px;  /* 根据SVG实际像素调整 */
+  left: 150px;
+}
+.btn-living {
+  top: 600px;  /* 根据SVG实际像素调整 */
+  left: 210px;
+}
+.nav-circle-btn img {
+  width: 48px;      /* 或你的svg设计尺寸 */
+  height: 48px;
+  display: block;
+  pointer-events: auto;
+}
+.nav-circle-btn:active img {
+  /* 可选：按下变暗或缩放 */
+  filter: brightness(0.8);
+  transform: scale(0.92);
+}
+@keyframes btn-blink {
+  0%   { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+  40%  { opacity: 0.6; filter: drop-shadow(0 0 8px #e6f3ff) brightness(1.3);}
+  60%  { opacity: 1; filter: drop-shadow(0 0 16px #b5e2ff) brightness(1.5);}
+  100% { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+}
+.nav-circle-btn.blink img {
+  animation: btn-blink 1.2s infinite;
+  /* 可选：动画节奏平滑 */
+  animation-timing-function: ease-in-out;
+}
+
+
+    </style>
+</head>
+<body>
+  <div class="app-frame"></div>
+  <div class="main-bg"></div>
+</div>
+  <!-- 按钮一：客厅（假设定位: top: 200px; left: 120px;） -->
+<a href="public.html" class="nav-circle-btn btn-floor blink" title="Go to public area">
+    <img src="../svg/living room button.svg" alt="Public Button"/>
+    </a>
+  <!-- 按钮二：二楼（假设定位: top: 320px; left: 200px;） -->
+  <a href="private.html" class="nav-circle-btn btn-living blink" title="Go to private area">
+    <img src="../svg/2nd floor button.svg" alt="Private Button"/>
+    </a>
+  <!-- 如果你底部有圆角遮罩可以用 -->
+  <div class="bottom-mask"></div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../js/footer.js"></script>
+</body>
+</html>

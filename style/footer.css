@@ -1,0 +1,59 @@
+/* /style/footer.css */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 72px;            /* 按你的UI高度调整 */
+  background: #191919;     /* 按你的UI背景色调整 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -2px 24px rgba(0,0,0,0.25);
+}
+
+.bottom-nav nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 340px;      /* 可调节，保证icon对齐分布 */
+}
+
+.bottom-nav .nav-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: #232323;        /* 圆形背景色 */
+  margin: 0 4px;
+  transition: background 0.2s;
+}
+
+.bottom-nav .nav-btn:active,
+.bottom-nav .nav-btn.selected {
+  background: #343434;
+  /* 可以加高亮阴影、色块等 */
+}
+
+.bottom-nav .nav-btn img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 390px) {
+  .bottom-nav {
+    width: 100vw;
+    min-width: 320px;
+  }
+  .bottom-nav nav {
+    width: 90vw;
+    min-width: 280px;
+  }
+}

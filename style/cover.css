@@ -1,0 +1,107 @@
+.page-anim-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  width: 390px;
+  height: 844px;
+  overflow: hidden;
+  z-index: 1;
+}
+ html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+    .app-frame {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      margin: 0 auto;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+      background: #191919;
+      /* 居中，适配大屏 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
+    }
+    .cover-bg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../img/cover.png') center center/cover no-repeat;
+      z-index: 1;
+      /* 由app-frame控制圆角 */
+    }
+    .bottom-mask {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #191919;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .logo-btn {
+      position: absolute;
+      top: 350px; left: 55%;
+      transform: translateX(-50%);
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      cursor: pointer;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow .18s;
+    }
+    .logo-btn:active {
+      box-shadow: 0 2px 32px #191919cc;
+    }
+    .logo-btn img {
+      width: 200px; height: 200px; display: block;
+      pointer-events: none;
+    }
+  /* 蜘蛛默认隐藏在顶部（未掉落状态） */
+    .spider-anim {
+      position: absolute;
+      left: 50%;
+      top: 5px; left: 18%;/* 藏在logo正上方 */
+      transform: translateX(-50%) translateY(-48px); /* 初始悬空 */
+      z-index: 4;
+      width: 180px; height: 180px;
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    /* 掉落时加 active 类，触发下落动画 */
+    .spider-anim.drop {
+      animation: spider-drop 1.3s cubic-bezier(.38,2.3,.6,1) forwards;
+      opacity: 1;
+    }
+    @keyframes spider-drop {
+      0% {
+        transform: translateX(-50%) translateY(-130px) ;
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      78% {
+        transform: translateX(-50%) translateY(0px);
+        opacity: 1;
+      }
+      95% {
+        transform: translateX(-50%) translateY(0px);
+      }
+      100% {
+        transform: translateX(-50%) translateY(2px);
+        opacity: 1;
+      }
+    }
