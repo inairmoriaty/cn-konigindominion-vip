@@ -45,6 +45,16 @@
       z-index: 1;
       /* 由app-frame控制圆角 */
     }
+    
+/* 热点：使用百分比定位，跟随不同机型比例 */
+.hotspot{
+  position: absolute;
+  width: 10vw; height: 10vw;           /* 例子：用 vw 让尺寸自适应 */
+  min-width: 44px; min-height: 44px;   /* 可触达最小尺寸 */
+  left: 62%; top: 58%;                 /* 例子：按图上相对位置给 % */
+  transform: translate(-50%,-50%);
+}
+    
     .bottom-mask {
       position: absolute;
       left: 0; bottom: 0;

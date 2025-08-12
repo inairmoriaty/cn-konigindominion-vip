@@ -1,10 +1,16 @@
- html, body {
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
       margin: 0; padding: 0;
       width: 100vw;
       height: 100vh;
       background: #191919;
       overflow: hidden;
     }
+
     .app-frame {
       width: 390px;
       height: 844px;
@@ -18,15 +24,26 @@
       top: 0; left: 0; right: 0; bottom: 0;
       box-sizing: border-box;
     }
-    .main-bg {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      height: 100%;
-      background: url('../img/index_bg.png') center center/cover no-repeat;
-      z-index: 1;
-      /* 由app-frame控制圆角 */
-    }
+
+.main-bg {
+  position: absolute;
+  inset: 0; /* 相当于 top:0; left:0; right:0; bottom:0 */
+  width: 100%;
+  height: 100%;
+  background: url('../img/home_bg.png') center / cover no-repeat;
+  z-index: 1;
+  /* 圆角还是由 app-frame 控制 */
+}
+
+/* 热点：使用百分比定位，跟随不同机型比例 */
+.hotspot{
+  position: absolute;
+  width: 10vw; height: 10vw;           /* 例子：用 vw 让尺寸自适应 */
+  min-width: 44px; min-height: 44px;   /* 可触达最小尺寸 */
+  left: 62%; top: 58%;                 /* 例子：按图上相对位置给 % */
+  transform: translate(-50%,-50%);
+}
+    
     .bottom-mask {
       position: absolute;
       left: 0; bottom: 0;
