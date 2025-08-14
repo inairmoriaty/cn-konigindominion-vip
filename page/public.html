@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Public</title>
+  <link rel="stylesheet" href="/style/index.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <style>
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+ html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+    .app-frame {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: relative;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #191919;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+
+      /* 完全填充屏幕 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
+    }
+    .public-bg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: #191919;
+      z-index: 1;
+    }
+    
+    .public-content {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 2;
+    }
+    
+    .public-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    
+    .public-text {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+    
+    .bottom-mask {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 92px;
+      background: #191919;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="public-bg"></div>
+    <div class="public-content">
+      <div class="public-title">公开篇目</div>
+      <div class="public-text">公开内容开发中...</div>
+    </div>
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../js/footer.js"></script>
+</body>
+</html>

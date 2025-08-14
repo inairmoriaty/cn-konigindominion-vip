@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Private</title>
+  <link rel="stylesheet" href="/style/private.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <style>
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+
+    .app-frame {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: relative;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #191919;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+
+      /* 完全填充屏幕 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
+    }
+
+.private-bg {
+  position: absolute;
+  inset: 0; /* 相当于 top:0; left:0; right:0; bottom:0 */
+  width: 100%;
+  height: 100%;
+  background: url('../img/private.png') center / cover no-repeat;
+  z-index: 1;
+  /* 圆角还是由 app-frame 控制 */
+}
+
+.private-title {
+  position: absolute;
+  top: 0%; left: 50%;
+  transform: translateX(-50%);
+  width: 750px; height: 300px;
+  background: url('../svg/private/door brand.svg') center center/contain no-repeat;
+  z-index: 2;
+  pointer-events: none;
+}
+ 
+ /* 客单滚轮选项区域 */
+.guest-list-wrapper{
+  position: absolute;
+  left: 53%;
+  transform: translateX(-50%);
+  width: 180px; /* 容器宽度：在这里调大/调小 */
+  top: 22%;
+  height: 240px; /* 3 条可见：72 高 + 16 上下间距*2 = 104/条，这里按72+32=104约等 => 288 */
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+ .guest-list{
+   position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden; /* 超出区域隐藏，由遮罩/裁剪处理 */
+  /* 上下遮罩（渐隐）以只露出中间三个选项 */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
+ }
+ .guest-list-viewport{
+  height: 288px; /* 固定3行可视高度（与 wrapper 对齐） */
+   overflow-y: auto;
+   padding-right: 8px; /* 让内容不贴边 */
+   scrollbar-width: none; /* Firefox */
+ }
+ .guest-list-viewport::-webkit-scrollbar{ display: none; }
+ 
+.guest-item{
+  height: 48px; /* 在这里改单条高度 */
+  margin: 16px 0; /* 上下间距 */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 15px; /* 在这里改字号 */
+  letter-spacing: .5px;
+  user-select: none;
+  pointer-events: none; /* 纯展示，不可交互 */
+  /* 纯CSS绘制的方形圆角容器（替代SVG） */
+  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
+  border: 1px solid #696969;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+ }
+
+/* 门的透明热点区域（点击进入密码验证） */
+.door-hotspot{
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%);
+  width: 22%;   /* 调整为门的大致宽度 */
+  height: 20%;  /* 调整为门的大致高度 */
+  z-index: 6;   /* 高于列表与背景，低于底部导航 */
+  cursor: pointer;
+  background: transparent; /* 透明点击区 */
+}
+ 
+ /* 右侧自定义滚动条 */
+ .guest-scrollbar{
+   position: relative;
+   width: 14px;
+   height: 100%;
+ }
+ .guest-scrollbar .track{
+   position: absolute; inset: 0;
+   background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
+   opacity: .9;
+ }
+ .guest-scrollbar .thumb{
+   position: absolute; left: 0; right: 0;
+   height: 40px; /* 将由脚本调整 */
+   background: url('../svg/private/single opition.svg') center center/contain no-repeat;
+ }
+
+
+/* 热点：使用百分比定位，跟随不同机型比例 */
+.hotspot{
+  position: absolute;
+  width: 10vw; height: 10vw;           /* 例子：用 vw 让尺寸自适应 */
+  min-width: 44px; min-height: 44px;   /* 可触达最小尺寸 */
+  left: 62%; top: 40%;                 /* 例子：按图上相对位置给 % */
+  transform: translate(-50%,-50%);
+}
+    
+    .bottom-mask {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #191919;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+.nav-circle-btn {
+  position: absolute;
+  z-index: 10;
+  display: block;
+  /* 你可以加transition/hover样式等 */
+  }
+
+
+    </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="private-bg"></div>
+    <div class="private-title"></div>
+    <!-- 门的透明互动区域：点击跳转到密码页 -->
+    <a class="door-hotspot" id="doorHotspot" aria-label="Enter Locked Area"></a>
+    
+    <div class="guest-list-wrapper" id="guestList">
+      <div class="guest-list">
+        <div class="guest-list-viewport" id="guestViewport">
+          <div class="guest-item">Guest Name</div>
+          <div class="guest-item">Guest Name</div>
+          <div class="guest-item">Guest Name</div>
+          <div class="guest-item">Guest Name</div>
+          <div class="guest-item">Guest Name</div>
+        </div>
+      </div>
+      <div class="guest-scrollbar" id="guestScrollbar">
+        <div class="track"></div>
+        <div class="thumb" id="guestThumb"></div>
+      </div>
+    </div>
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../js/footer.js"></script>
+<script>
+// 自定义滚动条与滚轮同步
+(function(){
+  const viewport = document.getElementById('guestViewport');
+  const thumb = document.getElementById('guestThumb');
+  const scrollbar = document.getElementById('guestScrollbar');
+  if(!viewport || !thumb || !scrollbar) return;
+
+  function updateThumb(){
+    const viewH = viewport.clientHeight;
+    const scrollH = viewport.scrollHeight;
+    const trackH = scrollbar.clientHeight;
+    const minThumb = 24;
+    const thumbH = Math.max(minThumb, Math.round(viewH * viewH / Math.max(scrollH, 1))); // 与可视高度成比例
+    const maxTop = Math.max(trackH - thumbH, 0);
+    const top = (viewport.scrollTop / Math.max(scrollH - viewH, 1)) * maxTop;
+    thumb.style.height = thumbH + 'px';
+    thumb.style.top = top + 'px';
+  }
+
+  // 监听滚动和尺寸变化
+  viewport.addEventListener('scroll', updateThumb, { passive: true });
+  window.addEventListener('resize', updateThumb);
+  // 初始化
+  updateThumb();
+})();
+
+// 门的热点点击：跳转到密码验证页面
+(function(){
+  const door = document.getElementById('doorHotspot');
+  if (!door) return;
+  door.addEventListener('click', function(){
+    window.location.href = '../locked_files/master.html';
+  });
+})();
+</script>
+</body>
+</html>

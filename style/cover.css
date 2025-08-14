@@ -45,6 +45,16 @@
       z-index: 1;
       /* 由app-frame控制圆角 */
     }
+    
+/* 热点：使用百分比定位，跟随不同机型比例 */
+.hotspot{
+  position: absolute;
+  width: 10vw; height: 10vw;           /* 例子：用 vw 让尺寸自适应 */
+  min-width: 44px; min-height: 44px;   /* 可触达最小尺寸 */
+  left: 62%; top: 58%;                 /* 例子：按图上相对位置给 % */
+  transform: translate(-50%,-50%);
+}
+    
     .bottom-mask {
       position: absolute;
       left: 0; bottom: 0;
@@ -58,7 +68,7 @@
     }
     .logo-btn {
       position: absolute;
-      top: 350px; left: 55%;
+      top: 42%; left: 50%;
       transform: translateX(-50%);
       width: 120px; height: 120px;
       border-radius: 50%;
@@ -79,6 +89,17 @@
       width: 200px; height: 200px; display: block;
       pointer-events: none;
     }
+    
+    .cover-title {
+      position: absolute;
+      top: 24%; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 80px;
+      background: url('../img/cover title.png') center center/contain no-repeat;
+      z-index: 3;
+      pointer-events: none;
+    }
+    
   /* 蜘蛛默认隐藏在顶部（未掉落状态） */
     .spider-anim {
       position: absolute;
