@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - 驯化目录</title>
+  <link rel="stylesheet" href="/style/index.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <style>
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+ html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #ffffff;
+      overflow: hidden;
+    }
+    .app-frame {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: relative;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #ffffff;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+
+      /* 完全填充屏幕 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
+    }
+    
+    .catalog-bg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 1;
+    }
+    
+    .catalog-title {
+      position: absolute;
+      top: 15%; left: 50%;
+      transform: translateX(-50%);
+      color: #000;
+      font-family: "SimSun", "宋体", serif;
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .chapter-list {
+      position: absolute;
+      top: 30%; left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 2;
+    }
+    
+    .chapter-btn {
+      padding: 16px 20px;
+      background: #f5f5f5;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-family: "SimSun", "宋体", serif;
+      font-size: 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .chapter-btn:hover {
+      background: #e8e8e8;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .chapter-btn:active {
+      transform: translateY(0);
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="catalog-bg"></div>
+    <div class="catalog-title">
+      <div>《驯化》</div>
+      <div>章节目录</div>
+    </div>
+    
+    <div class="chapter-list">
+      <button class="chapter-btn" data-chapter="1">第一章 · 俘虏</button>
+      <button class="chapter-btn" data-chapter="2">第二章 · 战利品</button>
+      <button class="chapter-btn" data-chapter="3">第三章 · 体检</button>
+      <button class="chapter-btn" data-chapter="4">第四章 · untamed (上)</button>
+      <button class="chapter-btn" data-chapter="5">第五章 · untamed (下)</button>
+      <button class="chapter-btn" data-chapter="6">第六章 · 自由即奴役</button>
+      <button class="chapter-btn" data-chapter="7">第七章 · Hard Time</button>
+    </div>
+    
+    <button class="back-btn" id="backBtn">
+      <span>←</span>
+      <span>回首页</span>
+    </button>
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../../js/footer.js"></script>
+<script>
+// 返回按钮功能
+document.addEventListener('DOMContentLoaded', function() {
+  const backBtn = document.getElementById('backBtn');
+  if (backBtn) {
+    backBtn.addEventListener('click', function() {
+      // 返回上一页
+      window.history.back();
+    });
+  }
+  
+  // 章节按钮点击事件
+  const chapterBtns = document.querySelectorAll('.chapter-btn');
+  chapterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const chapter = this.getAttribute('data-chapter');
+      console.log('Chapter clicked:', chapter);
+      
+      // 跳转到具体章节页面
+      if (chapter === '1') {
+        window.location.href = 'chapter1.html';
+      } else {
+        alert(`第${chapter}章 - ${this.textContent} 正在开发中...`);
+      }
+    });
+  });
+});
+</script>
+</body>
+</html>
