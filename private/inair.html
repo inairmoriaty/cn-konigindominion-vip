@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Inair</title>
+  <link rel="stylesheet" href="/style/index.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <style>
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+ html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+    .app-frame {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: relative;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #191919;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+
+      /* 完全填充屏幕 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
+    }
+    
+    .inair-bg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../../img/master/master_bg.png') center center/cover no-repeat;
+      z-index: 1;
+    }
+    
+    .inair-title {
+      position: absolute;
+      top: -3%; left: 50%;
+      transform: translateX(-50%);
+      width: 750px; height: 300px;
+      background: url('../../img/master/inair.png') center center/contain no-repeat;
+      z-index: 2;
+      pointer-events: none;
+    }
+    
+    .bottom-mask {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 92px;
+      background: #191919;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="inair-bg"></div>
+    <div class="inair-title"></div>
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../js/footer.js"></script>
+<script>
+// 确保footer正确加载
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Inair page loaded');
+  // 检查footer是否加载
+  setTimeout(() => {
+    const footer = document.querySelector('.bottom-nav');
+    if (footer) {
+      console.log('Footer loaded successfully');
+    } else {
+      console.log('Footer not found, checking placeholder');
+      const placeholder = document.getElementById('footer-placeholder');
+      console.log('Footer placeholder:', placeholder);
+    }
+  }, 1000);
+});
+</script>
+</body>
+</html>

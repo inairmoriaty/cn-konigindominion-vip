@@ -51,7 +51,7 @@ html, body {
 
 .private-title {
   position: absolute;
-  top: 0%; left: 50%;
+  top: -3%; left: 50%;
   transform: translateX(-50%);
   width: 750px; height: 300px;
   background: url('../svg/private/door brand.svg') center center/contain no-repeat;
@@ -112,7 +112,7 @@ html, body {
 .door-hotspot{
   position: absolute;
   left: 50%;
-  top: 30%;
+  top: 55%; /* 下移，避免被scroll option遮挡 */
   transform: translateX(-50%);
   width: 22%;   /* 调整为门的大致宽度 */
   height: 20%;  /* 调整为门的大致高度 */
@@ -228,9 +228,21 @@ html, body {
 // 门的热点点击：跳转到密码验证页面
 (function(){
   const door = document.getElementById('doorHotspot');
-  if (!door) return;
-  door.addEventListener('click', function(){
+  console.log('Door hotspot element:', door);
+  if (!door) {
+    console.error('Door hotspot element not found!');
+    return;
+  }
+  console.log('Adding click event listener to door hotspot');
+  door.addEventListener('click', function(e){
+    console.log('Door hotspot clicked!');
+    e.preventDefault();
     window.location.href = '../locked_files/master.html';
+  });
+  
+  // 添加鼠标悬停事件用于调试
+  door.addEventListener('mouseenter', function(){
+    console.log('Mouse entered door hotspot area');
   });
 })();
 </script>
