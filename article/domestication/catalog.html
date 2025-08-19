@@ -68,10 +68,38 @@
       transform: translateX(-50%);
       width: 80%;
       max-width: 320px;
+      height: 480px; /* 固定高度，大约显示7个按钮 */
       display: flex;
       flex-direction: column;
       gap: 12px;
       z-index: 2;
+      overflow-y: auto; /* 添加垂直滚动 */
+      padding-right: 8px; /* 为滚动条留出空间 */
+    }
+    
+    /* 自定义滚动条样式 */
+    .chapter-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .chapter-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    .chapter-list::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+    
+    .chapter-list::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+    
+    /* Firefox滚动条样式 */
+    .chapter-list {
+      scrollbar-width: thin;
+      scrollbar-color: #c1c1c1 #f1f1f1;
     }
     
     .chapter-btn {
@@ -109,13 +137,17 @@
     </div>
     
     <div class="chapter-list">
-      <button class="chapter-btn" data-chapter="1">第一章 · 俘虏</button>
-      <button class="chapter-btn" data-chapter="2">第二章 · 战利品</button>
+      <button class="chapter-btn" data-chapter="1">第一章 · Hunt</button>
+      <button class="chapter-btn" data-chapter="2">第二章 · Trophy</button>
       <button class="chapter-btn" data-chapter="3">第三章 · 体检</button>
       <button class="chapter-btn" data-chapter="4">第四章 · untamed (上)</button>
       <button class="chapter-btn" data-chapter="5">第五章 · untamed (下)</button>
-      <button class="chapter-btn" data-chapter="6">第六章 · 自由即奴役</button>
+      <button class="chapter-btn" data-chapter="6">第六章 · freedom?</button>
       <button class="chapter-btn" data-chapter="7">第七章 · Hard Time</button>
+      <button class="chapter-btn" data-chapter="8">第八章 · Prisoner</button>
+      <button class="chapter-btn" data-chapter="9">第九章 · unlocked door(1)</button>
+      <button class="chapter-btn" data-chapter="10">第十章 · unlocked door(2)</button>
+      <button class="chapter-btn" data-chapter="11">第十一章 · unlocked door(3)</button>
     </div>
     
     <button class="back-btn" id="backBtn">
@@ -149,6 +181,26 @@ document.addEventListener('DOMContentLoaded', function() {
       // 跳转到具体章节页面
       if (chapter === '1') {
         window.location.href = 'chapter1.html';
+      } else if (chapter === '2') {
+        window.location.href = 'chapter2.html';
+      } else if (chapter === '3') {
+        window.location.href = 'chapter3.html';
+      } else if (chapter === '4') {
+        window.location.href = 'chapter4.html';
+      } else if (chapter === '5') {
+        window.location.href = 'chapter5.html';
+      } else if (chapter === '6') {
+        window.location.href = 'chapter6.html';
+      } else if (chapter === '7') {
+        window.location.href = 'chapter7.html';
+      } else if (chapter === '8') {
+        window.location.href = 'chapter8.html';
+      } else if (chapter === '9') {
+        window.location.href = 'chapter9.html';
+      } else if (chapter === '10') {
+        window.location.href = 'chapter10.html';
+      } else if (chapter === '11') {
+        window.location.href = 'chapter11.html';
       } else {
         alert(`第${chapter}章 - ${this.textContent} 正在开发中...`);
       }
