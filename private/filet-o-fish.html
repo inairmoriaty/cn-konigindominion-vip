@@ -554,15 +554,15 @@
         // 计算当前位置的百分比
         const progress = Math.abs(currentPosition) / maxSlideDistance;
         
-        // 当在第一个指示器位置（床的位置）时显示床按钮
-        if (progress < 0.5) {
+        // 当在起始位置（床的位置）时显示床按钮
+        if (progress < 0.3) {
           bedButton.classList.add('show');
         } else {
           bedButton.classList.remove('show');
         }
         
         // 当在第二个指示器位置（桌子位置）时显示whisky按钮
-        if (progress >= 0.5) {
+        if (progress >= 0.8) {
           whiskyButton.classList.add('show');
         } else {
           whiskyButton.classList.remove('show');
@@ -747,6 +747,12 @@
   const guestList = document.getElementById('guestList');
   let isGuestListVisible = false;
   
+  // 确保页面加载时滚轮选项是隐藏的
+  if (guestList) {
+    guestList.classList.remove('show');
+    isGuestListVisible = false;
+  }
+  
   if (bedBtn) {
     bedBtn.addEventListener('click', function(e) {
       e.preventDefault();
@@ -762,6 +768,20 @@
       }
     });
   }
+  
+  // 点击空白区域隐藏滚轮选项
+  document.addEventListener('click', function(e) {
+    // 如果滚轮选项是显示的，且点击的不是床按钮或滚轮选项内部
+    if (isGuestListVisible && guestList) {
+      const isClickOnBedBtn = bedBtn && bedBtn.contains(e.target);
+      const isClickOnGuestList = guestList.contains(e.target);
+      
+      if (!isClickOnBedBtn && !isClickOnGuestList) {
+        guestList.classList.remove('show');
+        isGuestListVisible = false;
+      }
+    }
+  });
   
   // 自定义滚动条与滚轮同步
   const viewport = document.getElementById('guestViewport');
