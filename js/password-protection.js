@@ -133,6 +133,8 @@ class PasswordProtection {
   showPasswordPrompt() {
     // 隐藏原内容
     const originalContent = document.body.innerHTML;
+    const doorplateUrl = this.pageConfig.doorplate || '../img/door brand.png';
+    
     document.body.innerHTML = `
       <div id="password-overlay" style="
         position: fixed;
@@ -177,7 +179,7 @@ class PasswordProtection {
             top: -3%; left: 50%;
             transform: translateX(-50%);
             width: 750px; height: 300px;
-            background: url('../img/master/master room.png') center center/contain no-repeat;
+            background: url('${doorplateUrl}') center center/contain no-repeat;
             z-index: 2;
             pointer-events: none;
           "></div>
@@ -392,37 +394,44 @@ const PAGE_CONFIGS = {
   'master': {
     password: '0524',
     sessionKey: 'master_access_granted',
-    tabSessionKey: 'master_tab_session'
+    tabSessionKey: 'master_tab_session',
+    doorplate: '../img/master/master room.png'
   },
   'filet-o-fish': {
     password: '1024',
     sessionKey: 'filet_o_fish_access_granted',
-    tabSessionKey: 'filet_o_fish_tab_session'
+    tabSessionKey: 'filet_o_fish_tab_session',
+    doorplate: '../img/door brand.png'
   },
   'berlin': {
     password: '0524', // 使用默认密码
     sessionKey: 'berlin_access_granted',
-    tabSessionKey: 'berlin_tab_session'
+    tabSessionKey: 'berlin_tab_session',
+    doorplate: '../img/door brand.png'
   },
   'cage': {
-    password: '0524', // 使用默认密码
+    password: '1024', // 使用默认密码
     sessionKey: 'cage_access_granted',
-    tabSessionKey: 'cage_tab_session'
+    tabSessionKey: 'cage_tab_session',
+    doorplate: '../img/door brand.png'
   },
   '2049': {
-    password: '0524', // 使用默认密码
+    password: '1024', // 使用默认密码
     sessionKey: '2049_access_granted',
-    tabSessionKey: '2049_tab_session'
+    tabSessionKey: '2049_tab_session',
+    doorplate: '../img/door brand.png'
   },
   'vampire': {
-    password: '0524', // 使用默认密码
+    password: '1024', // 使用默认密码
     sessionKey: 'vampire_access_granted',
-    tabSessionKey: 'vampire_tab_session'
+    tabSessionKey: 'vampire_tab_session',
+    doorplate: '../img/door brand.png'
   },
   'domestication': {
     password: '0524', // 使用默认密码
     sessionKey: 'domestication_access_granted',
-    tabSessionKey: 'domestication_tab_session'
+    tabSessionKey: 'domestication_tab_session',
+    doorplate: '../img/door brand.png'
   }
 };
 
@@ -433,20 +442,20 @@ function detectPageType() {
   
   console.log('检测页面类型:', pathname);
   
-  // 检测各种页面类型
-  if (pathname.includes('master.html')) {
+  // 检测各种页面类型 - 需要更精确的匹配
+  if (pathname.includes('/private/master.html') || pathname.includes('master.html')) {
     return 'master';
-  } else if (pathname.includes('filet-o-fish.html')) {
+  } else if (pathname.includes('/private/filet-o-fish.html') || pathname.includes('filet-o-fish.html')) {
     return 'filet-o-fish';
-  } else if (pathname.includes('berlin.html')) {
+  } else if (pathname.includes('/private/berlin.html') || pathname.includes('berlin.html')) {
     return 'berlin';
-  } else if (pathname.includes('cage.html')) {
+  } else if (pathname.includes('/private/cage.html') || pathname.includes('cage.html')) {
     return 'cage';
-  } else if (pathname.includes('2049.html')) {
+  } else if (pathname.includes('/private/2049.html') || pathname.includes('2049.html')) {
     return '2049';
-  } else if (pathname.includes('vampire.html')) {
+  } else if (pathname.includes('/private/vampire.html') || pathname.includes('vampire.html')) {
     return 'vampire';
-  } else if (pathname.includes('domestication/')) {
+  } else if (pathname.includes('/private/domestication/') || pathname.includes('domestication/')) {
     return 'domestication';
   }
   
@@ -461,6 +470,11 @@ window.passwordProtection = new PasswordProtection(pageConfig);
 
 // 页面加载时自动初始化
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('页面类型:', pageType, '密码:', pageConfig.password);
+  console.log('=== 密码保护系统初始化 ===');
+  console.log('当前URL:', window.location.href);
+  console.log('检测到的页面类型:', pageType);
+  console.log('使用的密码:', pageConfig.password);
+  console.log('会话键名:', pageConfig.sessionKey);
+  console.log('========================');
   window.passwordProtection.init();
 });

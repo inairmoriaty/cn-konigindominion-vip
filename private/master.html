@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - Inair</title>
   <link rel="stylesheet" href="/style/index.css">
   <link rel="stylesheet" href="/style/footer.css">
@@ -302,6 +302,13 @@
         width: 8px;
         height: 8px;
       }
+      
+      /* 移动端背景图优化 */
+      .bg-slider {
+        background-size: auto 100%;
+        background-position: left center;
+        background-attachment: scroll;
+      }
     }
 
         /* 客单滚轮选项区域 */
@@ -374,25 +381,6 @@
       transform: scale(0.98);
     }
     
-    /* 右侧自定义滚动条 */
-    .guest-scrollbar{
-      position: relative;
-      width: 14px;
-      height: 100%;
-    }
-    
-    .guest-scrollbar .track{
-      position: absolute; inset: 0;
-      background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
-      opacity: .9;
-    }
-    
-    .guest-scrollbar .thumb{
-      position: absolute; left: 0; right: 0;
-      height: 40px;
-      background: url('../svg/private/single opition.svg') center center/contain no-repeat;
-    }
-
 
     .interaction-btn:active img {
   /* 可选：按下变暗或缩放 */
@@ -436,9 +424,6 @@
           <div class="guest-item" data-article="abyss.html">深渊漫步</div>
         </div>
       </div>
-      <div class="guest-scrollbar" id="guestScrollbar">
-        <div class="track"></div>
-        <div class="thumb" id="guestThumb"></div>
       </div>
     </div>
     
@@ -634,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // 枕头位置大约在滑动进度的中间位置
       // 当枕头在画面内时显示床按钮
       if (bedButton) {
-        if (progress >= 0.40 && progress <= 0.50) {
+        if (progress >= 0.30 && progress <= 0.65) {
           bedButton.classList.add('show');
         } else {
           bedButton.classList.remove('show');
@@ -651,6 +636,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
     }
+
+      // 点击空白区域隐藏滚轮选项
+  document.addEventListener('click', function(e) {
+    // 如果滚轮选项是显示的，且点击的不是床按钮或滚轮选项内部
+    if (isGuestListVisible && guestList) {
+      const isClickOnBedBtn = bedBtn && bedBtn.contains(e.target);
+      const isClickOnGuestList = guestList.contains(e.target);
+      
+      if (!isClickOnBedBtn && !isClickOnGuestList) {
+        guestList.classList.remove('show');
+        isGuestListVisible = false;
+      }
+    }
+  });
+
 
     // 更新门牌显示状态
     function updateTitleVisibility() {

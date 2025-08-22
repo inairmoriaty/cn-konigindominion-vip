@@ -348,26 +348,6 @@
       transform: scale(0.98);
     }
     
-    /* 右侧自定义滚动条 */
-    .guest-scrollbar{
-      position: relative;
-      width: 14px;
-      height: 100%;
-    }
-    
-    .guest-scrollbar .track{
-      position: absolute; inset: 0;
-      background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
-      opacity: .9;
-    }
-    
-    .guest-scrollbar .thumb{
-      position: absolute; left: 0; right: 0;
-      height: 40px;
-      background: url('../svg/private/single opition.svg') center center/contain no-repeat;
-    }
-
-
     .interaction-btn:active img {
   /* 可选：按下变暗或缩放 */
   filter: brightness(0.8);
@@ -421,7 +401,6 @@
           <div class="guest-item" data-article="cage.html">次元裂缝</div>
         </div>
       </div>
-      <div class="guest-scrollbar" id="guestScrollbar">
         <div class="track"></div>
         <div class="thumb" id="guestThumb"></div>
       </div>
@@ -555,14 +534,19 @@
         const progress = Math.abs(currentPosition) / maxSlideDistance;
         
         // 当在起始位置（床的位置）时显示床按钮
-        if (progress < 0.3) {
+        if (progress < 0.25) {
           bedButton.classList.add('show');
         } else {
           bedButton.classList.remove('show');
+          // 如果床按钮隐藏，也隐藏客人列表
+          if (guestList) {
+            guestList.classList.remove('show');
+            isGuestListVisible = false;
+          }
         }
         
         // 当在第二个指示器位置（桌子位置）时显示whisky按钮
-        if (progress >= 0.8) {
+        if (progress >= 0.85 && progress <= 1) {
           whiskyButton.classList.add('show');
         } else {
           whiskyButton.classList.remove('show');
@@ -832,7 +816,7 @@
           e.preventDefault();
           console.log('Whisky button clicked');
           // 跳转到2049.html文章页面
-          window.location.href = '../../article/2049.html';
+          window.location.href = '../../article/private/2049.html';
         });
       }
 
