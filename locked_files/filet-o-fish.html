@@ -38,7 +38,7 @@
       box-sizing: border-box;
     }
     
-    .master-bg {
+    .guest-bg {
       position: absolute;
       left: 0; top: 0;
       width: 100%;
@@ -47,12 +47,12 @@
       z-index: 1;
     }
     
-    .master-title {
+    .guest-title {
       position: absolute;
       top: -3%; left: 50%;
       transform: translateX(-50%);
       width: 750px; height: 300px;
-      background: url('../img/master/master\ room.png') center center/contain no-repeat;
+      background: url('../img/door brand.png') center center/contain no-repeat;
       z-index: 2;
       pointer-events: none;
     }
@@ -127,8 +127,8 @@
 </head>
 <body>
   <div class="app-frame">
-    <div class="master-bg"></div>
-    <div class="master-title"></div>
+    <div class="guest-bg"></div>
+    <div class="guest-title"></div>
     <div class="password-prompt">输入密码以解锁此房间</div>
     <input type="password" class="password-input" id="passwordInput" placeholder="请输入密码" maxlength="4">
     <button class="enter-btn" id="enterBtn"></button>

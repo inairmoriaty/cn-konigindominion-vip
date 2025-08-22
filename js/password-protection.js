@@ -1,9 +1,13 @@
-// 密码保护系统 - 基于master.html设计
+// 密码保护系统 - 支持不同页面使用不同密码
 class PasswordProtection {
-  constructor() {
-    this.password = '0524'; // 默认密码
-    this.sessionKey = 'private_access_granted';
-    this.tabSessionKey = 'private_tab_session';
+  constructor(pageConfig) {
+    // 页面配置，包含密码和会话键名
+    this.pageConfig = pageConfig || {
+      password: '0524', // 默认密码
+      sessionKey: 'private_access_granted',
+      tabSessionKey: 'private_tab_session'
+    };
+    
     this.sessionExpiry = 24 * 60 * 60 * 1000; // 24小时过期
     this.tabSessionExpiry = 30 * 60 * 1000; // 30分钟过期（Tab会话）
   }
@@ -43,7 +47,7 @@ class PasswordProtection {
   // 获取Tab会话信息（sessionStorage）
   getTabSession() {
     try {
-      const session = sessionStorage.getItem(this.tabSessionKey);
+      const session = sessionStorage.getItem(this.pageConfig.tabSessionKey);
       return session ? JSON.parse(session) : null;
     } catch (e) {
       return null;
@@ -56,18 +60,18 @@ class PasswordProtection {
       timestamp: Date.now(),
       expiry: Date.now() + this.tabSessionExpiry
     };
-    sessionStorage.setItem(this.tabSessionKey, JSON.stringify(session));
+    sessionStorage.setItem(this.pageConfig.tabSessionKey, JSON.stringify(session));
   }
 
   // 清除Tab会话
   clearTabSession() {
-    sessionStorage.removeItem(this.tabSessionKey);
+    sessionStorage.removeItem(this.pageConfig.tabSessionKey);
   }
 
   // 获取长期会话信息（localStorage）
   getSession() {
     try {
-      const session = localStorage.getItem(this.sessionKey);
+      const session = localStorage.getItem(this.pageConfig.sessionKey);
       return session ? JSON.parse(session) : null;
     } catch (e) {
       return null;
@@ -80,17 +84,17 @@ class PasswordProtection {
       timestamp: Date.now(),
       expiry: Date.now() + this.sessionExpiry
     };
-    localStorage.setItem(this.sessionKey, JSON.stringify(session));
+    localStorage.setItem(this.pageConfig.sessionKey, JSON.stringify(session));
   }
 
   // 清除长期会话
   clearSession() {
-    localStorage.removeItem(this.sessionKey);
+    localStorage.removeItem(this.pageConfig.sessionKey);
   }
 
   // 验证密码
   verifyPassword(inputPassword) {
-    return inputPassword === this.password;
+    return inputPassword === this.pageConfig.password;
   }
 
   // 检测访问路径类型
@@ -383,10 +387,80 @@ class PasswordProtection {
   }
 }
 
+// 页面配置映射
+const PAGE_CONFIGS = {
+  'master': {
+    password: '0524',
+    sessionKey: 'master_access_granted',
+    tabSessionKey: 'master_tab_session'
+  },
+  'filet-o-fish': {
+    password: '1024',
+    sessionKey: 'filet_o_fish_access_granted',
+    tabSessionKey: 'filet_o_fish_tab_session'
+  },
+  'berlin': {
+    password: '0524', // 使用默认密码
+    sessionKey: 'berlin_access_granted',
+    tabSessionKey: 'berlin_tab_session'
+  },
+  'cage': {
+    password: '0524', // 使用默认密码
+    sessionKey: 'cage_access_granted',
+    tabSessionKey: 'cage_tab_session'
+  },
+  '2049': {
+    password: '0524', // 使用默认密码
+    sessionKey: '2049_access_granted',
+    tabSessionKey: '2049_tab_session'
+  },
+  'vampire': {
+    password: '0524', // 使用默认密码
+    sessionKey: 'vampire_access_granted',
+    tabSessionKey: 'vampire_tab_session'
+  },
+  'domestication': {
+    password: '0524', // 使用默认密码
+    sessionKey: 'domestication_access_granted',
+    tabSessionKey: 'domestication_tab_session'
+  }
+};
+
+// 根据当前页面URL自动检测页面类型
+function detectPageType() {
+  const currentUrl = window.location.href;
+  const pathname = window.location.pathname;
+  
+  console.log('检测页面类型:', pathname);
+  
+  // 检测各种页面类型
+  if (pathname.includes('master.html')) {
+    return 'master';
+  } else if (pathname.includes('filet-o-fish.html')) {
+    return 'filet-o-fish';
+  } else if (pathname.includes('berlin.html')) {
+    return 'berlin';
+  } else if (pathname.includes('cage.html')) {
+    return 'cage';
+  } else if (pathname.includes('2049.html')) {
+    return '2049';
+  } else if (pathname.includes('vampire.html')) {
+    return 'vampire';
+  } else if (pathname.includes('domestication/')) {
+    return 'domestication';
+  }
+  
+  // 默认返回master配置
+  return 'master';
+}
+
 // 创建全局实例
-const passwordProtection = new PasswordProtection();
+const pageType = detectPageType();
+const pageConfig = PAGE_CONFIGS[pageType] || PAGE_CONFIGS['master'];
+window.passwordProtection = new PasswordProtection(pageConfig);
 
 // 页面加载时自动初始化
 document.addEventListener('DOMContentLoaded', function() {
-  passwordProtection.init();
+  console.log('页面类型:', pageType, '密码:', pageConfig.password);
+  window.passwordProtection.init();
 });
