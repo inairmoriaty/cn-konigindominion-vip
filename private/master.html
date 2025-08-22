@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Inair</title>
+  <link rel="stylesheet" href="/style/index.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <style>
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      margin: 0; 
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+
+    .app-frame {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: relative;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #191919;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0;
+      box-sizing: border-box;
+    }
+
+    /* 横向滑动背景容器 */
+    .horizontal-bg-container {
+      position: absolute;
+      left: 0; 
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* 背景图片容器 - 可以左右滑动 */
+    .bg-slider {
+      position: absolute;
+      left: 0; 
+      top: 0;
+      width: 300%; /* 3倍宽度，对应图片的3个部分 */
+      height: 100%;
+      background-image: url('../img/master/master_bg.PNG');
+      background-size: auto 100%; /* 保持图片比例，高度100% */
+      background-position: left center;
+      background-repeat: no-repeat;
+      transition: transform 0.3s ease-out;
+      cursor: grab;
+    }
+
+    .bg-slider:active {
+      cursor: grabbing;
+    }
+
+    /* 滑动指示器 - 长条bar样式 */
+    .slide-indicators {
+      position: absolute;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      z-index: 10;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 2px;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+
+    .indicator.active {
+      transform: scaleX(1);
+    }
+
+    /* 滑动提示 */
+    .slide-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-family: "SimSun", "宋体", serif;
+      text-align: center;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .slide-hint.show {
+      opacity: 1;
+    }
+
+    /* 内容层 */
+    .content-layer {
+      position: absolute;
+      left: 0; 
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .content-layer > * {
+      pointer-events: auto;
+    }
+
+    /* 标题 */
+    .page-title {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 门牌 */
+    .inair-title {
+      position: absolute;
+      top: -3%; 
+      left: 50%;
+      transform: translateX(-50%);
+      width: 750px; 
+      height: 300px;
+      background: url('../img/master/inair.png') center center/contain no-repeat;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .inair-title.show {
+      opacity: 1;
+    }
+
+    /* 交互按钮 */
+    .interaction-btn {
+      position: absolute;
+      z-index: 10;
+      display: block;
+      cursor: pointer;
+    }
+
+    .btn-bed {
+      top: 75%; /* 枕头的位置，大约65%从顶部 */
+      left: 50%; /* 枕头的位置，稍微偏左 */
+      transform: translate(-50%, -50%);
+    }
+
+    .btn-desk {
+      top: 75%; /* 桌子的位置，大约60%从顶部 */
+      left: 25%; /* 桌子的位置，在左侧 */
+      transform: translate(-50%, -50%);
+    }
+
+    .interaction-btn img {
+      width: 8vw;
+      height: 8vw;
+      min-width: 60px;
+      min-height: 60px;
+      max-width: 100px;
+      max-height: 100px;
+      display: block;
+      pointer-events: auto;
+      transition: all 0.2s ease;
+    }
+
+    .interaction-btn:hover img {
+      filter: brightness(1.2);
+      transform: scale(1.05);
+    }
+
+    .interaction-btn:active img {
+      filter: brightness(0.8);
+      transform: scale(0.95);
+    }
+
+    /* 按钮显示/隐藏控制 */
+    .interaction-btn {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      pointer-events: none;
+    }
+
+    .interaction-btn.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* 底部遮罩 */
+    .bottom-mask {
+      position: absolute;
+      left: 0; 
+      bottom: 0;
+      width: 100%;
+      height: 92px;
+      background: #191919;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* 边界提示效果 */
+    .boundary-hint {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 15;
+    }
+
+    .boundary-hint.show {
+      opacity: 1;
+    }
+
+    .boundary-hint.left {
+      left: 20px;
+    }
+
+    .boundary-hint.right {
+      right: 20px;
+    }
+
+    .boundary-hint::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-top: none;
+      border-right: none;
+    }
+
+    .boundary-hint.left::before {
+      transform: rotate(45deg);
+    }
+
+    .boundary-hint.right::before {
+      transform: rotate(-135deg);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .slide-indicators {
+        bottom: 100px;
+        width: 150px;
+        height: 3px;
+      }
+      
+      .boundary-hint {
+        width: 30px;
+        height: 30px;
+      }
+      
+      .boundary-hint::before {
+        width: 8px;
+        height: 8px;
+      }
+    }
+
+        /* 客单滚轮选项区域 */
+        .guest-list-wrapper{
+      position: absolute;
+      left: 53%;
+      transform: translateX(-50%);
+      width: 180px;
+      top: 22%;
+      height: 240px;
+      z-index: 20;
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .guest-list-wrapper.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .guest-list{
+      position: relative;
+      flex: 1 1 auto;
+      height: 100%;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
+    }
+    
+    .guest-list-viewport{
+      height: 288px;
+      overflow-y: auto;
+      padding-right: 8px;
+      scrollbar-width: none;
+    }
+    
+    .guest-list-viewport::-webkit-scrollbar{ display: none; }
+    
+    .guest-item{
+      height: 48px;
+      margin: 16px 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 15px;
+      font-family: "SimSun", "宋体", serif; /* 改为宋体 */
+      letter-spacing: .5px;
+      user-select: none;
+      pointer-events: auto; /* 改为可点击 */
+      cursor: pointer; /* 添加鼠标指针 */
+      background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
+      border: 1px solid #696969;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+      transition: all 0.2s ease; /* 添加过渡效果 */
+    }
+    
+    .guest-item:hover {
+      background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
+      transform: scale(1.02);
+    }
+    
+    .guest-item:active {
+      transform: scale(0.98);
+    }
+    
+    /* 右侧自定义滚动条 */
+    .guest-scrollbar{
+      position: relative;
+      width: 14px;
+      height: 100%;
+    }
+    
+    .guest-scrollbar .track{
+      position: absolute; inset: 0;
+      background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
+      opacity: .9;
+    }
+    
+    .guest-scrollbar .thumb{
+      position: absolute; left: 0; right: 0;
+      height: 40px;
+      background: url('../svg/private/single opition.svg') center center/contain no-repeat;
+    }
+
+
+    .interaction-btn:active img {
+  /* 可选：按下变暗或缩放 */
+  filter: brightness(0.8);
+  transform: scale(0.92);
+}
+@keyframes btn-blink {
+  0%   { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+  40%  { opacity: 0.6; filter: drop-shadow(0 0 8px #e6f3ff) brightness(1.3);}
+  60%  { opacity: 1; filter: drop-shadow(0 0 16px #b5e2ff) brightness(1.5);}
+  100% { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+}
+.interaction-btn.blink img {
+  animation: btn-blink 1.2s infinite;
+  /* 可选：动画节奏平滑 */
+  animation-timing-function: ease-in-out;
+}
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="bg-slider"></div>
+    <div class="inair-title"></div>
+    
+      <!-- 床上的交互按钮 -->
+      <a href="#" class="interaction-btn btn-bed blink" title="Bed Interaction" id="bedButton">
+        <img src="../img/default btn.png" alt="Bed Button"/>
+      </a>
+      
+      <!-- 桌子上的交互按钮 -->
+      <a href="#" class="interaction-btn btn-desk blink" title="Desk Interaction" id="deskButton">
+        <img src="../img/default btn.png" alt="Desk Button"/>
+      </a>
+    
+    <!-- 客单滚轮选项（默认隐藏） -->
+    <div class="guest-list-wrapper" id="guestList">
+      <div class="guest-list">
+        <div class="guest-list-viewport" id="guestViewport">
+          <div class="guest-item" data-article="domestication.html">驯化</div>
+          <div class="guest-item" data-article="monroe.html">梦露小姐</div>
+          <div class="guest-item" data-article="abyss.html">深渊漫步</div>
+        </div>
+      </div>
+      <div class="guest-scrollbar" id="guestScrollbar">
+        <div class="track"></div>
+        <div class="thumb" id="guestThumb"></div>
+      </div>
+    </div>
+    
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../js/footer.js"></script>
+<script>
+// 确保footer正确加载
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Inair page loaded');
+  // 检查footer是否加载
+  setTimeout(() => {
+    const footer = document.querySelector('.bottom-nav');
+    if (footer) {
+      console.log('Footer loaded successfully');
+    } else {
+      console.log('Footer not found, checking placeholder');
+      const placeholder = document.getElementById('footer-placeholder');
+      console.log('Footer placeholder:', placeholder);
+    }
+  }, 1000);
+  
+  // 床按钮点击事件
+  const bedBtn = document.querySelector('.btn-bed');
+  const guestList = document.getElementById('guestList');
+  let isGuestListVisible = false;
+  
+  if (bedBtn) {
+    bedBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('Bed button clicked');
+      
+      // 切换滚轮选项的显示/隐藏
+      if (isGuestListVisible) {
+        guestList.classList.remove('show');
+        isGuestListVisible = false;
+      } else {
+        guestList.classList.add('show');
+        isGuestListVisible = true;
+      }
+    });
+  }
+  
+  // 桌子按钮点击事件
+  const deskBtn = document.querySelector('.btn-desk');
+  if (deskBtn) {
+    deskBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('Desk button clicked');
+      
+      // 直接跳转到berlin.html
+      window.location.href = '../../article/private/berlin.html';
+    });
+  }
+  
+  // 自定义滚动条与滚轮同步
+  const viewport = document.getElementById('guestViewport');
+  const thumb = document.getElementById('guestThumb');
+  const scrollbar = document.getElementById('guestScrollbar');
+  
+  if(viewport && thumb && scrollbar) {
+    function updateThumb(){
+      const viewH = viewport.clientHeight;
+      const scrollH = viewport.scrollHeight;
+      const trackH = scrollbar.clientHeight;
+      const minThumb = 24;
+      const thumbH = Math.max(minThumb, Math.round(viewH * viewH / Math.max(scrollH, 1)));
+      const maxTop = Math.max(trackH - thumbH, 0);
+      const top = (viewport.scrollTop / Math.max(scrollH - viewH, 1)) * maxTop;
+      thumb.style.height = thumbH + 'px';
+      thumb.style.top = top + 'px';
+    }
+
+    // 监听滚动和尺寸变化
+    viewport.addEventListener('scroll', updateThumb, { passive: true });
+    window.addEventListener('resize', updateThumb);
+    // 初始化
+    updateThumb();
+  }
+  
+  // 滚轮选项点击跳转
+  const guestItems = document.querySelectorAll('.guest-item');
+  guestItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const articleFile = this.getAttribute('data-article');
+      if (articleFile) {
+        console.log('Jumping to article:', articleFile);
+        if (articleFile === 'domestication.html') {
+          window.location.href = `../../article/private/domestication/catalog.html`;
+        } else if (articleFile === 'monroe.html') {
+          window.location.href = `../../article/private/monroe.html`;
+        } else if (articleFile === 'abyss.html') {
+          window.location.href = `../../article/private/abyss.html`;
+        } else {
+          window.location.href = `../../article/private/${articleFile}`;
+        }
+      }
+    });
+  });
+
+  // 背景滑动功能 - 连续滑动版本
+  const bgSlider = document.querySelector('.bg-slider');
+  const slideIndicators = document.querySelector('.slide-indicators');
+  const slideHint = document.querySelector('.slide-hint');
+  const bedButton = document.getElementById('bedButton');
+  
+  if (bgSlider) {
+    let currentPosition = 0; // 当前位置（百分比）
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+    let startPosition = 0; // 开始拖动时的位置
+    let maxSlideDistance = 100; // 最大滑动距离，设置默认值
+
+    // 初始化
+    function initSlider() {
+      // 动态计算最大滑动距离
+      calculateMaxSlideDistance();
+      
+      updateSlider();
+      showHint();
+    }
+
+    // 计算最大滑动距离
+    function calculateMaxSlideDistance() {
+      const img = new Image();
+      img.onload = function() {
+        const containerWidth = window.innerWidth;
+        const imgWidth = this.width;
+        const imgHeight = this.height;
+        
+        // 计算图片在容器中的实际显示宽度
+        const containerHeight = window.innerHeight;
+        const scale = containerHeight / imgHeight;
+        const displayWidth = imgWidth * scale;
+        
+        // 计算可以滑动的距离
+        if (displayWidth > containerWidth) {
+          const actualSlideDistance = displayWidth - containerWidth;
+          maxSlideDistance = (actualSlideDistance / containerWidth) * 100 * 0.3; // 缩小到30% 适配背景图宽度
+        } else {
+          maxSlideDistance = 50; // 设置一个默认值
+        }
+        
+        console.log('Container width:', containerWidth);
+        console.log('Image display width:', displayWidth);
+        console.log('Max slide distance:', maxSlideDistance);
+        
+        // 设置初始位置到门牌区域的中间位置（约40%的滑动距离）
+        currentPosition = -(maxSlideDistance * 0.45);
+        
+        updateSlider();
+      };
+      
+      // 添加错误处理
+      img.onerror = function() {
+        console.error('Failed to load image');
+        maxSlideDistance = 100; // 设置默认滑动距离
+        // 设置初始位置到门牌区域的中间位置
+        currentPosition = -(maxSlideDistance * 0.4);
+        updateSlider();
+      };
+      
+      img.src = '../img/master/master_bg.PNG';
+    }
+
+    // 更新滑块位置
+    function updateSlider() {
+      // 限制滑动范围在0到-maxSlideDistance之间
+      currentPosition = Math.max(-maxSlideDistance, Math.min(0, currentPosition));
+      bgSlider.style.transform = `translateX(${currentPosition}%)`;
+      
+      // 更新指示器位置
+      updateIndicators();
+      
+      // 更新按钮显示状态
+      updateButtonVisibility();
+      
+      // 更新门牌显示状态
+      updateTitleVisibility();
+    }
+
+    // 更新按钮显示状态
+    function updateButtonVisibility() {
+      const deskButton = document.getElementById('deskButton');
+      
+      // 计算当前位置的百分比
+      const progress = Math.abs(currentPosition) / maxSlideDistance;
+      
+      // 枕头位置大约在滑动进度的中间位置
+      // 当枕头在画面内时显示床按钮
+      if (bedButton) {
+        if (progress >= 0.40 && progress <= 0.50) {
+          bedButton.classList.add('show');
+        } else {
+          bedButton.classList.remove('show');
+        }
+      }
+      
+      // 桌子位置大约在滑动进度的左侧
+      // 当桌子在画面内时显示桌子按钮
+      if (deskButton) {
+        if (progress >= 0 && progress <= 0.10) {
+          deskButton.classList.add('show');
+        } else {
+          deskButton.classList.remove('show');
+        }
+      }
+    }
+
+    // 更新门牌显示状态
+    function updateTitleVisibility() {
+      const titleElement = document.querySelector('.inair-title');
+      if (!titleElement) return;
+      
+      // 计算当前位置的百分比
+      const progress = Math.abs(currentPosition) / maxSlideDistance;
+      
+      // 门牌只在背景图正上方显示，滑动到两侧时隐藏
+      if (progress >= 0.1 && progress <= 0.7) {
+        titleElement.classList.add('show');
+      } else {
+        titleElement.classList.remove('show');
+      }
+    }
+
+    // 更新指示器
+    function updateIndicators() {
+      const indicators = document.querySelectorAll('.indicator');
+      if (indicators.length === 0) {
+        createIndicators();
+        return;
+      }
+      
+      if (maxSlideDistance <= 0) {
+        // 如果不需要滑动，进度条为0
+        indicators.forEach((indicator) => {
+          indicator.style.transform = 'scaleX(0)';
+        });
+        return;
+      }
+      
+      const progress = Math.abs(currentPosition) / maxSlideDistance;
+      // 将进度转换为0-1之间的值
+      const progressValue = Math.min(1, Math.max(0, progress));
+      
+      indicators.forEach((indicator) => {
+        indicator.style.transform = `scaleX(${progressValue})`;
+      });
+    }
+
+    // 创建滑动指示器
+    function createIndicators() {
+      if (!slideIndicators) {
+        const indicators = document.createElement('div');
+        indicators.className = 'slide-indicators';
+        
+        // 创建进度条指示器
+        const indicator = document.createElement('div');
+        indicator.className = 'indicator';
+        indicators.appendChild(indicator);
+        
+        // 添加点击事件，点击进度条可以跳转到对应位置
+        indicators.addEventListener('click', function(e) {
+          const rect = this.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const progress = clickX / rect.width;
+          goToPosition(progress * 100);
+        });
+        
+        document.querySelector('.app-frame').appendChild(indicators);
+      }
+    }
+
+    // 创建滑动提示
+    function createSlideHint() {
+      if (!slideHint) {
+        const hint = document.createElement('div');
+        hint.className = 'slide-hint';
+        hint.textContent = '左右滑动查看全景';
+        document.querySelector('.app-frame').appendChild(hint);
+      }
+    }
+
+    // 显示提示
+    function showHint() {
+      const hint = document.querySelector('.slide-hint');
+      if (hint) {
+        hint.classList.add('show');
+        setTimeout(() => {
+          hint.classList.remove('show');
+        }, 3000);
+      }
+    }
+
+    // 切换到指定位置
+    function goToPosition(percentage) {
+      currentPosition = -percentage * maxSlideDistance / 100;
+      updateSlider();
+    }
+
+    // 鼠标事件
+    bgSlider.addEventListener('mousedown', function(e) {
+      // 如果guest list显示，则不处理背景滑动
+      if (isGuestListVisible) return;
+      
+      isDragging = true;
+      startX = e.clientX;
+      currentX = startX;
+      startPosition = currentPosition; // 记录开始拖动时的位置
+      bgSlider.style.cursor = 'grabbing';
+      bgSlider.style.transition = 'none';
+    });
+
+    document.addEventListener('mousemove', function(e) {
+      if (!isDragging || isGuestListVisible) return;
+      
+      currentX = e.clientX;
+      const diff = currentX - startX;
+      
+      // 确保maxSlideDistance有值
+      if (maxSlideDistance <= 0) {
+        maxSlideDistance = 100; // 设置默认值
+      }
+      
+      // 计算目标位置（基于开始拖动时的位置）
+      let targetPosition = startPosition - (diff / window.innerWidth) * maxSlideDistance;
+      
+      // 添加边界限制和阻力效果
+      if (targetPosition > 0) {
+        // 向右滑动超出左边界，添加阻力
+        targetPosition = targetPosition * 0.3;
+      } else if (targetPosition < -maxSlideDistance) {
+        // 向左滑动超出右边界，添加阻力
+        const overDistance = Math.abs(targetPosition + maxSlideDistance);
+        targetPosition = -maxSlideDistance - (overDistance * 0.3);
+      }
+      
+      currentPosition = targetPosition;
+      bgSlider.style.transform = `translateX(${currentPosition}%)`;
+    });
+
+    document.addEventListener('mouseup', function() {
+      if (!isDragging || isGuestListVisible) return;
+      
+      isDragging = false;
+      bgSlider.style.cursor = 'grab';
+      bgSlider.style.transition = 'transform 0.3s ease-out';
+      
+      // 确保最终位置在有效范围内
+      currentPosition = Math.max(-maxSlideDistance, Math.min(0, currentPosition));
+      updateSlider();
+    });
+
+    // 触摸事件（移动端）
+    bgSlider.addEventListener('touchstart', function(e) {
+      // 如果guest list显示，则不处理背景滑动
+      if (isGuestListVisible) return;
+      
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      currentX = startX;
+      startPosition = currentPosition; // 记录开始拖动时的位置
+      bgSlider.style.transition = 'none';
+    });
+
+    document.addEventListener('touchmove', function(e) {
+      if (!isDragging || isGuestListVisible) return;
+      
+      currentX = e.touches[0].clientX;
+      const diff = currentX - startX;
+      
+      // 确保maxSlideDistance有值
+      if (maxSlideDistance <= 0) {
+        maxSlideDistance = 100; // 设置默认值
+      }
+      
+      // 计算目标位置（基于开始拖动时的位置）
+      let targetPosition = startPosition - (diff / window.innerWidth) * maxSlideDistance;
+      
+      // 添加边界限制和阻力效果
+      if (targetPosition > 0) {
+        // 向右滑动超出左边界，添加阻力
+        targetPosition = targetPosition * 0.3;
+      } else if (targetPosition < -maxSlideDistance) {
+        // 向左滑动超出右边界，添加阻力
+        const overDistance = Math.abs(targetPosition + maxSlideDistance);
+        targetPosition = -maxSlideDistance - (overDistance * 0.3);
+      }
+      
+      currentPosition = targetPosition;
+      bgSlider.style.transform = `translateX(${currentPosition}%)`;
+    });
+
+    document.addEventListener('touchend', function() {
+      if (!isDragging || isGuestListVisible) return;
+      
+      isDragging = false;
+      bgSlider.style.transition = 'transform 0.3s ease-out';
+      
+      // 确保最终位置在有效范围内
+      currentPosition = Math.max(-maxSlideDistance, Math.min(0, currentPosition));
+      updateSlider();
+    });
+
+    // 防止拖拽时选中文本
+    bgSlider.addEventListener('selectstart', (e) => e.preventDefault());
+    
+    // 初始化
+    createIndicators();
+    createSlideHint();
+    initSlider();
+  }
+});
+</script>
+<script src="../js/password-protection.js"></script>
+</body>
+</html>

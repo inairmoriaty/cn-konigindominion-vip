@@ -3,8 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第一章 - 驯化</title>
+    <title>Blade Runner</title>
     <link rel="stylesheet" href="../style/article.css">
+    <style>
+        /* 收藏按钮样式 */
+        .favourite-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .favourite-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+
+        .favourite-btn:active {
+            transform: scale(0.95);
+        }
+
+        .favourite-icon {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
 <body>
         <div class="article-container">
@@ -207,14 +242,29 @@
 </div>
 </div>
 
+<!-- 收藏按钮 -->
+<div id="favourite-button-container"></div>
 
-
-
-
-<script>
-// 页面加载完成后的初始化
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('文章页面加载完成');
+    <script src="../../js/favourite-manager.js"></script>
+    <script src="../../js/password-protection.js"></script>
+    <script>
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('文章页面加载完成');
+            
+            // 初始化收藏按钮
+            const articleInfo = {
+                title: 'Blade Runner',
+                url: window.location.href,
+                author: 'Inair',
+                category: 'private'
+            };
+            
+            const favouriteContainer = document.getElementById('favourite-button-container');
+            if (favouriteContainer && window.createFavouriteButton) {
+                const favouriteBtn = createFavouriteButton(articleInfo);
+                favouriteContainer.appendChild(favouriteBtn);
+            }
     
     // 添加右滑返回手势支持（兼容iOS和Android）
     let startX = 0;

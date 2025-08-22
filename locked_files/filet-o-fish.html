@@ -160,31 +160,20 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
   const passwordInput = document.getElementById('passwordInput');
   const enterBtn = document.getElementById('enterBtn');
-  const correctPassword = '0524';
+  const correctPassword = '1024';
   
   // 验证密码的函数
   function validatePassword() {
     const enteredPassword = passwordInput.value;
     if (enteredPassword === correctPassword) {
-      // 密码正确，保存Tab会话并跳转到目标页面
-      saveTabSession();
-      window.location.href = '../private/master.html';
+      // 密码正确，跳转到private/inair.html
+      window.location.href = '../private/filet-o-fish.html';
     } else {
       // 密码错误
       alert('密码错误，请重试。');
       passwordInput.value = '';
       passwordInput.focus();
     }
-  }
-  
-  // 保存Tab会话的函数
-  function saveTabSession() {
-    const session = {
-      timestamp: Date.now(),
-      expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
-    };
-    sessionStorage.setItem('private_tab_session', JSON.stringify(session));
-    console.log('Tab会话已保存');
   }
   
   // Enter键验证

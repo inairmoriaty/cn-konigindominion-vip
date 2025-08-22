@@ -411,7 +411,7 @@
       
       <!-- 床上的交互按钮 -->
       <a href="#" class="interaction-btn btn-bed blink" title="Bed Interaction" id="bedButton">
-        <img src="../svg/2nd floor button.svg" alt="Bed Button"/>
+        <img src="../img/default btn.png" alt="Bed Button"/>
       </a>
           <!-- 客单滚轮选项（默认隐藏） -->
     <div class="guest-list-wrapper" id="guestList">
@@ -429,7 +429,7 @@
 
       <!-- Whisky上的交互按钮 -->
       <a href="#" class="interaction-btn btn-whisky blink" title="Whisky Interaction" id="whiskyButton">
-        <img src="../svg/2nd floor button.svg" alt="Whisky Button"/>
+        <img src="../img/default btn.png" alt="Whisky Button"/>
       </a>
       
       <!-- 边界提示 -->
@@ -816,11 +816,11 @@
       if (articleFile) {
         console.log('Jumping to article:', articleFile);
         if (articleFile === 'vampire.html') {
-          window.location.href = `../../article/vampire.html`;
+          window.location.href = `../../article/private/vampire.html`;
         } else if (articleFile === 'cage.html') {
-          window.location.href = `../../article/cage.html`;
+          window.location.href = `../../article/private/cage.html`;
         } else {
-          window.location.href = `../../article/${articleFile}`;
+          window.location.href = `../../article/private/${articleFile}`;
         }
       }
     });
@@ -850,5 +850,6 @@
       }, 1000);
     });
   </script>
+  <script src="../js/password-protection.js"></script>
 </body>
 </html>
