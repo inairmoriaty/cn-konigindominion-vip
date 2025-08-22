@@ -381,6 +381,14 @@ class PasswordProtection {
 
   // 初始化密码保护
   init() {
+    // 防止重复初始化
+    if (this.initialized) {
+      console.log('密码保护已初始化，跳过重复调用');
+      return;
+    }
+    
+    this.initialized = true;
+    
     if (!this.isAuthenticated()) {
       this.showPasswordPrompt();
     } else {
@@ -470,11 +478,19 @@ window.passwordProtection = new PasswordProtection(pageConfig);
 
 // 页面加载时自动初始化
 document.addEventListener('DOMContentLoaded', function() {
+  // 防止重复初始化
+  if (window.passwordProtectionInitialized) {
+    console.log('密码保护系统已初始化，跳过重复初始化');
+    return;
+  }
+  
   console.log('=== 密码保护系统初始化 ===');
   console.log('当前URL:', window.location.href);
   console.log('检测到的页面类型:', pageType);
   console.log('使用的密码:', pageConfig.password);
   console.log('会话键名:', pageConfig.sessionKey);
   console.log('========================');
+  
   window.passwordProtection.init();
+  window.passwordProtectionInitialized = true;
 });
