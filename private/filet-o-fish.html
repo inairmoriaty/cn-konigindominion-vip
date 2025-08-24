@@ -6,6 +6,7 @@
   <title>KÖNIGIN - Filet-o-Fish</title>
   <link rel="stylesheet" href="/style/index.css">
   <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="/style/mobile.css">
   <style>
     :root {
       --safe-top: env(safe-area-inset-top, 0px);
@@ -647,15 +648,24 @@
 
       // 触摸事件（移动端）
       bgSlider.addEventListener('touchstart', function(e) {
+        // 如果guest list显示，则不处理背景滑动
+        if (isGuestListVisible) return;
+        
+        // 防止默认行为
+        e.preventDefault();
+        
         isDragging = true;
         startX = e.touches[0].clientX;
         currentX = startX;
         startPosition = currentPosition; // 记录开始拖动时的位置
         bgSlider.style.transition = 'none';
-      });
+      }, { passive: false });
 
       document.addEventListener('touchmove', function(e) {
-        if (!isDragging) return;
+        if (!isDragging || isGuestListVisible) return;
+        
+        // 防止默认行为
+        e.preventDefault();
         
         currentX = e.touches[0].clientX;
         const diff = currentX - startX;
@@ -687,7 +697,7 @@
       });
 
       document.addEventListener('touchend', function() {
-        if (!isDragging) return;
+        if (!isDragging || isGuestListVisible) return;
         
         isDragging = false;
         bgSlider.style.transition = 'transform 0.3s ease-out';
@@ -699,7 +709,7 @@
 
       // 指示器点击事件
       indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', function() {
+        const handleIndicatorClick = function() {
           if (maxSlideDistance <= 0) {
             // 如果不需要滑动，点击任何指示器都回到起始位置
             currentPosition = 0;
@@ -712,7 +722,10 @@
             const percentage = index * 100; // 0% 或 100%
             goToPosition(percentage);
           }
-        });
+        };
+        
+        indicator.addEventListener('click', handleIndicatorClick);
+        indicator.addEventListener('touchend', handleIndicatorClick);
       });
 
       // 键盘事件
@@ -738,9 +751,11 @@
   }
   
   if (bedBtn) {
-    bedBtn.addEventListener('click', function(e) {
+    // 同时支持点击和触摸
+    const handleBedClick = function(e) {
       e.preventDefault();
-      console.log('Bed button clicked');
+      e.stopPropagation();
+      console.log('Bed button clicked/touched');
       
       // 切换滚轮选项的显示/隐藏
       if (isGuestListVisible) {
@@ -750,12 +765,28 @@
         guestList.classList.add('show');
         isGuestListVisible = true;
       }
-    });
+    };
+    
+    bedBtn.addEventListener('click', handleBedClick);
+    bedBtn.addEventListener('touchend', handleBedClick);
   }
   
   // 点击空白区域隐藏滚轮选项
   document.addEventListener('click', function(e) {
     // 如果滚轮选项是显示的，且点击的不是床按钮或滚轮选项内部
+    if (isGuestListVisible && guestList) {
+      const isClickOnBedBtn = bedBtn && bedBtn.contains(e.target);
+      const isClickOnGuestList = guestList.contains(e.target);
+      
+      if (!isClickOnBedBtn && !isClickOnGuestList) {
+        guestList.classList.remove('show');
+        isGuestListVisible = false;
+      }
+    }
+  });
+
+  // 触摸事件也处理空白区域点击
+  document.addEventListener('touchend', function(e) {
     if (isGuestListVisible && guestList) {
       const isClickOnBedBtn = bedBtn && bedBtn.contains(e.target);
       const isClickOnGuestList = guestList.contains(e.target);
@@ -795,7 +826,7 @@
   // 滚轮选项点击跳转
   const guestItems = document.querySelectorAll('.guest-item');
   guestItems.forEach(item => {
-    item.addEventListener('click', function() {
+    const handleGuestItemClick = function() {
       const articleFile = this.getAttribute('data-article');
       if (articleFile) {
         console.log('Jumping to article:', articleFile);
@@ -807,19 +838,29 @@
           window.location.href = `../../article/private/${articleFile}`;
         }
       }
-    });
+    };
+    
+    item.addEventListener('click', handleGuestItemClick);
+    item.addEventListener('touchend', handleGuestItemClick);
   });
 
       // Whisky按钮点击事件
       if (whiskyButton) {
-        whiskyButton.addEventListener('click', function(e) {
+        const handleWhiskyClick = function(e) {
           e.preventDefault();
-          console.log('Whisky button clicked');
+          e.stopPropagation();
+          console.log('Whisky button clicked/touched');
           // 跳转到2049.html文章页面
           window.location.href = '../../article/private/2049.html';
-        });
+        };
+        
+        whiskyButton.addEventListener('click', handleWhiskyClick);
+        whiskyButton.addEventListener('touchend', handleWhiskyClick);
       }
 
+      // 防止拖拽时选中文本
+      bgSlider.addEventListener('selectstart', (e) => e.preventDefault());
+      
       // 初始化
       initSlider();
 
@@ -834,6 +875,7 @@
       }, 1000);
     });
   </script>
+  <script src="../js/mobile-optimization.js"></script>
   <script src="../js/password-protection.js"></script>
 </body>
 </html>
