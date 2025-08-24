@@ -823,6 +823,16 @@
     updateThumb();
   }
   
+  // 保存article层级会话的函数
+  function saveArticleHierarchySession() {
+    const session = {
+      timestamp: Date.now(),
+      expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
+    };
+    sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
+    console.log('Article层级会话已保存');
+  }
+
   // 滚轮选项点击跳转
   const guestItems = document.querySelectorAll('.guest-item');
   guestItems.forEach(item => {
@@ -830,6 +840,10 @@
       const articleFile = this.getAttribute('data-article');
       if (articleFile) {
         console.log('Jumping to article:', articleFile);
+        
+        // 保存article层级会话
+        saveArticleHierarchySession();
+        
         if (articleFile === 'vampire.html') {
           window.location.href = `../../article/private/vampire.html`;
         } else if (articleFile === 'cage.html') {
@@ -850,7 +864,9 @@
           e.preventDefault();
           e.stopPropagation();
           console.log('Whisky button clicked/touched');
-          // 跳转到2049.html文章页面
+          
+          // 保存article层级会话后跳转
+          saveArticleHierarchySession();
           window.location.href = '../../article/private/2049.html';
         };
         

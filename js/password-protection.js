@@ -1,4 +1,4 @@
-// 密码保护系统 - 支持不同页面使用不同密码
+// 密码保护系统 - 支持层级化会话管理
 class PasswordProtection {
   constructor(pageConfig) {
     // 页面配置，包含密码和会话键名
@@ -10,6 +10,12 @@ class PasswordProtection {
     
     this.sessionExpiry = 24 * 60 * 60 * 1000; // 24小时过期
     this.tabSessionExpiry = 30 * 60 * 1000; // 30分钟过期（Tab会话）
+    
+    // 层级会话管理
+    this.hierarchySessions = {
+      'private': 'private_hierarchy_session', // private文件夹层级会话
+      'article': 'article_hierarchy_session'  // article/private文件夹层级会话
+    };
   }
 
   // 检查是否已通过验证
@@ -42,6 +48,37 @@ class PasswordProtection {
     
     console.log('✓ 长期会话有效，已通过认证');
     return true;
+  }
+
+  // 检查是否已通过层级认证
+  isHierarchyAuthenticatedForPage() {
+    const currentPath = window.location.pathname;
+    
+    // 检查当前页面属于哪个层级
+    if (currentPath.includes('/article/private/')) {
+      // article/private 层级：检查 private 和 article 层级会话
+      const privateAuth = this.isHierarchyAuthenticated('private');
+      const articleAuth = this.isHierarchyAuthenticated('article');
+      
+      console.log('Article页面层级认证检查:');
+      console.log('- Private层级:', privateAuth ? '✓' : '✗');
+      console.log('- Article层级:', articleAuth ? '✓' : '✗');
+      
+      // 如果任一层级有效，则通过认证
+      return privateAuth || articleAuth;
+      
+    } else if (currentPath.includes('/private/')) {
+      // private 层级：检查 private 层级会话
+      const privateAuth = this.isHierarchyAuthenticated('private');
+      
+      console.log('Private页面层级认证检查:');
+      console.log('- Private层级:', privateAuth ? '✓' : '✗');
+      
+      return privateAuth;
+    }
+    
+    // 其他页面使用原有认证逻辑
+    return this.isAuthenticated();
   }
 
   // 获取Tab会话信息（sessionStorage）
@@ -90,6 +127,44 @@ class PasswordProtection {
   // 清除长期会话
   clearSession() {
     localStorage.removeItem(this.pageConfig.sessionKey);
+  }
+
+  // 获取层级会话
+  getHierarchySession(hierarchy) {
+    try {
+      const session = sessionStorage.getItem(this.hierarchySessions[hierarchy]);
+      return session ? JSON.parse(session) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // 保存层级会话
+  saveHierarchySession(hierarchy) {
+    const session = {
+      timestamp: Date.now(),
+      expiry: Date.now() + this.tabSessionExpiry
+    };
+    sessionStorage.setItem(this.hierarchySessions[hierarchy], JSON.stringify(session));
+    console.log(`层级会话已保存: ${hierarchy}`);
+  }
+
+  // 清除层级会话
+  clearHierarchySession(hierarchy) {
+    sessionStorage.removeItem(this.hierarchySessions[hierarchy]);
+  }
+
+  // 检查层级会话是否有效
+  isHierarchyAuthenticated(hierarchy) {
+    const session = this.getHierarchySession(hierarchy);
+    if (!session) return false;
+    
+    if (Date.now() > session.expiry) {
+      this.clearHierarchySession(hierarchy);
+      return false;
+    }
+    
+    return true;
   }
 
   // 验证密码
@@ -315,17 +390,38 @@ class PasswordProtection {
     }
 
     if (this.verifyPassword(password)) {
-      // 密码正确，根据访问路径类型保存相应的会话
+      // 密码正确，根据访问路径类型和页面层级保存相应的会话
       const accessPath = this.detectAccessPath();
+      const currentPath = window.location.pathname;
       
       if (accessPath === 'regular') {
-        // 常规路径：保存Tab会话（sessionStorage）
+        // 常规路径：保存Tab会话和层级会话
         this.saveTabSession();
-        console.log('常规路径验证成功，保存Tab会话');
+        
+        // 根据页面层级保存相应的层级会话
+        if (currentPath.includes('/article/private/')) {
+          this.saveHierarchySession('article');
+          console.log('Article页面常规路径验证成功，保存Tab会话和Article层级会话');
+        } else if (currentPath.includes('/private/')) {
+          this.saveHierarchySession('private');
+          console.log('Private页面常规路径验证成功，保存Tab会话和Private层级会话');
+        } else {
+          console.log('常规路径验证成功，保存Tab会话');
+        }
       } else {
-        // 直接链接：保存长期会话（localStorage）
+        // 直接链接：保存长期会话和层级会话
         this.saveSession();
-        console.log('直接链接验证成功，保存长期会话');
+        
+        // 根据页面层级保存相应的层级会话
+        if (currentPath.includes('/article/private/')) {
+          this.saveHierarchySession('article');
+          console.log('Article页面直接链接验证成功，保存长期会话和Article层级会话');
+        } else if (currentPath.includes('/private/')) {
+          this.saveHierarchySession('private');
+          console.log('Private页面直接链接验证成功，保存长期会话和Private层级会话');
+        } else {
+          console.log('直接链接验证成功，保存长期会话');
+        }
       }
       
       this.showOriginalContent();
@@ -389,10 +485,11 @@ class PasswordProtection {
     
     this.initialized = true;
     
-    if (!this.isAuthenticated()) {
+    // 使用层级认证检查
+    if (!this.isHierarchyAuthenticatedForPage()) {
       this.showPasswordPrompt();
     } else {
-      console.log('已通过验证，无需重新输入密码');
+      console.log('已通过层级认证，无需重新输入密码');
     }
   }
 }

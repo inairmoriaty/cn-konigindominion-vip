@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>层级会话测试</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #191919;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #333;
+      border-radius: 8px;
+    }
+    
+    .test-btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 10px 20px;
+      background: #555;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .test-btn:hover {
+      background: #666;
+    }
+    
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      background: #444;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    
+    .success { color: #51cf66; }
+    .error { color: #ff6b6b; }
+    .info { color: #74c0fc; }
+  </style>
+</head>
+<body>
+  <h1>层级会话机制测试</h1>
+  
+  <div class="test-section">
+    <h2>当前会话状态</h2>
+    <div id="session-status" class="status">
+      正在检查会话状态...
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h2>测试链接</h2>
+    <a href="page/private.html" class="test-btn">进入 Private 页面</a>
+    <a href="private/master.html" class="test-btn">直接访问 Master 页面</a>
+    <a href="article/private/berlin.html" class="test-btn">直接访问 Berlin 文章</a>
+    <a href="article/private/vampire.html" class="test-btn">直接访问 Vampire 文章</a>
+  </div>
+  
+  <div class="test-section">
+    <h2>会话管理</h2>
+    <button class="test-btn" onclick="clearAllSessions()">清除所有会话</button>
+    <button class="test-btn" onclick="savePrivateSession()">保存 Private 层级会话</button>
+    <button class="test-btn" onclick="saveArticleSession()">保存 Article 层级会话</button>
+  </div>
+  
+  <div class="test-section">
+    <h2>测试结果</h2>
+    <div id="test-results" class="status">
+      等待测试...
+    </div>
+  </div>
+  
+  <script>
+    // 检查会话状态
+    function checkSessionStatus() {
+      const statusDiv = document.getElementById('session-status');
+      const results = [];
+      
+      // 检查各种会话
+      const sessions = [
+        { name: 'Master Tab Session', key: 'master_tab_session' },
+        { name: 'Filet-o-Fish Tab Session', key: 'filet_o_fish_tab_session' },
+        { name: 'Private Hierarchy Session', key: 'private_hierarchy_session' },
+        { name: 'Article Hierarchy Session', key: 'article_hierarchy_session' },
+        { name: 'Master Access Granted', key: 'master_access_granted' },
+        { name: 'Filet-o-Fish Access Granted', key: 'filet_o_fish_access_granted' }
+      ];
+      
+      sessions.forEach(session => {
+        const data = sessionStorage.getItem(session.key) || localStorage.getItem(session.key);
+        if (data) {
+          try {
+            const parsed = JSON.parse(data);
+            const isExpired = Date.now() > parsed.expiry;
+            const status = isExpired ? '已过期' : '有效';
+            const timeLeft = isExpired ? 0 : Math.round((parsed.expiry - Date.now()) / 1000);
+            
+            results.push(`<span class="${isExpired ? 'error' : 'success'}">${session.name}: ${status} (剩余${timeLeft}秒)</span>`);
+          } catch (e) {
+            results.push(`<span class="error">${session.name}: 数据格式错误</span>`);
+          }
+        } else {
+          results.push(`<span class="info">${session.name}: 不存在</span>`);
+        }
+      });
+      
+      statusDiv.innerHTML = results.join('<br>');
+    }
+    
+    // 清除所有会话
+    function clearAllSessions() {
+      const sessions = [
+        'master_tab_session',
+        'filet_o_fish_tab_session',
+        'private_hierarchy_session',
+        'article_hierarchy_session'
+      ];
+      
+      const longTermSessions = [
+        'master_access_granted',
+        'filet_o_fish_access_granted'
+      ];
+      
+      sessions.forEach(key => sessionStorage.removeItem(key));
+      longTermSessions.forEach(key => localStorage.removeItem(key));
+      
+      document.getElementById('test-results').innerHTML = '<span class="success">所有会话已清除</span>';
+      checkSessionStatus();
+    }
+    
+    // 保存 Private 层级会话
+    function savePrivateSession() {
+      const session = {
+        timestamp: Date.now(),
+        expiry: Date.now() + (30 * 60 * 1000)
+      };
+      sessionStorage.setItem('private_hierarchy_session', JSON.stringify(session));
+      
+      document.getElementById('test-results').innerHTML = '<span class="success">Private 层级会话已保存</span>';
+      checkSessionStatus();
+    }
+    
+    // 保存 Article 层级会话
+    function saveArticleSession() {
+      const session = {
+        timestamp: Date.now(),
+        expiry: Date.now() + (30 * 60 * 1000)
+      };
+      sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
+      
+      document.getElementById('test-results').innerHTML = '<span class="success">Article 层级会话已保存</span>';
+      checkSessionStatus();
+    }
+    
+    // 页面加载时检查会话状态
+    document.addEventListener('DOMContentLoaded', function() {
+      checkSessionStatus();
+      
+      // 每5秒更新一次状态
+      setInterval(checkSessionStatus, 5000);
+    });
+  </script>
+</body>
+</html>

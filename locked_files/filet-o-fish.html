@@ -184,7 +184,15 @@ document.addEventListener('DOMContentLoaded', function() {
       expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
     };
     sessionStorage.setItem('filet_o_fish_tab_session', JSON.stringify(session));
-    console.log('Tab会话已保存');
+    
+    // 同时保存private层级会话
+    const privateSession = {
+      timestamp: Date.now(),
+      expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
+    };
+    sessionStorage.setItem('private_hierarchy_session', JSON.stringify(privateSession));
+    
+    console.log('Tab会话和Private层级会话已保存');
   }
   
   // Enter键验证
