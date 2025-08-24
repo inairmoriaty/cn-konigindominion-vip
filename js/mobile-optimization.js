@@ -1,4 +1,5 @@
 // 移动端触摸优化脚本
+if (typeof MobileOptimization === 'undefined') {
 class MobileOptimization {
   constructor() {
     this.lastTouchEnd = 0;
@@ -194,9 +195,12 @@ class MobileOptimization {
     return false;
   }
 }
+} // 闭合 if (typeof MobileOptimization === 'undefined') 的括号
 
 // 创建全局实例
-window.mobileOptimization = new MobileOptimization();
+if (typeof window.mobileOptimization === 'undefined') {
+  window.mobileOptimization = new MobileOptimization();
+}
 
 // 页面加载时自动初始化
 document.addEventListener('DOMContentLoaded', function() {

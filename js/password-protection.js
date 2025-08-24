@@ -1,4 +1,5 @@
 // 密码保护系统 - 支持层级化会话管理
+if (typeof PasswordProtection === 'undefined') {
 class PasswordProtection {
   constructor(pageConfig) {
     // 页面配置，包含密码和会话键名
@@ -493,6 +494,7 @@ class PasswordProtection {
     }
   }
 }
+} // 闭合 if (typeof PasswordProtection === 'undefined') 的括号
 
 // 页面配置映射
 const PAGE_CONFIGS = {
@@ -502,10 +504,10 @@ const PAGE_CONFIGS = {
     tabSessionKey: 'master_tab_session',
     doorplate: '../img/master/master room.png'
   },
-  'filet-o-fish': {
+  'filet': {
     password: '1024',
-    sessionKey: 'filet_o_fish_access_granted',
-    tabSessionKey: 'filet_o_fish_tab_session',
+    sessionKey: 'filet_access_granted',
+    tabSessionKey: 'filet_tab_session',
     doorplate: '../img/door brand.png'
   },
   'berlin': {
@@ -536,6 +538,12 @@ const PAGE_CONFIGS = {
     password: '0524', // 使用默认密码
     sessionKey: 'domestication_access_granted',
     tabSessionKey: 'domestication_tab_session',
+    doorplate: '../img/master/master room.png'
+  },
+  'mistyrain': {
+    password: '0811', // 使用默认密码
+    sessionKey: 'mistyrain_access_granted',
+    tabSessionKey: 'mistyrain_tab_session',
     doorplate: '../img/door brand.png'
   }
 };
@@ -550,8 +558,8 @@ function detectPageType() {
   // 检测各种页面类型 - 需要更精确的匹配
   if (pathname.includes('/private/master.html') || pathname.includes('master.html')) {
     return 'master';
-  } else if (pathname.includes('/private/filet-o-fish.html') || pathname.includes('filet-o-fish.html')) {
-    return 'filet-o-fish';
+  } else if (pathname.includes('/private/filet.html') || pathname.includes('filet.html')) {
+    return 'filet';
   } else if (pathname.includes('/private/berlin.html') || pathname.includes('berlin.html')) {
     return 'berlin';
   } else if (pathname.includes('/private/cage.html') || pathname.includes('cage.html')) {
@@ -569,9 +577,11 @@ function detectPageType() {
 }
 
 // 创建全局实例
-const pageType = detectPageType();
-const pageConfig = PAGE_CONFIGS[pageType] || PAGE_CONFIGS['master'];
-window.passwordProtection = new PasswordProtection(pageConfig);
+if (typeof window.passwordProtection === 'undefined') {
+  const pageType = detectPageType();
+  const pageConfig = PAGE_CONFIGS[pageType] || PAGE_CONFIGS['master'];
+  window.passwordProtection = new PasswordProtection(pageConfig);
+}
 
 // 页面加载时自动初始化
 document.addEventListener('DOMContentLoaded', function() {

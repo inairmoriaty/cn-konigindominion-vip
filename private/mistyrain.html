@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Inair</title>
+  <link rel="stylesheet" href="/style/index.css">
+  <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="/style/mobile.css">
+  <style>
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      margin: 0; 
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
+      overflow: hidden;
+    }
+
+    .app-frame {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      position: relative;
+      margin: 0;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #191919;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0;
+      box-sizing: border-box;
+    }

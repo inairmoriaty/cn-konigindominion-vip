@@ -2,10 +2,15 @@
 fetch('../components/footer.html')
   .then(res => res.text())
   .then(html => {
-    document.getElementById('footer-placeholder').innerHTML = html;
-    console.log('Footer loaded successfully');
-    // 加载侧边栏功能
-    loadSidebar();
+    const footerPlaceholder = document.getElementById('footer-placeholder');
+    if (footerPlaceholder) {
+      footerPlaceholder.innerHTML = html;
+      console.log('Footer loaded successfully');
+      // 加载侧边栏功能
+      loadSidebar();
+    } else {
+      console.warn('Footer placeholder not found, footer not loaded');
+    }
   })
   .catch(error => {
     console.error('Failed to load footer:', error);
