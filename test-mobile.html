@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>移动端优化测试</title>
+  <link rel="stylesheet" href="/style/mobile.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #191919;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    
+    .test-btn {
+      display: block;
+      width: 200px;
+      height: 60px;
+      margin: 20px 0;
+      background: #333;
+      border: 2px solid #666;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    
+    .test-btn:hover {
+      background: #444;
+    }
+    
+    .status {
+      margin: 20px 0;
+      padding: 10px;
+      background: #333;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>移动端优化测试</h1>
+  
+  <div class="status" id="status">
+    正在检测设备类型...
+  </div>
+  
+  <button class="test-btn" onclick="testClick()">测试点击</button>
+  <button class="test-btn" onclick="testTouch()">测试触摸</button>
+  <button class="test-btn" onclick="goToIndex()">返回首页</button>
+  
+  <script src="js/mobile-optimization.js"></script>
+  <script>
+    // 页面加载完成后显示设备信息
+    document.addEventListener('DOMContentLoaded', function() {
+      const status = document.getElementById('status');
+      const isMobile = MobileOptimization.isMobile();
+      const isTouch = MobileOptimization.isTouchDevice();
+      const isSlow = MobileOptimization.isSlowConnection();
+      
+      status.innerHTML = `
+        <strong>设备信息：</strong><br>
+        移动设备: ${isMobile ? '是' : '否'}<br>
+        触摸设备: ${isTouch ? '是' : '否'}<br>
+        慢网络: ${isSlow ? '是' : '否'}<br>
+        移动端优化: ${window.mobileOptimization.isInitialized ? '已启用' : '未启用'}
+      `;
+    });
+    
+    function testClick() {
+      alert('点击测试成功！');
+    }
+    
+    function testTouch() {
+      alert('触摸测试成功！');
+    }
+    
+    function goToIndex() {
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

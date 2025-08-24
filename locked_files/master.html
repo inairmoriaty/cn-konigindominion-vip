@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
       timestamp: Date.now(),
       expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
     };
-    sessionStorage.setItem('private_tab_session', JSON.stringify(session));
+    sessionStorage.setItem('master_tab_session', JSON.stringify(session));
     console.log('Tab会话已保存');
   }
   

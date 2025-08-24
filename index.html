@@ -6,6 +6,7 @@
   <title>KÖNIGIN - Index</title>
   <link rel="stylesheet" href="/style/cover.css">
   <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="/style/mobile.css">
   <style>
 .page-anim-container {
   position: relative;
@@ -133,25 +134,8 @@
     <img src="svg/cover/spider.svg" class="spider-anim" id="spiderAnim" />
   </div>
 </body>
-<script>
-const logoBtn = document.getElementById('logoBtn');
-const spiderAnim = document.getElementById('spiderAnim');
-const pageAnimContainer = document.querySelector('.page-anim-container');
-
-logoBtn.addEventListener('click', () => {
-  spiderAnim.classList.add('drop');
-  logoBtn.disabled = true;
-
-  setTimeout(() => {
-    pageAnimContainer.classList.add('page-fadeout');
-    setTimeout(() => {
-      window.location.href = "page/home.html";
-    }, 1200); // 动画时长
-  }, 1200); // 蜘蛛动画时长
-});
-
-
-</script>
+<script src="js/mobile-optimization.js"></script>
+<script src="js/cover.js"></script>
 
 </body>
 </html>

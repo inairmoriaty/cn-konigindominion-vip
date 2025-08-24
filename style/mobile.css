@@ -1,0 +1,227 @@
+/* 移动端优化样式 */
+
+/* 防止文本选择 */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 允许输入框选择文本 */
+input, textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* 优化触摸目标大小 */
+.interaction-btn,
+.guest-item,
+.logo-btn,
+button,
+a,
+.btn-bed,
+.btn-desk {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+/* 触摸反馈动画 */
+.touch-feedback {
+  transition: transform 0.1s ease-out;
+}
+
+.touch-feedback:active {
+  transform: scale(0.95);
+}
+
+/* 优化滑动性能 */
+.bg-slider,
+.horizontal-bg-container {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 防止iOS橡皮筋效果 */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 优化字体渲染 */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 移动端特定样式 */
+@media (max-width: 768px) {
+  /* 增加触摸目标大小 */
+  .interaction-btn img {
+    min-width: 60px;
+    min-height: 60px;
+  }
+  
+  /* 优化按钮间距 */
+  .guest-item {
+    margin: 20px 0;
+    padding: 12px;
+  }
+  
+  /* 优化滑动指示器 */
+  .slide-indicators {
+    bottom: 100px;
+    width: 150px;
+    height: 3px;
+  }
+  
+  /* 优化边界提示 */
+  .boundary-hint {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .boundary-hint::before {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* 小屏幕设备优化 */
+@media (max-width: 480px) {
+  .interaction-btn img {
+    min-width: 50px;
+    min-height: 50px;
+  }
+  
+  .guest-item {
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .slide-indicators {
+    bottom: 80px;
+    width: 120px;
+  }
+}
+
+/* 横屏模式优化 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .slide-indicators {
+    bottom: 60px;
+  }
+  
+  .interaction-btn {
+    transform: scale(0.8);
+  }
+}
+
+/* 高DPI屏幕优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .interaction-btn img,
+  .guest-item {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* 减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 深色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .interaction-btn:hover img {
+    filter: brightness(1.3);
+  }
+}
+
+/* 网络慢时的优化 */
+@media (prefers-reduced-data: reduce) {
+  .bg-slider {
+    background-size: cover;
+  }
+  
+  .interaction-btn img {
+    filter: none;
+  }
+}
+
+/* 触摸设备特定样式 */
+@media (hover: none) and (pointer: coarse) {
+  .interaction-btn:hover {
+    transform: none;
+  }
+  
+  .interaction-btn:active {
+    transform: scale(0.95);
+  }
+}
+
+/* 防止iOS Safari的缩放问题 */
+@supports (-webkit-touch-callout: none) {
+  .app-frame {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* 优化滚动性能 */
+.guest-list-viewport {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* 防止长按菜单 */
+.interaction-btn,
+.guest-item,
+.logo-btn {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* 优化焦点样式 */
+.interaction-btn:focus,
+.guest-item:focus,
+.logo-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* 加载状态优化 */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* 错误状态样式 */
+.error {
+  border: 1px solid #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+/* 成功状态样式 */
+.success {
+  border: 1px solid #51cf66;
+  background-color: rgba(81, 207, 102, 0.1);
+}

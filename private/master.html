@@ -6,6 +6,7 @@
   <title>KÖNIGIN - Inair</title>
   <link rel="stylesheet" href="/style/index.css">
   <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="/style/mobile.css">
   <style>
     :root {
       --safe-top: env(safe-area-inset-top, 0px);
@@ -432,11 +433,13 @@
 
   <!-- Footer自动插入点 -->
   <div id="footer-placeholder"></div>
+<script src="../js/mobile-optimization.js"></script>
 <script src="../js/footer.js"></script>
 <script>
 // 确保footer正确加载
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Inair page loaded');
+  
   // 检查footer是否加载
   setTimeout(() => {
     const footer = document.querySelector('.bottom-nav');
@@ -455,9 +458,11 @@ document.addEventListener('DOMContentLoaded', function() {
   let isGuestListVisible = false;
   
   if (bedBtn) {
-    bedBtn.addEventListener('click', function(e) {
+    // 同时支持点击和触摸
+    const handleBedClick = function(e) {
       e.preventDefault();
-      console.log('Bed button clicked');
+      e.stopPropagation();
+      console.log('Bed button clicked/touched');
       
       // 切换滚轮选项的显示/隐藏
       if (isGuestListVisible) {
@@ -467,19 +472,26 @@ document.addEventListener('DOMContentLoaded', function() {
         guestList.classList.add('show');
         isGuestListVisible = true;
       }
-    });
+    };
+    
+    bedBtn.addEventListener('click', handleBedClick);
+    bedBtn.addEventListener('touchend', handleBedClick);
   }
   
   // 桌子按钮点击事件
   const deskBtn = document.querySelector('.btn-desk');
   if (deskBtn) {
-    deskBtn.addEventListener('click', function(e) {
+    const handleDeskClick = function(e) {
       e.preventDefault();
-      console.log('Desk button clicked');
+      e.stopPropagation();
+      console.log('Desk button clicked/touched');
       
       // 直接跳转到berlin.html
       window.location.href = '../../article/private/berlin.html';
-    });
+    };
+    
+    deskBtn.addEventListener('click', handleDeskClick);
+    deskBtn.addEventListener('touchend', handleDeskClick);
   }
   
   // 自定义滚动条与滚轮同步
@@ -510,7 +522,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 滚轮选项点击跳转
   const guestItems = document.querySelectorAll('.guest-item');
   guestItems.forEach(item => {
-    item.addEventListener('click', function() {
+    const handleGuestItemClick = function() {
       const articleFile = this.getAttribute('data-article');
       if (articleFile) {
         console.log('Jumping to article:', articleFile);
@@ -524,7 +536,10 @@ document.addEventListener('DOMContentLoaded', function() {
           window.location.href = `../../article/private/${articleFile}`;
         }
       }
-    });
+    };
+    
+    item.addEventListener('click', handleGuestItemClick);
+    item.addEventListener('touchend', handleGuestItemClick);
   });
 
   // 背景滑动功能 - 连续滑动版本
@@ -540,6 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentX = 0;
     let startPosition = 0; // 开始拖动时的位置
     let maxSlideDistance = 100; // 最大滑动距离，设置默认值
+    let touchStartTime = 0; // 触摸开始时间
 
     // 初始化
     function initSlider() {
@@ -651,6 +667,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // 触摸事件也处理空白区域点击
+  document.addEventListener('touchend', function(e) {
+    if (isGuestListVisible && guestList) {
+      const isClickOnBedBtn = bedBtn && bedBtn.contains(e.target);
+      const isClickOnGuestList = guestList.contains(e.target);
+      
+      if (!isClickOnBedBtn && !isClickOnGuestList) {
+        guestList.classList.remove('show');
+        isGuestListVisible = false;
+      }
+    }
+  });
+
 
     // 更新门牌显示状态
     function updateTitleVisibility() {
@@ -708,6 +737,15 @@ document.addEventListener('DOMContentLoaded', function() {
         indicators.addEventListener('click', function(e) {
           const rect = this.getBoundingClientRect();
           const clickX = e.clientX - rect.left;
+          const progress = clickX / rect.width;
+          goToPosition(progress * 100);
+        });
+        
+        // 添加触摸事件
+        indicators.addEventListener('touchend', function(e) {
+          const rect = this.getBoundingClientRect();
+          const touch = e.changedTouches[0];
+          const clickX = touch.clientX - rect.left;
           const progress = clickX / rect.width;
           goToPosition(progress * 100);
         });
@@ -796,20 +834,27 @@ document.addEventListener('DOMContentLoaded', function() {
       updateSlider();
     });
 
-    // 触摸事件（移动端）
+    // 触摸事件（移动端）- 优化版本
     bgSlider.addEventListener('touchstart', function(e) {
       // 如果guest list显示，则不处理背景滑动
       if (isGuestListVisible) return;
       
+      // 防止默认行为
+      e.preventDefault();
+      
       isDragging = true;
+      touchStartTime = Date.now();
       startX = e.touches[0].clientX;
       currentX = startX;
       startPosition = currentPosition; // 记录开始拖动时的位置
       bgSlider.style.transition = 'none';
-    });
+    }, { passive: false });
 
     document.addEventListener('touchmove', function(e) {
       if (!isDragging || isGuestListVisible) return;
+      
+      // 防止默认行为
+      e.preventDefault();
       
       currentX = e.touches[0].clientX;
       const diff = currentX - startX;
@@ -834,13 +879,21 @@ document.addEventListener('DOMContentLoaded', function() {
       
       currentPosition = targetPosition;
       bgSlider.style.transform = `translateX(${currentPosition}%)`;
-    });
+    }, { passive: false });
 
-    document.addEventListener('touchend', function() {
+    document.addEventListener('touchend', function(e) {
       if (!isDragging || isGuestListVisible) return;
       
       isDragging = false;
       bgSlider.style.transition = 'transform 0.3s ease-out';
+      
+      // 检查是否为快速点击（小于200ms）
+      const touchDuration = Date.now() - touchStartTime;
+      if (touchDuration < 200) {
+        // 快速点击，可能是误触，不更新位置
+        console.log('快速点击，忽略');
+        return;
+      }
       
       // 确保最终位置在有效范围内
       currentPosition = Math.max(-maxSlideDistance, Math.min(0, currentPosition));
