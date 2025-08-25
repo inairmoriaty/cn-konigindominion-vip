@@ -17,6 +17,10 @@ class PasswordProtection {
       'private': 'private_hierarchy_session', // private文件夹层级会话
       'article': 'article_hierarchy_session'  // article/private文件夹层级会话
     };
+    
+    console.log('密码保护实例创建:');
+    console.log('- 页面配置:', this.pageConfig);
+    console.log('- 层级会话:', this.hierarchySessions);
   }
 
   // 检查是否已通过验证
@@ -55,6 +59,8 @@ class PasswordProtection {
   isHierarchyAuthenticatedForPage() {
     const currentPath = window.location.pathname;
     
+    console.log('层级认证检查 - 当前路径:', currentPath);
+    
     // 检查当前页面属于哪个层级
     if (currentPath.includes('/article/private/')) {
       // article/private 层级：检查 private 和 article 层级会话
@@ -79,6 +85,7 @@ class PasswordProtection {
     }
     
     // 其他页面使用原有认证逻辑
+    console.log('使用原有认证逻辑');
     return this.isAuthenticated();
   }
 
@@ -133,9 +140,18 @@ class PasswordProtection {
   // 获取层级会话
   getHierarchySession(hierarchy) {
     try {
-      const session = sessionStorage.getItem(this.hierarchySessions[hierarchy]);
-      return session ? JSON.parse(session) : null;
+      const sessionKey = this.hierarchySessions[hierarchy];
+      console.log(`获取层级会话: ${hierarchy}, 键名: ${sessionKey}`);
+      const session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        console.log(`- 找到会话: ${session}`);
+        return JSON.parse(session);
+      } else {
+        console.log(`- 未找到会话`);
+        return null;
+      }
     } catch (e) {
+      console.log(`- 获取会话出错: ${e.message}`);
       return null;
     }
   }
@@ -157,14 +173,20 @@ class PasswordProtection {
 
   // 检查层级会话是否有效
   isHierarchyAuthenticated(hierarchy) {
+    console.log(`检查层级会话: ${hierarchy}`);
     const session = this.getHierarchySession(hierarchy);
-    if (!session) return false;
+    if (!session) {
+      console.log(`- ${hierarchy} 层级会话不存在`);
+      return false;
+    }
     
     if (Date.now() > session.expiry) {
+      console.log(`- ${hierarchy} 层级会话已过期`);
       this.clearHierarchySession(hierarchy);
       return false;
     }
     
+    console.log(`- ${hierarchy} 层级会话有效`);
     return true;
   }
 
@@ -207,6 +229,9 @@ class PasswordProtection {
 
   // 显示密码输入界面（基于master.html设计）
   showPasswordPrompt() {
+    console.log('显示密码输入界面...');
+    console.log('门牌图片:', this.pageConfig.doorplate || '../img/door brand.png');
+    
     // 隐藏原内容
     const originalContent = document.body.innerHTML;
     const doorplateUrl = this.pageConfig.doorplate || '../img/door brand.png';
@@ -385,45 +410,56 @@ class PasswordProtection {
     const errorDiv = document.getElementById('error-message');
     const password = input.value.trim();
 
+    console.log('处理密码提交...');
+    console.log('输入的密码:', password);
+    console.log('期望的密码:', this.pageConfig.password);
+
     if (!password) {
       this.showError('请输入密码');
       return;
     }
 
     if (this.verifyPassword(password)) {
+      console.log('密码验证成功！');
+      
       // 密码正确，根据访问路径类型和页面层级保存相应的会话
       const accessPath = this.detectAccessPath();
       const currentPath = window.location.pathname;
       
-      if (accessPath === 'regular') {
-        // 常规路径：保存Tab会话和层级会话
-        this.saveTabSession();
-        
-        // 根据页面层级保存相应的层级会话
-        if (currentPath.includes('/article/private/')) {
-          this.saveHierarchySession('article');
-          console.log('Article页面常规路径验证成功，保存Tab会话和Article层级会话');
-        } else if (currentPath.includes('/private/')) {
-          this.saveHierarchySession('private');
-          console.log('Private页面常规路径验证成功，保存Tab会话和Private层级会话');
-        } else {
-          console.log('常规路径验证成功，保存Tab会话');
+      console.log('访问路径类型:', accessPath);
+      console.log('当前路径:', currentPath);
+      
+              if (accessPath === 'regular') {
+          console.log('常规路径验证，保存Tab会话和层级会话');
+          // 常规路径：保存Tab会话和层级会话
+          this.saveTabSession();
+          
+          // 根据页面层级保存相应的层级会话
+          if (currentPath.includes('/article/private/')) {
+            this.saveHierarchySession('article');
+            console.log('Article页面常规路径验证成功，保存Tab会话和Article层级会话');
+          } else if (currentPath.includes('/private/')) {
+            this.saveHierarchySession('private');
+            console.log('Private页面常规路径验证成功，保存Tab会话和Private层级会话');
+          } else {
+            console.log('常规路径验证成功，保存Tab会话');
+          }
+              } else {
+          console.log('直接链接验证，保存长期会话和层级会话');
+          // 直接链接：保存长期会话和层级会话
+          this.saveSession();
+          
+          // 根据页面层级保存相应的层级会话
+          if (currentPath.includes('/article/private/')) {
+            this.saveHierarchySession('article');
+            console.log('Article页面直接链接验证成功，保存长期会话和Article层级会话');
+          } else if (currentPath.includes('/private/')) {
+            this.saveHierarchySession('private');
+            console.log('Private页面直接链接验证成功，保存长期会话和Private层级会话');
+          } else {
+            console.log('直接链接验证成功，保存长期会话');
+          }
         }
-      } else {
-        // 直接链接：保存长期会话和层级会话
-        this.saveSession();
-        
-        // 根据页面层级保存相应的层级会话
-        if (currentPath.includes('/article/private/')) {
-          this.saveHierarchySession('article');
-          console.log('Article页面直接链接验证成功，保存长期会话和Article层级会话');
-        } else if (currentPath.includes('/private/')) {
-          this.saveHierarchySession('private');
-          console.log('Private页面直接链接验证成功，保存长期会话和Private层级会话');
-        } else {
-          console.log('直接链接验证成功，保存长期会话');
-        }
-      }
       
       this.showOriginalContent();
     } else {
@@ -448,25 +484,32 @@ class PasswordProtection {
 
   // 显示原内容
   showOriginalContent() {
+    console.log('显示原内容...');
     const originalContent = document.getElementById('original-content').value;
     document.body.innerHTML = originalContent;
     
     // 重新初始化页面脚本
     this.reinitializeScripts();
+    console.log('原内容已显示，脚本已重新初始化');
   }
 
   // 重新初始化脚本
   reinitializeScripts() {
+    console.log('重新初始化脚本...');
     // 重新执行所有脚本标签
     const scripts = document.querySelectorAll('script');
-    scripts.forEach(script => {
+    console.log(`找到 ${scripts.length} 个脚本标签`);
+    
+    scripts.forEach((script, index) => {
       if (script.src) {
         // 外部脚本，重新加载
+        console.log(`重新加载外部脚本: ${script.src}`);
         const newScript = document.createElement('script');
         newScript.src = script.src;
         document.head.appendChild(newScript);
       } else if (script.textContent) {
         // 内联脚本，重新执行
+        console.log(`重新执行内联脚本 #${index + 1}`);
         try {
           eval(script.textContent);
         } catch (e) {
@@ -474,6 +517,8 @@ class PasswordProtection {
         }
       }
     });
+    
+    console.log('脚本重新初始化完成');
   }
 
   // 初始化密码保护
@@ -486,8 +531,12 @@ class PasswordProtection {
     
     this.initialized = true;
     
+    console.log('开始密码保护初始化...');
+    console.log('检查层级认证状态...');
+    
     // 使用层级认证检查
     if (!this.isHierarchyAuthenticatedForPage()) {
+      console.log('未通过层级认证，显示密码输入界面');
       this.showPasswordPrompt();
     } else {
       console.log('已通过层级认证，无需重新输入密码');
@@ -554,25 +603,40 @@ function detectPageType() {
   const pathname = window.location.pathname;
   
   console.log('检测页面类型:', pathname);
+  console.log('当前URL:', currentUrl);
   
   // 检测各种页面类型 - 需要更精确的匹配
   if (pathname.includes('/private/master.html') || pathname.includes('master.html')) {
+    console.log('检测到页面类型: master');
     return 'master';
   } else if (pathname.includes('/private/filet.html') || pathname.includes('filet.html')) {
+    console.log('检测到页面类型: filet');
     return 'filet';
   } else if (pathname.includes('/private/berlin.html') || pathname.includes('berlin.html')) {
+    console.log('检测到页面类型: berlin');
     return 'berlin';
   } else if (pathname.includes('/private/cage.html') || pathname.includes('cage.html')) {
+    console.log('检测到页面类型: cage');
     return 'cage';
   } else if (pathname.includes('/private/2049.html') || pathname.includes('2049.html')) {
+    console.log('检测到页面类型: 2049');
     return '2049';
   } else if (pathname.includes('/private/vampire.html') || pathname.includes('vampire.html')) {
+    console.log('检测到页面类型: vampire');
     return 'vampire';
   } else if (pathname.includes('/private/domestication/') || pathname.includes('domestication/')) {
+    console.log('检测到页面类型: domestication');
     return 'domestication';
+  } else if (pathname.includes('/private/mistyrain.html')) {
+    console.log('检测到页面类型: mistyrain (private目录)');
+    return 'mistyrain';
+  } else if (pathname.includes('/locked_files/mistyrain.html')) {
+    console.log('检测到页面类型: mistyrain (locked_files目录)');
+    return 'mistyrain';
   }
   
   // 默认返回master配置
+  console.log('未检测到特定页面类型，使用默认: master');
   return 'master';
 }
 
@@ -580,6 +644,11 @@ function detectPageType() {
 if (typeof window.passwordProtection === 'undefined') {
   const pageType = detectPageType();
   const pageConfig = PAGE_CONFIGS[pageType] || PAGE_CONFIGS['master'];
+  
+  console.log('创建密码保护全局实例:');
+  console.log('- 检测到的页面类型:', pageType);
+  console.log('- 使用的页面配置:', pageConfig);
+  
   window.passwordProtection = new PasswordProtection(pageConfig);
 }
 
@@ -591,11 +660,15 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
+  const pageType = detectPageType();
+  const pageConfig = PAGE_CONFIGS[pageType] || PAGE_CONFIGS['master'];
+  
   console.log('=== 密码保护系统初始化 ===');
   console.log('当前URL:', window.location.href);
   console.log('检测到的页面类型:', pageType);
   console.log('使用的密码:', pageConfig.password);
   console.log('会话键名:', pageConfig.sessionKey);
+  console.log('页面配置:', pageConfig);
   console.log('========================');
   
   window.passwordProtection.init();
