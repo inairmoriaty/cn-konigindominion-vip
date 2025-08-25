@@ -602,41 +602,65 @@ function detectPageType() {
   const currentUrl = window.location.href;
   const pathname = window.location.pathname;
   
-  console.log('检测页面类型:', pathname);
+  console.log('=== 页面类型检测开始 ===');
   console.log('当前URL:', currentUrl);
+  console.log('路径名:', pathname);
+  console.log('主机名:', window.location.hostname);
+  console.log('端口:', window.location.port);
+  console.log('路径段:', pathname.split('/').filter(Boolean));
+  console.log('包含 /private/:', pathname.includes('/private/'));
+  console.log('包含 /article/private/:', pathname.includes('/article/private/'));
+  console.log('包含 /locked_files/:', pathname.includes('/locked_files/'));
   
-  // 检测各种页面类型 - 需要更精确的匹配
-  if (pathname.includes('/private/master.html') || pathname.includes('master.html')) {
-    console.log('检测到页面类型: master');
+  // 检测各种页面类型 - 基于目录路径的精准匹配
+  if (pathname.includes('/private/')) {
+    // private文件夹下的所有页面都需要密码保护
+    if (pathname.includes('/private/master.html')) {
+      console.log('检测到页面类型: master');
+      return 'master';
+    } else if (pathname.includes('/private/filet.html')) {
+      console.log('检测到页面类型: filet');
+      return 'filet';
+    } else if (pathname.includes('/private/berlin.html')) {
+      console.log('检测到页面类型: berlin');
+      return 'berlin';
+    } else if (pathname.includes('/private/cage.html')) {
+      console.log('检测到页面类型: cage');
+      return 'cage';
+    } else if (pathname.includes('/private/2049.html')) {
+      console.log('检测到页面类型: 2049');
+      return '2049';
+    } else if (pathname.includes('/private/vampire.html')) {
+      console.log('检测到页面类型: vampire');
+      return 'vampire';
+    } else if (pathname.includes('/private/domestication/')) {
+      console.log('检测到页面类型: domestication');
+      return 'domestication';
+    } else if (pathname.includes('/private/mistyrain.html')) {
+      console.log('检测到页面类型: mistyrain');
+      return 'mistyrain';
+    } else {
+      // private文件夹下的其他页面，使用默认配置
+      console.log('检测到private文件夹下的页面，使用默认配置');
+      return 'master';
+    }
+  } else if (pathname.includes('/article/private/')) {
+    // article/private文件夹下的所有页面都需要密码保护
+    console.log('检测到article/private文件夹下的页面，使用默认配置');
     return 'master';
-  } else if (pathname.includes('/private/filet.html') || pathname.includes('filet.html')) {
-    console.log('检测到页面类型: filet');
-    return 'filet';
-  } else if (pathname.includes('/private/berlin.html') || pathname.includes('berlin.html')) {
-    console.log('检测到页面类型: berlin');
-    return 'berlin';
-  } else if (pathname.includes('/private/cage.html') || pathname.includes('cage.html')) {
-    console.log('检测到页面类型: cage');
-    return 'cage';
-  } else if (pathname.includes('/private/2049.html') || pathname.includes('2049.html')) {
-    console.log('检测到页面类型: 2049');
-    return '2049';
-  } else if (pathname.includes('/private/vampire.html') || pathname.includes('vampire.html')) {
-    console.log('检测到页面类型: vampire');
-    return 'vampire';
-  } else if (pathname.includes('/private/domestication/') || pathname.includes('domestication/')) {
-    console.log('检测到页面类型: domestication');
-    return 'domestication';
-  } else if (pathname.includes('/private/mistyrain.html')) {
-    console.log('检测到页面类型: mistyrain (private目录)');
-    return 'mistyrain';
-  } else if (pathname.includes('/locked_files/mistyrain.html')) {
-    console.log('检测到页面类型: mistyrain (locked_files目录)');
-    return 'mistyrain';
+  } else if (pathname.includes('/locked_files/')) {
+    // locked_files文件夹下的页面
+    if (pathname.includes('/locked_files/mistyrain.html')) {
+      console.log('检测到页面类型: mistyrain (locked_files目录)');
+      return 'mistyrain';
+    } else {
+      console.log('检测到locked_files文件夹下的页面，使用默认配置');
+      return 'master';
+    }
   }
   
-  // 默认返回master配置
-  console.log('未检测到特定页面类型，使用默认: master');
+  // 如果没有匹配到任何路径
+  console.log('未检测到需要密码保护的路径，使用默认配置');
   return 'master';
 }
 

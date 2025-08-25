@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Debug</title>
+</head>
+<body>
+  <h1>URL 路径调试</h1>
+  <div id="url-info"></div>
+  
+  <script>
+    const urlInfo = document.getElementById('url-info');
+    
+    // 显示各种URL信息
+    urlInfo.innerHTML = `
+      <h3>当前URL信息:</h3>
+      <p><strong>完整URL:</strong> ${window.location.href}</p>
+      <p><strong>路径名:</strong> ${window.location.pathname}</p>
+      <p><strong>主机名:</strong> ${window.location.hostname}</p>
+      <p><strong>端口:</strong> ${window.location.port}</p>
+      <p><strong>协议:</strong> ${window.location.protocol}</p>
+      <p><strong>查询字符串:</strong> ${window.location.search}</p>
+      <p><strong>哈希:</strong> ${window.location.hash}</p>
+      
+      <h3>路径分析:</h3>
+      <p><strong>包含 '/private/':</strong> ${window.location.pathname.includes('/private/')}</p>
+      <p><strong>包含 '/article/private/':</strong> ${window.location.pathname.includes('/article/private/')}</p>
+      <p><strong>包含 '/locked_files/':</strong> ${window.location.pathname.includes('/locked_files/')}</p>
+      
+      <h3>路径分割:</h3>
+      <p><strong>路径段:</strong> ${window.location.pathname.split('/').filter(Boolean).join(' | ')}</p>
+    `;
+    
+    console.log('=== URL Debug Info ===');
+    console.log('完整URL:', window.location.href);
+    console.log('路径名:', window.location.pathname);
+    console.log('包含 /private/:', window.location.pathname.includes('/private/'));
+    console.log('包含 /article/private/:', window.location.pathname.includes('/article/private/'));
+    console.log('路径段:', window.location.pathname.split('/').filter(Boolean));
+    console.log('=====================');
+  </script>
+</body>
+</html>
