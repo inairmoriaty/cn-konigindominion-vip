@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="/style/footer.css">
   <style>
 :root{
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
 
-    html, body {
+ html, body {
       margin: 0; padding: 0;
       width: 100vw;
       height: 100vh;
@@ -37,7 +37,7 @@
       top: 0; left: 0; right: 0; bottom: 0;
       box-sizing: border-box;
     }
-
+    
     .guest-bg {
       position: absolute;
       left: 0; top: 0;
@@ -46,7 +46,7 @@
       background: url('../img/code_bg.png') center center/cover no-repeat;
       z-index: 1;
     }
-
+    
     .guest-title {
       position: absolute;
       top: -3%; left: 50%;
@@ -56,7 +56,7 @@
       z-index: 2;
       pointer-events: none;
     }
-
+    
     .password-prompt {
       position: absolute;
       top: 27%; left: 50%;
@@ -68,7 +68,7 @@
       z-index: 2;
       pointer-events: none;
     }
-
+    
     .password-input {
       position: absolute;
       top: 35%; left: 50%;
@@ -122,7 +122,7 @@
       border-bottom-right-radius: 0;
       z-index: 3;
       pointer-events: none;
-}
+    }
   </style>
 </head>
 <body>
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
   const passwordInput = document.getElementById('passwordInput');
   const enterBtn = document.getElementById('enterBtn');
-  const correctPassword = '0811';  // 这里更改密码
+  const correctPassword = '0101';
   
   // 验证密码的函数
   function validatePassword() {
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (enteredPassword === correctPassword) {
       // 密码正确，保存Tab会话并跳转到目标页面
       saveTabSession();
-      window.location.href = '../private/mistyrain.html';    // 这里更改跳转页面路径
+      window.location.href = '../page/private/202oatmeal.html';
     } else {
       // 密码错误
       alert('密码错误，请重试。');
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
       timestamp: Date.now(),
       expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
     };
-    sessionStorage.setItem('mistyrain_tab_session', JSON.stringify(session));
+    sessionStorage.setItem('filet_o_fish_tab_session', JSON.stringify(session));
     
     // 同时保存private层级会话
     const privateSession = {

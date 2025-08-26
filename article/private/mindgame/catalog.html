@@ -210,10 +210,11 @@
     </div>
     
     <div class="chapter-list">
-      <button class="chapter-btn" data-chapter="1">第一章</button>
-      <button class="chapter-btn" data-chapter="2">第二章</button>
-      <button class="chapter-btn" data-chapter="3">第三章</button>
-      <button class="chapter-btn" data-chapter="4">第四章</button>
+      <button class="chapter-btn" data-chapter="1">第一章·办公室恋情</button>
+      <button class="chapter-btn" data-chapter="2">第二章·会议室play</button>
+      <button class="chapter-btn" data-chapter="3">第三章·审讯室</button>
+      <button class="chapter-btn" data-chapter="4">第四章·迟来的烛光晚餐</button>
+      <button class="chapter-btn" data-chapter="5">第五章·逃离</button>
     </div>
     
     <button class="back-btn" id="backBtn">
@@ -236,9 +237,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   // 初始化收藏按钮
   const articleInfo = {
-    title: '驯化目录',
+    title: '俘心游戏目录',
     url: window.location.href,
-    author: 'Inair',
+    author: 'Inair & Misty Rain',
     category: 'private'
   };
   
@@ -272,6 +273,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'chapter3.html';
       } else if (chapter === '4') {
         window.location.href = 'chapter4.html';
+      } else if (chapter === '5') {
+        window.location.href = 'chapter5.html';
+
         alert(`第${chapter}章 - ${this.textContent} 正在开发中...`);
       }
     });

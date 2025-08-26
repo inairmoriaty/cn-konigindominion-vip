@@ -1,0 +1,23 @@
+[
+  {
+    "id": "konig",
+    "label": "König",
+    "subtitle": "男主人珍藏",
+    "image": "../../img/public/konig.png",
+    "link": "/reads/konig-public.html"
+  },
+  {
+    "id": "konigin",
+    "label": "Königin",
+    "subtitle": "女主人精选",
+    "image": "../../img/public/konig.png",
+    "link": "/reads/konigin-public.html"
+  },
+  {
+    "id": "guest",
+    "label": "Guest",
+    "subtitle": "客人专享",
+    "image": "../../img/public/konig.png",
+    "link": "/reads/guest-public.html"
+  }
+]

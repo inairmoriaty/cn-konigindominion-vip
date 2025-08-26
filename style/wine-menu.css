@@ -1,0 +1,273 @@
+/* 酒单样式 - 左右滑动滚轮设计 */
+.wine-menu-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.wine-menu-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 酒单滚轮选项区域 */
+.wine-list-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px; /* 增加容器宽度以适应更大的item */
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 400px; /* 增加容器高度以适应更大的item */
+  z-index: 1001;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  pointer-events: none; /* 让容器不阻挡全屏触控 */
+}
+
+.wine-list {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden; /* 超出区域隐藏，由遮罩/裁剪处理 */
+  /* 左右遮罩（渐隐）以只露出中间三个选项 */
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 60px, rgba(0,0,0,1) calc(100% - 60px), rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 60px, rgba(0,0,0,1) calc(100% - 60px), rgba(0,0,0,0) 100%);
+}
+
+.wine-list-viewport {
+  height: 100%;
+  overflow-x: auto;
+  padding: 0 8px; /* 让内容不贴边 */
+  scrollbar-width: none; /* Firefox */
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: auto; /* 恢复内容区域的交互 */
+  scroll-snap-type: x mandatory; /* 启用滚动对齐 */
+}
+
+.wine-list-viewport::-webkit-scrollbar { 
+  display: none; 
+}
+
+.wine-item {
+  height: 320px; /* 增加高度以适应更大的图片 */
+  width: 160px; /* 增加宽度以适应更大的图片 */
+  margin: 0 10px; /* 左右间距 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  font-size: 15px; /* 在这里改字号 */
+  letter-spacing: .5px;
+  user-select: none;
+  pointer-events: auto; /* 允许交互 */
+  cursor: pointer; /* 添加鼠标指针 */
+  /* 透明容器 */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 更丝滑的过渡效果 */
+  flex-shrink: 0;
+  transform: scale(1);
+  scroll-snap-align: center; /* 滚动对齐到中心 */
+  padding: 15px 10px; /* 添加内边距 */
+}
+
+/* 添加悬停效果 */
+.wine-item:hover {
+  transform: scale(1.02);
+}
+
+.wine-item:hover .wine-bottom {
+  background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), inset 0 -2px 4px rgba(0,0,0,.4), 0 4px 15px rgba(0,0,0,.3);
+}
+
+.wine-item:active {
+  transform: scale(0.98);
+}
+
+/* 选中状态效果 */
+.wine-item.active {
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.wine-item.active .wine-bottom {
+  background: linear-gradient(180deg, #7a7a7a 0%, #6a6a6a 45%, #616161 100%);
+  border-color: #8a8a8a;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -2px 4px rgba(0,0,0,.5), 0 6px 20px rgba(0,0,0,.4);
+}
+
+.wine-item.active .wine-label {
+  color: #ffffff; /* 金色高亮 */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  font-weight: bold;
+  transform: scale(1.05); /* 轻微放大 */
+  transition: all 0.3s ease;
+}
+
+.wine-item.active .wine-subtitle {
+  color: rgba(255, 255, 255, 0.8); /* 金色高亮，稍微透明 */
+  transform: scale(1.02); /* 轻微放大 */
+  transition: all 0.3s ease;
+}
+
+/* 拖拽状态 */
+.wine-item.dragging {
+  transition: none;
+  z-index: 20;
+}
+
+/* 上部分 - 透明文字容器 */
+.wine-top {
+  height: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  text-align: center;
+}
+
+/* 中部分 - 酒水图片 */
+.wine-image {
+  width: 160px; /* 放大到两倍 */
+  height: 200px; /* 放大到两倍 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: transparent; /* 透明底 */
+}
+
+.wine-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* 保持图片比例 */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); /* 添加轻微阴影 */
+}
+
+/* 下部分 - 标签box */
+.wine-bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
+  border: 1px solid #696969;
+  border-radius: 10px;
+  padding: 8px 6px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+}
+
+.wine-label {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.wine-subtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+/* 右侧自定义滚动条 */
+.wine-scrollbar {
+  position: relative;
+  width: 14px;
+  height: 100%;
+}
+
+.wine-scrollbar .track {
+  position: absolute; 
+  inset: 0;
+  background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
+  opacity: .9;
+}
+
+.wine-scrollbar .thumb {
+  position: absolute; 
+  top: 0; 
+  bottom: 0;
+  width: 40px; /* 将由脚本调整 */
+  background: url('../svg/private/single opition.svg') center center/contain no-repeat;
+}
+
+/* 背景模糊效果 */
+.wine-menu-open .main-bg,
+.wine-menu-open .title {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .wine-list-wrapper {
+    width: 320px;
+    height: 280px;
+  }
+  
+  .wine-item {
+    height: 240px;
+    width: 120px;
+    margin: 0 8px; /* 减少间距 */
+    padding: 10px 8px; /* 减少内边距 */
+  }
+  
+  .wine-top {
+    height: 15px;
+    font-size: 10px;
+  }
+  
+  .wine-image {
+    width: 100px; /* 移动端也放大到两倍 */
+    height: 120px; /* 移动端也放大到两倍 */
+    background: transparent; /* 确保移动端也是透明底 */
+  }
+  
+  .wine-bottom {
+    padding: 6px 4px;
+  }
+  
+  .wine-label {
+    font-size: 12px;
+  }
+  
+  /* 优化移动端滚动 */
+  .wine-list-viewport {
+    -webkit-overflow-scrolling: touch; /* iOS滚动优化 */
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory; /* 确保移动端也启用滚动对齐 */
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .wine-item {
+    transition: all 0.2s ease; /* 触摸设备使用更快的过渡 */
+  }
+  
+  .wine-item:hover {
+    transform: none; /* 触摸设备禁用悬停效果 */
+  }
+}

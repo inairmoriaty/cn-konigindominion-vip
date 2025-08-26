@@ -1,10 +1,29 @@
 // /js/footer.js
-fetch('../components/footer.html')
+// 根据当前页面位置确定footer组件的路径
+const currentPath = window.location.pathname;
+let footerPath = '../components/footer.html';
+
+// 如果页面在 page/public/ 或 page/private/ 目录下，需要调整路径
+if (currentPath.includes('/page/public/') || currentPath.includes('/page/private/')) {
+  footerPath = '../../components/footer.html';
+}
+
+fetch(footerPath)
   .then(res => res.text())
   .then(html => {
     const footerPlaceholder = document.getElementById('footer-placeholder');
     if (footerPlaceholder) {
-      footerPlaceholder.innerHTML = html;
+      // 根据当前页面位置调整路径
+      let adjustedHtml = html;
+      
+      if (currentPath.includes('/page/public/') || currentPath.includes('/page/private/')) {
+        // 将 ../page/ 替换为 ../../page/
+        adjustedHtml = html.replace(/\.\.\/page\//g, '../../page/');
+        // 将 ../img/ 替换为 ../../img/
+        adjustedHtml = html.replace(/\.\.\/img\//g, '../../img/');
+      }
+      
+      footerPlaceholder.innerHTML = adjustedHtml;
       console.log('Footer loaded successfully');
       // 加载侧边栏功能
       loadSidebar();
@@ -36,14 +55,18 @@ function loadSidebar() {
   if (!document.querySelector('link[href*="sidebar.css"]')) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '../style/sidebar.css';
+    link.href = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
+      ? '../../style/sidebar.css' 
+      : '../style/sidebar.css';
     document.head.appendChild(link);
   }
   
   // 动态加载JS
   if (!window.sidebarLoaded) {
     const script = document.createElement('script');
-    script.src = '../js/sidebar.js';
+    script.src = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
+      ? '../../js/sidebar.js' 
+      : '../js/sidebar.js';
     script.onload = function() {
       window.sidebarLoaded = true;
       console.log('Sidebar loaded successfully');

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KÖNIGIN - Misty Rain</title>
+  <title>KÖNIGIN - 燕麦的房间</title>
 
   <link rel="stylesheet" href="/style/footer.css">
   <link rel="stylesheet" href="/style/mobile.css">
@@ -60,7 +60,7 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-image: url('../img/guest/mistyrain_bg.png');
+      background-image: url('../../img/guest/mistyrain_bg.png');
       background-size: cover; /* 覆盖整个容器 */
       background-position: center center;
       background-repeat: no-repeat;
@@ -101,7 +101,7 @@
       transform: translateX(-50%);
       width: 750px; 
       height: 300px;
-      background: url('../img/guest/mistyrain_door.png') center center/contain no-repeat;
+      background: url('../../img/guest/mistyrain_door.png') center center/contain no-repeat;
       z-index: 2;
       pointer-events: none;
       opacity: 1; /* 静态显示，始终可见 */
@@ -197,7 +197,7 @@
     
     <!-- 交互按钮 -->
     <a href="#" class="interaction-btn blink" title="Interaction" id="interactionButton">
-      <img src="../img/default btn.png" alt="Interaction Button"/>
+      <img src="../../img/default btn.png" alt="Interaction Button"/>
     </a>
       
 
@@ -207,11 +207,10 @@
 
   <!-- Footer自动插入点 -->
   <div id="footer-placeholder"></div>
-<script src="../js/mobile-optimization.js"></script>
-<script src="../js/footer.js"></script>
-<script src="../js/password-protection.js"></script>
+<script src="../../js/mobile-optimization.js"></script>
+<script src="../../js/footer.js"></script>
 <script>
-// 确保footer正确加载
+// 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Misty Rain page loaded');
   
@@ -238,8 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
       console.log('Interaction button clicked/touched');
       
-      // 保存article层级会话后跳转
-      saveArticleHierarchySession();
+      // 直接跳转
       window.location.href = '../../article/private/mindgame/catalog.html';
     };
     
@@ -254,17 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Interaction button not found');
   }
   
-  // 保存article层级会话的函数
-  function saveArticleHierarchySession() {
-    const session = {
-      timestamp: Date.now(),
-      expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
-    };
-    sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
-    console.log('Article层级会话已保存');
-  }
-
-
   // 初始化页面元素检查
   console.log('=== Page Elements Check ===');
   console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
