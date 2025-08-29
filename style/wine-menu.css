@@ -21,13 +21,14 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  width: 400px; /* 增加容器宽度以适应更大的item */
+  width: 600px; /* 增加容器宽度以适应更大的item */
   top: 50%;
   transform: translate(-50%, -50%);
-  height: 400px; /* 增加容器高度以适应更大的item */
+  height: 600px; /* 增加容器高度以适应更大的item */
   z-index: 1001;
   display: flex;
-  align-items: stretch;
+  align-items: center; /* 垂直居中 */
+  justify-content: center; /* 水平居中 */
   gap: 12px;
   pointer-events: none; /* 让容器不阻挡全屏触控 */
 }
@@ -37,15 +38,15 @@
   flex: 1 1 auto;
   height: 100%;
   overflow: hidden; /* 超出区域隐藏，由遮罩/裁剪处理 */
-  /* 左右遮罩（渐隐）以只露出中间三个选项 */
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 60px, rgba(0,0,0,1) calc(100% - 60px), rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 60px, rgba(0,0,0,1) calc(100% - 60px), rgba(0,0,0,0) 100%);
+  /* 左右遮罩（渐隐）以只露出中间选项 */
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 120px, rgba(0,0,0,1) calc(100% - 120px), rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to right, rgba(0,0,0,0) 0, rgba(0,0,0,1) 120px, rgba(0,0,0,1) calc(100% - 120px), rgba(0,0,0,0) 100%);
 }
 
 .wine-list-viewport {
   height: 100%;
   overflow-x: auto;
-  padding: 0 8px; /* 让内容不贴边 */
+  padding: 0 50px; /* 增加左右内边距，确保循环滚动时item能完全居中 */
   scrollbar-width: none; /* Firefox */
   display: flex;
   align-items: center;
@@ -59,8 +60,8 @@
 }
 
 .wine-item {
-  height: 320px; /* 增加高度以适应更大的图片 */
-  width: 160px; /* 增加宽度以适应更大的图片 */
+  height: 520px; /* 增加高度以适应更大的图片 */
+  width: 320px; /* 增加宽度以适应更大的图片 */
   margin: 0 10px; /* 左右间距 */
   display: flex;
   flex-direction: column;
@@ -145,8 +146,8 @@
 
 /* 中部分 - 酒水图片 */
 .wine-image {
-  width: 160px; /* 放大到两倍 */
-  height: 200px; /* 放大到两倍 */
+  width: 320px; /* 再放大两倍 */
+  height: 400px; /* 再放大两倍 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,27 +192,6 @@
   line-height: 1.2;
 }
 
-/* 右侧自定义滚动条 */
-.wine-scrollbar {
-  position: relative;
-  width: 14px;
-  height: 100%;
-}
-
-.wine-scrollbar .track {
-  position: absolute; 
-  inset: 0;
-  background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
-  opacity: .9;
-}
-
-.wine-scrollbar .thumb {
-  position: absolute; 
-  top: 0; 
-  bottom: 0;
-  width: 40px; /* 将由脚本调整 */
-  background: url('../svg/private/single opition.svg') center center/contain no-repeat;
-}
 
 /* 背景模糊效果 */
 .wine-menu-open .main-bg,
@@ -223,13 +203,13 @@
 /* 移动端优化 */
 @media (max-width: 768px) {
   .wine-list-wrapper {
-    width: 320px;
-    height: 280px;
+    width: 400px;
+    height: 400px;
   }
   
   .wine-item {
-    height: 240px;
-    width: 120px;
+    height: 360px;
+    width: 200px;
     margin: 0 8px; /* 减少间距 */
     padding: 10px 8px; /* 减少内边距 */
   }
@@ -240,8 +220,8 @@
   }
   
   .wine-image {
-    width: 100px; /* 移动端也放大到两倍 */
-    height: 120px; /* 移动端也放大到两倍 */
+    width: 160px; /* 移动端也再放大两倍 */
+    height: 200px; /* 移动端也再放大两倍 */
     background: transparent; /* 确保移动端也是透明底 */
   }
   

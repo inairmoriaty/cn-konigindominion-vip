@@ -63,7 +63,7 @@ class WineMenu {
     this.bindSwipeEvents();
   }
 
-  // 绑定滑动事件 - 单个item滑动
+  // 绑定滑动事件 - 循环滚动
   bindSwipeEvents() {
     const overlay = document.getElementById('wineMenuOverlay');
     if (!overlay) return;
@@ -75,7 +75,7 @@ class WineMenu {
     let velocity = 0;
     let currentItem = null;
 
-    // 触摸事件 - 单个item滑动
+    // 触摸事件 - 循环滚动
     overlay.addEventListener('touchstart', (e) => {
       // 找到被触摸的item
       const item = e.target.closest('.wine-item');
@@ -115,19 +115,19 @@ class WineMenu {
       const diffX = startX - currentX;
       const timeDiff = Date.now() - startTime;
       
-      // 根据滑动距离和速度判断
+      // 根据滑动距离和速度判断 - 支持循环滚动
       if (Math.abs(diffX) > 30 || Math.abs(velocity) > 0.5) {
         if (diffX > 0 || velocity > 0) {
-          this.nextDrink();
+          this.nextDrink(); // 向右滑动，下一个
         } else {
-          this.prevDrink();
+          this.prevDrink(); // 向左滑动，上一个
         }
       }
       
       currentItem = null;
     }, { passive: true });
 
-    // 鼠标事件 - 单个item滑动
+    // 鼠标事件 - 循环滚动
     overlay.addEventListener('mousedown', (e) => {
       // 找到被点击的item
       const item = e.target.closest('.wine-item');
@@ -166,12 +166,12 @@ class WineMenu {
       const diffX = startX - currentX;
       const timeDiff = Date.now() - startTime;
       
-      // 根据滑动距离和速度判断
+      // 根据滑动距离和速度判断 - 支持循环滚动
       if (Math.abs(diffX) > 30 || Math.abs(velocity) > 0.5) {
         if (diffX > 0 || velocity > 0) {
-          this.nextDrink();
+          this.nextDrink(); // 向右滑动，下一个
         } else {
-          this.prevDrink();
+          this.prevDrink(); // 向左滑动，上一个
         }
       }
       
@@ -219,7 +219,8 @@ class WineMenu {
       viewport.appendChild(item);
     });
 
-    // 设置初始位置
+    // 确保第一个item（男主人珍藏）在屏幕正中
+    this.currentIndex = 0;
     this.updateScrollPosition();
   }
 
@@ -277,7 +278,7 @@ class WineMenu {
     this.updateScrollPosition();
   }
 
-  // 更新滚动位置 - 优化动画
+  // 更新滚动位置 - 循环滚动和完美居中
   updateScrollPosition() {
     const viewport = document.getElementById('wineListViewport');
     if (!viewport) return;
@@ -285,18 +286,23 @@ class WineMenu {
     this.isAnimating = true; // 开始动画
 
     const items = viewport.querySelectorAll('.wine-item');
-    const itemWidth = 180; // 每个选项的宽度（包含间距）- 调整为新的item宽度
+    const itemWidth = 340; // 每个选项的宽度（包含间距）
     const viewportWidth = viewport.offsetWidth;
+    
+    // 计算完美居中的滚动位置
     const centerOffset = viewportWidth / 2 - itemWidth / 2;
-    const scrollPosition = this.currentIndex * itemWidth - centerOffset;
+    let scrollPosition = this.currentIndex * itemWidth - centerOffset;
+    
+    // 确保滚动位置不为负数，并且考虑padding
+    scrollPosition = Math.max(0, scrollPosition);
     
     // 使用更丝滑的滚动动画
     viewport.scrollTo({
-      left: Math.max(0, scrollPosition),
+      left: scrollPosition,
       behavior: 'smooth'
     });
 
-    // 更新选中状态 - 添加动画延迟
+    // 更新选中状态
     items.forEach((item, index) => {
       const isActive = index === this.currentIndex;
       item.classList.toggle('active', isActive);

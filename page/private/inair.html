@@ -60,12 +60,13 @@
       top: 0;
       width: 300%; /* 3倍宽度，对应图片的3个部分 */
       height: 100%;
-      background-image: url('../../img/master/master_bg.png\ 22-28-21-651.png');
+      background-image: url('../../img/master/master_bg.png 22-28-21-651.png');
       background-size: auto 100%; /* 保持图片比例，高度100% */
       background-position: left center;
       background-repeat: no-repeat;
       transition: transform 0.3s ease-out;
       cursor: grab;
+      will-change: transform; /* 优化性能 */
     }
 
     .bg-slider:active {
@@ -306,6 +307,7 @@
       
       /* 移动端背景图优化 */
       .bg-slider {
+        width: 300%; /* 移动端保持与桌面端一致的宽度 */
         background-size: auto 100%;
         background-position: left center;
         background-attachment: scroll;
@@ -439,6 +441,20 @@
 // 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Inair page loaded');
+  
+  // 测试背景图片是否能正确加载
+  const testImage = new Image();
+  testImage.onload = function() {
+    console.log('✅ 背景图片测试加载成功！');
+    console.log('图片尺寸:', this.width, 'x', this.height);
+  };
+  testImage.onerror = function() {
+    console.error('❌ 背景图片测试加载失败！');
+    console.error('测试路径:', this.src);
+  };
+  testImage.src = '../../img/master/master_bg.png 22-28-21-651.png';
+  
+
   
   // 检查footer是否加载
   setTimeout(() => {
@@ -580,21 +596,14 @@ document.addEventListener('DOMContentLoaded', function() {
       updateSlider();
       showHint();
       
-      // 调试：强制显示床按钮（临时）
-      setTimeout(() => {
-        const bedButton = document.getElementById('bedButton');
-        if (bedButton) {
-          bedButton.classList.add('show');
-          console.log('调试：强制显示床按钮');
-        }
-        // 桌子按钮不强制显示，只在滑动到左侧时显示
-      }, 1000);
+
     }
 
     // 计算最大滑动距离
     function calculateMaxSlideDistance() {
       const img = new Image();
       img.onload = function() {
+        console.log('背景图片加载成功！');
         const containerWidth = window.innerWidth;
         const imgWidth = this.width;
         const imgHeight = this.height;
@@ -604,10 +613,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const scale = containerHeight / imgHeight;
         const displayWidth = imgWidth * scale;
         
-        // 计算可以滑动的距离
+        // 计算可以滑动的距离 - 采用201filet.html的方式
         if (displayWidth > containerWidth) {
           const actualSlideDistance = displayWidth - containerWidth;
-          maxSlideDistance = (actualSlideDistance / containerWidth) * 100 * 0.3; // 缩小到30% 适配背景图宽度
+          maxSlideDistance = (actualSlideDistance / containerWidth) * 100 * 0.29; // 缩小到30% 适配背景图宽度
+          console.log('滑动距离计算:', actualSlideDistance, 'px, 转换为百分比:', maxSlideDistance, '%');
         } else {
           maxSlideDistance = 50; // 设置一个默认值
         }
@@ -616,22 +626,28 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Image display width:', displayWidth);
         console.log('Max slide distance:', maxSlideDistance);
         
-        // 设置初始位置到床按钮可见的区域（约50%的滑动距离）
-        currentPosition = -(maxSlideDistance * 0.5);
+
+        
+        // 设置初始位置到床按钮可见的区域（约20%的滑动距离）
+        currentPosition = -(maxSlideDistance * 0.45);
         
         updateSlider();
       };
       
       // 添加错误处理
       img.onerror = function() {
-        console.error('Failed to load image');
-        maxSlideDistance = 100; // 设置默认滑动距离
+        console.error('Failed to load image: ../../img/master/master_bg.png 22-28-21-651.png');
+        maxSlideDistance = 200; // 设置默认滑动距离，与CSS 300%宽度匹配
         // 设置初始位置到床按钮可见的区域
-        currentPosition = -(maxSlideDistance * 0.5);
+        currentPosition = -(maxSlideDistance * 0.2);
+        console.log('图片加载失败，使用默认设置:', maxSlideDistance, currentPosition);
         updateSlider();
       };
       
-      img.src = '../img/master/master_bg.png\ 22-28-21-651.png';
+      const imagePath = '../../img/master/master_bg.png 22-28-21-651.png';
+      console.log('开始加载图片:', imagePath);
+      console.log('当前页面路径:', window.location.pathname);
+      img.src = imagePath;
     }
 
     // 更新滑块位置
@@ -663,7 +679,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // 枕头位置大约在滑动进度的中间位置
       // 当枕头在画面内时显示床按钮
       if (bedButton) {
-        if (progress >= 0.30 && progress <= 0.65) {
+        if (progress >= 0.3 && progress <= 0.5) {
           bedButton.classList.add('show');
           console.log('Bed button shown');
         } else {
@@ -674,10 +690,10 @@ document.addEventListener('DOMContentLoaded', function() {
         console.warn('Bed button not found');
       }
       
-      // 桌子位置大约在滑动进度的左侧
+      // 桌子位置大约在滑动进度的右侧
       // 当桌子在画面内时显示桌子按钮
       if (deskButton) {
-        if (progress >= 0 && progress <= 0.10) {
+        if (progress >= 0 && progress <= 0.15) {
           deskButton.classList.add('show');
           console.log('Desk button shown - table in view');
         } else {
@@ -847,11 +863,13 @@ document.addEventListener('DOMContentLoaded', function() {
       // 添加边界限制和阻力效果
       if (targetPosition > 0) {
         // 向右滑动超出左边界，添加阻力
-        targetPosition = targetPosition * 0.3;
+        targetPosition = targetPosition * 0.2;
+        console.log('鼠标左边界阻力效果');
       } else if (targetPosition < -maxSlideDistance) {
         // 向左滑动超出右边界，添加阻力
         const overDistance = Math.abs(targetPosition + maxSlideDistance);
-        targetPosition = -maxSlideDistance - (overDistance * 0.3);
+        targetPosition = -maxSlideDistance - (overDistance * 0.2);
+        console.log('鼠标右边界阻力效果');
       }
       
       currentPosition = targetPosition;
@@ -864,6 +882,27 @@ document.addEventListener('DOMContentLoaded', function() {
       isDragging = false;
       bgSlider.style.cursor = 'grab';
       bgSlider.style.transition = 'transform 0.3s ease-out';
+      
+      // 添加回弹效果
+      if (currentPosition > 0) {
+        // 超出左边界，回弹到0
+        currentPosition = 0;
+        console.log('回弹到左边界');
+      } else if (currentPosition < -maxSlideDistance) {
+        // 超出右边界，回弹到最大距离
+        currentPosition = -maxSlideDistance;
+        console.log('回弹到右边界');
+      }
+      
+      // 添加轻微过冲效果，增强回弹感
+      if (Math.abs(currentPosition) > maxSlideDistance * 0.8) {
+        console.log('接近边界，增强回弹效果');
+      }
+      
+      // 添加轻微过冲效果，增强回弹感
+      if (Math.abs(currentPosition) > maxSlideDistance * 0.8) {
+        console.log('接近边界，增强回弹效果');
+      }
       
       // 确保最终位置在有效范围内
       currentPosition = Math.max(-maxSlideDistance, Math.min(0, currentPosition));
@@ -906,11 +945,13 @@ document.addEventListener('DOMContentLoaded', function() {
       // 添加边界限制和阻力效果
       if (targetPosition > 0) {
         // 向右滑动超出左边界，添加阻力
-        targetPosition = targetPosition * 0.3;
+        targetPosition = targetPosition * 0.2;
+        console.log('触摸左边界阻力效果');
       } else if (targetPosition < -maxSlideDistance) {
         // 向左滑动超出右边界，添加阻力
         const overDistance = Math.abs(targetPosition + maxSlideDistance);
-        targetPosition = -maxSlideDistance - (overDistance * 0.3);
+        targetPosition = -maxSlideDistance - (overDistance * 0.2);
+        console.log('触摸右边界阻力效果');
       }
       
       currentPosition = targetPosition;
@@ -929,6 +970,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // 快速点击，可能是误触，不更新位置
         console.log('快速点击，忽略');
         return;
+      }
+      
+      // 添加回弹效果
+      if (currentPosition > 0) {
+        // 超出左边界，回弹到0
+        currentPosition = 0;
+        console.log('回弹到左边界');
+      } else if (currentPosition < -maxSlideDistance) {
+        // 超出右边界，回弹到最大距离
+        currentPosition = -maxSlideDistance;
+        console.log('回弹到右边界');
       }
       
       // 确保最终位置在有效范围内
