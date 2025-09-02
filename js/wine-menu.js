@@ -15,7 +15,7 @@ class WineMenu {
   // 加载酒单数据
   async loadDrinksData() {
     try {
-      const response = await fetch('../../drinks.json');
+      const response = await fetch('../../json/drinks.json');
       this.drinksData = await response.json();
       console.log('Drinks data loaded:', this.drinksData);
     } catch (error) {

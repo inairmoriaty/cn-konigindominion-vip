@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - Sidebar</title>
-  <link rel="stylesheet" href="/style/index.css">
-  <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="../style/home.css">
+  <link rel="stylesheet" href="../style/footer.css">
   <style>
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
@@ -75,24 +75,33 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.2s ease;
       text-decoration: none;
       color: black;
       font-size: 16px;
       font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     
     .sidebar-btn:hover {
       background: #e8e8e8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
     }
     
     .sidebar-btn:active {
       background: #d8d8d8;
+      transform: translateY(0);
     }
     
     .sidebar-btn img {
       width: 24px;
       height: 24px;
+      filter: brightness(0.7); /* 让图标稍微暗一点，更容易看见 */
+    }
+    
+    .sidebar-btn:hover img {
+      filter: brightness(1); /* 悬停时图标变亮 */
     }
     .bottom-mask {
       position: absolute;
@@ -113,15 +122,15 @@
     <div class="sidebar-logo"></div>
     <div class="sidebar-buttons">
       <a href="public.html" class="sidebar-btn">
-        <img src="../img/public_btn.png" alt="Public" />
+        <img src="../svg/sidebar/public_btn.svg" alt="Public" />
         <span>公开篇目</span>
       </a>
       <a href="private.html" class="sidebar-btn">
-        <img src="../img/private_btn.png" alt="Private" />
+        <img src="../svg/sidebar/private_btn.svg" alt="Private" />
         <span>私密客单</span>
       </a>
-      <a href="render.html" class="sidebar-btn">
-        <img src="../img/render.png" alt="Render" />
+      <a href="public/render.html" class="sidebar-btn">
+        <img src="../svg/sidebar/render_btn.svg" alt="Render" />
         <span>图集存放</span>
       </a>
     </div>

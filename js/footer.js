@@ -25,6 +25,8 @@ fetch(footerPath)
       
       footerPlaceholder.innerHTML = adjustedHtml;
       console.log('Footer loaded successfully');
+      console.log('Current path:', currentPath);
+      console.log('Adjusted footer HTML:', adjustedHtml);
       // 加载侧边栏功能
       loadSidebar();
     } else {
@@ -46,6 +48,17 @@ window.handleSidebarClick = function(event) {
   } else {
     console.log('Sidebar overlay not available, navigating to sidebar.html');
     return true; // 允许正常导航
+  }
+};
+
+// 测试home按钮点击
+window.testHomeButton = function() {
+  const homeBtn = document.getElementById('homeBtn');
+  if (homeBtn) {
+    console.log('Home button found, testing click...');
+    homeBtn.click();
+  } else {
+    console.log('Home button not found');
   }
 };
 
@@ -100,6 +113,81 @@ function loadSidebar() {
       sidebarBtn.addEventListener('click', sidebarBtn.sidebarClickHandler);
     } else {
       console.log('Sidebar button not found in footer.js');
+    }
+    
+    // 确保home按钮事件绑定
+    const homeBtn = document.getElementById('homeBtn');
+    if (homeBtn) {
+      console.log('Home button found in footer.js');
+      // 移除可能存在的旧事件监听器
+      homeBtn.removeEventListener('click', homeBtn.homeClickHandler);
+      
+      // 添加新的事件监听器
+      homeBtn.homeClickHandler = function(e) {
+        e.preventDefault();
+        console.log('Home button clicked from footer.js');
+        
+        // 根据当前页面位置确定正确的home页面路径
+        let homePath = '../page/home.html';
+        if (currentPath.includes('/page/public/') || currentPath.includes('/page/private/')) {
+          homePath = '../../page/home.html';
+        }
+        
+        console.log('Navigating to home page:', homePath);
+        window.location.href = homePath;
+      };
+      
+      homeBtn.addEventListener('click', homeBtn.homeClickHandler);
+    } else {
+      console.log('Home button not found in footer.js');
+    }
+    
+    // 确保notification按钮事件绑定
+    const notificationBtn = document.getElementById('notificationBtn');
+    if (notificationBtn) {
+      console.log('Notification button found in footer.js');
+      notificationBtn.removeEventListener('click', notificationBtn.notificationClickHandler);
+      
+      notificationBtn.notificationClickHandler = function(e) {
+        e.preventDefault();
+        console.log('Notification button clicked from footer.js');
+        
+        let notificationPath = '../page/notification.html';
+        if (currentPath.includes('/page/public/') || currentPath.includes('/page/private/')) {
+          notificationPath = '../../page/notification.html';
+        }
+        
+        console.log('Navigating to notification page:', notificationPath);
+        window.location.href = notificationPath;
+      };
+      
+      notificationBtn.addEventListener('click', notificationBtn.notificationClickHandler);
+    } else {
+      console.log('Notification button not found in footer.js');
+    }
+    
+    // 确保favourite按钮事件绑定
+    const favouriteBtn = document.getElementById('favouriteBtn');
+    if (favouriteBtn) {
+      console.log('Favourite button found in footer.js');
+      favouriteBtn.removeEventListener('click', favouriteBtn.favouriteClickHandler);
+      
+      favouriteBtn.favouriteClickHandler = function(e) {
+        e.preventDefault();
+        console.log('Favourite button clicked from footer.js');
+        
+        let favouritePath = '../page/favourite.html';
+        if (currentPath.includes('/page/public/') || currentPath.includes('/page/private/')) {
+          favouritePath = '../../page/favourite.html';
+        }
+        
+        console.log('Navigating to favourite page:', favouritePath);
+        window.location.href = favouritePath;
+      };
+      
+      favouriteBtn.addEventListener('click', favouriteBtn.favouriteClickHandler);
+    } else {
+      console.log('Favourite button not found in footer.js');
     }
   }, 100);
 }

@@ -24,7 +24,7 @@
   width: 600px; /* 增加容器宽度以适应更大的item */
   top: 50%;
   transform: translate(-50%, -50%);
-  height: 600px; /* 增加容器高度以适应更大的item */
+  height: 660px; /* 增加容器高度以适应更高的item */
   z-index: 1001;
   display: flex;
   align-items: center; /* 垂直居中 */
@@ -60,13 +60,13 @@
 }
 
 .wine-item {
-  height: 520px; /* 增加高度以适应更大的图片 */
+  height: 580px; /* 增加高度以适应更长的subtitle */
   width: 320px; /* 增加宽度以适应更大的图片 */
   margin: 0 10px; /* 左右间距 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* 改为space-between确保底部对齐 */
   color: #fff;
   font-size: 15px; /* 在这里改字号 */
   letter-spacing: .5px;
@@ -133,15 +133,20 @@
 
 /* 上部分 - 透明文字容器 */
 .wine-top {
-  height: 20px;
+  height: auto;
+  min-height: 20px;
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   background: transparent;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  text-align: center;
+  font-size: 11px;
+  text-align: left;
+  line-height: 1.4;
+  white-space: pre-line;
+  padding: 6px 8px;
+  flex-shrink: 0; /* 防止压缩 */
 }
 
 /* 中部分 - 酒水图片 */
@@ -153,6 +158,7 @@
   justify-content: center;
   flex-shrink: 0;
   background: transparent; /* 透明底 */
+  margin: 0; /* 移除margin，让flexbox控制间距 */
 }
 
 .wine-image img {
@@ -174,6 +180,8 @@
   border-radius: 10px;
   padding: 8px 6px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+  flex-shrink: 0; /* 防止压缩 */
+  margin-top: auto; /* 推到底部 */
 }
 
 .wine-label {
@@ -185,11 +193,12 @@
 }
 
 .wine-subtitle {
-  font-size: 11px;
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.8);
   text-align: center;
   font-style: italic;
-  line-height: 1.2;
+  line-height: 1.3;
+  white-space: pre-line;
 }
 
 
@@ -204,25 +213,29 @@
 @media (max-width: 768px) {
   .wine-list-wrapper {
     width: 400px;
-    height: 400px;
+    height: 460px; /* 增加高度以适应更高的item */
   }
   
   .wine-item {
-    height: 360px;
+    height: 420px; /* 增加高度以适应更长的subtitle */
     width: 200px;
     margin: 0 8px; /* 减少间距 */
     padding: 10px 8px; /* 减少内边距 */
   }
   
   .wine-top {
-    height: 15px;
+    height: auto;
+    min-height: 15px;
     font-size: 10px;
+    line-height: 1.3;
+    padding: 4px 6px;
   }
   
   .wine-image {
     width: 160px; /* 移动端也再放大两倍 */
     height: 200px; /* 移动端也再放大两倍 */
     background: transparent; /* 确保移动端也是透明底 */
+    margin: 0; /* 移除margin，让flexbox控制间距 */
   }
   
   .wine-bottom {

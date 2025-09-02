@@ -1,141 +1,199 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KÖNIGIN - Index</title>
-  <link rel="stylesheet" href="/style/cover.css">
-  <link rel="stylesheet" href="/style/footer.css">
-  <link rel="stylesheet" href="/style/mobile.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KÖNIGIN - 预警页面</title>
   <style>
-.page-anim-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
-}
- html, body {
-      margin: 0; padding: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #191919;
-      overflow: hidden;
-    }
-    .app-frame {
-      width: 390px;
-      height: 844px;
-      position: relative;
-      margin: 0 auto;
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.25);
-      background: #191919;
-      /* 居中，适配大屏 */
-      top: 0; left: 0; right: 0; bottom: 0;
+    * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
     }
-    .cover-bg {
-      position: absolute;
-      left: 0; top: 0;
-      width: 100%;
-      height: 100%;
-      background: url('img/cover.png') center center/cover no-repeat;
-      z-index: 1;
-      /* 由app-frame控制圆角 */
-    }
-    .bottom-mask {
-      position: absolute;
-      left: 0; bottom: 0;
-      width: 100%;
-      height: 92px;  /* 可覆盖footer高度+阴影 */
-      background: #191919;
-      border-bottom-left-radius: 24px;
-      border-bottom-right-radius: 24px;
-      z-index: 3;
-      pointer-events: none;
-    }
-    .logo-btn {
-      position: absolute;
-      top: 350px; left: 55%;
-      transform: translateX(-50%);
-      width: 120px; height: 120px;
-      border-radius: 50%;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      cursor: pointer;
-      z-index: 3;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: box-shadow .18s;
-    }
-    .logo-btn:active {
-      box-shadow: 0 2px 32px #191919cc;
-    }
-    .logo-btn img {
-      width: 200px; height: 200px; display: block;
-      pointer-events: none;
-    }
-  /* 蜘蛛默认隐藏在顶部（未掉落状态） */
-    .spider-anim {
-      position: absolute;
-      left: 50%;
-      top: 5px; left: 18%;/* 藏在logo正上方 */
-      transform: translateX(-50%) translateY(-48px); /* 初始悬空 */
-      z-index: 4;
-      width: 250px; height: 250px;
-      opacity: 0;
-      transition: opacity .2s;
-      pointer-events: none;
-    }
-    /* 掉落时加 active 类，触发下落动画 */
-    .spider-anim.drop {
-      animation: spider-drop 1.3s cubic-bezier(.38,2.3,.6,1) forwards;
-      opacity: 1;
-    }
-    @keyframes spider-drop {
-      0% {
-        transform: translateX(-50%) translateY(-130px) ;
-        opacity: 0;
-      }
-      10% { opacity: 1; }
-      78% {
-        transform: translateX(-50%) translateY(0px);
-        opacity: 1;
-      }
-      95% {
-        transform: translateX(-50%) translateY(0px);
-      }
-      100% {
-        transform: translateX(-50%) translateY(2px);
-        opacity: 1;
-      }
-    }
-    .page-fadeout {
-  animation: page-zoomfade 1.2s cubic-bezier(.3,1,.7,1) forwards;
-}
-@keyframes page-zoomfade {
-  0%   { opacity: 1;   transform: scale(1);      filter: blur(0px);}
-  80%  { opacity: 0.8; transform: scale(1.12);  filter: blur(2px);}
-  100% { opacity: 0;   transform: scale(1.18);  filter: blur(8px);}
-}
 
-    </style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .warning-container {
+      text-align: center;
+      max-width: 600px;
+      padding: 40px 20px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .warning-icon {
+      font-size: 80px;
+      margin-bottom: 30px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .warning-title {
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ff6b6b;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .warning-message {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      color: #e0e0e0;
+    }
+
+    .warning-details {
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+
+    .warning-details h3 {
+      color: #ff6b6b;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .warning-details ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .warning-details li {
+      margin-bottom: 8px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .warning-details li:before {
+      content: "⚠️";
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .enter-button {
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .enter-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+
+    .enter-button:active {
+      transform: translateY(0);
+    }
+
+    .footer-note {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #888;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      .warning-container {
+        margin: 20px;
+        padding: 30px 15px;
+      }
+      
+      .warning-title {
+        font-size: 28px;
+      }
+      
+      .warning-message {
+        font-size: 16px;
+      }
+      
+      .enter-button {
+        padding: 12px 30px;
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="page-anim-container">
-    <div class="cover-bg"></div>
-    <div class="cover-title"></div>
-    <button class="logo-btn" id="logoBtn">
-      <img src="svg/cover/logo.svg" />
+  <div class="warning-container">
+    <div class="warning-icon">⚠️</div>
+    
+    <h1 class="warning-title">内容预警</h1>
+    
+    <p class="warning-message">
+      本网站包含成人内容、暴力描写和敏感主题，可能不适合所有年龄段。
+      请确认您已年满18岁，并了解相关内容可能对您造成的影响。
+    </p>
+    
+    <div class="warning-details">
+      <h3>内容类型包括：</h3>
+      <ul>
+        <li>成人主题和内容</li>
+        <li>暴力、非自愿情节描写</li>
+、        <li>敏感社会话题讨论</li>
+      </ul>
+    </div>
+    
+    <button class="enter-button" onclick="enterSite()">
+      我已了解，进入网站
     </button>
-    <img src="svg/cover/spider.svg" class="spider-anim" id="spiderAnim" />
+    
+    <div class="footer-note">
+      <p>如果您未满18岁或对相关内容感到不适，请立即离开此页面。</p>
+      <p>进入网站即表示您已确认符合访问条件。</p>
+    </div>
   </div>
-</body>
-<script src="js/mobile-optimization.js"></script>
-<script src="js/cover.js"></script>
 
+  <script>
+    function enterSite() {
+      // 添加淡出动画
+      document.body.style.transition = 'opacity 0.5s ease';
+      document.body.style.opacity = '0';
+      
+      // 延迟跳转到cover页面
+      setTimeout(() => {
+        window.location.href = 'page/cover.html';
+      }, 500);
+    }
+
+    // 防止右键菜单
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // 防止F12开发者工具
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+  </script>
 </body>
 </html>

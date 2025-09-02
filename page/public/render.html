@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KÖNIGIN - 图集存放</title>
+  <link rel="stylesheet" href="../../style/home.css">
+  <link rel="stylesheet" href="../../style/footer.css">
+  <link rel="stylesheet" href="../../style/mobile.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #191919;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    .render-container {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #191919 0%, #2d2d2d 50%, #1a1a1a 100%);
+      position: relative;
+    }
+
+    /* 顶部标题区域 */
+    .header-section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../../img/public/public_bg.png') center center/cover no-repeat;
+      opacity: 0.3;
+      z-index: 1;
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+
+    .render-icon {
+      font-size: 120px;
+      margin-bottom: 30px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .render-title {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #ffd700;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .render-subtitle {
+      font-size: 20px;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      color: #e0e0e0;
+      opacity: 0.9;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      animation: bounce 2s infinite;
+      cursor: pointer;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    .scroll-arrow {
+      font-size: 24px;
+      color: #ffd700;
+    }
+
+    /* 图集展示区域 */
+    .gallery-section {
+      padding: 80px 20px;
+      background: rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 36px;
+      font-weight: bold;
+      margin-bottom: 60px;
+      color: #ffd700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .gallery-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .gallery-item-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+
+    .gallery-item-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #ffd700;
+    }
+
+    .gallery-item-desc {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #e0e0e0;
+    }
+
+    /* 功能预览区域 */
+    .features-section {
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      position: relative;
+      z-index: 2;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 15px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: scale(1.05);
+      background: rgba(255, 215, 0, 0.15);
+    }
+
+    .feature-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #ffd700;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #e0e0e0;
+    }
+
+    /* 底部区域 */
+    .bottom-section {
+      padding: 80px 20px;
+      background: rgba(0, 0, 0, 0.6);
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .back-button {
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      color: #1a1a1a;
+      border: none;
+      padding: 18px 50px;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .back-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+      background: linear-gradient(45deg, #ffed4e, #ffd700);
+    }
+
+    .back-button:active {
+      transform: translateY(-1px);
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .render-title {
+        font-size: 32px;
+      }
+      
+      .render-subtitle {
+        font-size: 16px;
+      }
+      
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+      
+      .section-title {
+        font-size: 28px;
+        margin-bottom: 40px;
+      }
+      
+      .gallery-section,
+      .features-section,
+      .bottom-section {
+        padding: 60px 20px;
+      }
+    }
+
+    /* 滚动条样式 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #2d2d2d;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ffd700;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ffed4e;
+    }
+  </style>
+</head>
+<body>
+  <div class="render-container">
+    <!-- 顶部标题区域 -->
+    <section class="header-section">
+      <div class="header-bg"></div>
+      <div class="header-content">
+        <div class="render-icon">🖼️</div>
+        <h1 class="render-title">图集存放</h1>
+        <p class="render-subtitle">
+          欢迎来到KÖNIGIN的图集存放空间！<br>
+          这里收藏着各种精美的图片和视觉素材，<br>
+          为您提供独特的视觉体验。
+        </p>
+      </div>
+      <div class="scroll-indicator">
+        <div class="scroll-arrow">⬇️</div>
+      </div>
+    </section>
+
+    <!-- 图集展示区域 -->
+    <section class="gallery-section">
+      <h2 class="section-title">🖼️ 图集分类</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <div class="gallery-item-icon">🍷</div>
+          <h3 class="gallery-item-title">酒品图集</h3>
+          <p class="gallery-item-desc">
+            精选各种酒品的精美图片，<br>
+            展现酒品的独特魅力与艺术价值。
+          </p>
+        </div>
+        
+        <div class="gallery-item">
+          <div class="gallery-item-icon">🏛️</div>
+          <h3 class="gallery-item-title">场景图集</h3>
+          <p class="gallery-item-desc">
+            酒吧、餐厅等场景的实景图片，<br>
+            营造沉浸式的视觉体验。
+          </p>
+        </div>
+        
+        <div class="gallery-item">
+          <div class="gallery-item-icon">🎨</div>
+          <h3 class="gallery-item-title">艺术图集</h3>
+          <p class="gallery-item-desc">
+            与酒文化相关的艺术作品，<br>
+            包括插画、摄影等创意内容。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 功能预览区域 -->
+    <section class="features-section">
+      <h2 class="section-title">🎯 即将推出的功能</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3 class="feature-title">高清浏览</h3>
+          <p class="feature-desc">支持高清图片浏览和缩放功能</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🏷️</div>
+          <h3 class="feature-title">智能分类</h3>
+          <p class="feature-desc">智能分类和标签管理系统</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">❤️</div>
+          <h3 class="feature-title">个人收藏</h3>
+          <p class="feature-desc">个人收藏和分享功能</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔎</div>
+          <h3 class="feature-title">搜索筛选</h3>
+          <p class="feature-desc">强大的图片搜索和筛选功能</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">☁️</div>
+          <h3 class="feature-title">云端同步</h3>
+          <p class="feature-desc">云端同步和自动备份</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3 class="feature-title">移动适配</h3>
+          <p class="feature-desc">完美适配各种移动设备</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 底部区域 -->
+    <section class="gallery-section">
+      <div style="text-align: center;">
+        <a href="public.html" class="back-button">
+          返回酒单
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+  
+  <!-- 加载底部导航栏 -->
+  <script>
+    // 平滑滚动效果
+    function initSmoothScroll() {
+      // 滚动指示器点击事件
+      const scrollIndicator = document.querySelector('.scroll-indicator');
+      if (scrollIndicator) {
+        scrollIndicator.addEventListener('click', () => {
+          const gallerySection = document.querySelector('.gallery-section');
+          if (gallerySection) {
+            gallerySection.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      }
+
+      console.log('Smooth scroll initialized in render.html');
+    }
+
+    // 页面加载完成后初始化功能
+    document.addEventListener('DOMContentLoaded', initSmoothScroll);
+    
+    // 动态加载footer
+    fetch('../../components/footer.html')
+      .then(response => response.text())
+      .then(html => {
+        // 将 ../page/ 替换为 ../../page/
+        let adjustedHtml = html.replace(/\.\.\/page\//g, '../../page/');
+        // 将 ../img/ 替换为 ../../img/
+        adjustedHtml = adjustedHtml.replace(/\.\.\/img\//g, '../../img/');
+        
+        const footerPlaceholder = document.getElementById('footer-placeholder');
+        if (footerPlaceholder) {
+          footerPlaceholder.innerHTML = adjustedHtml;
+          console.log('Footer loaded successfully in render.html');
+        }
+        
+        // 加载footer.js
+        const script = document.createElement('script');
+        script.src = '../../js/footer.js';
+        document.head.appendChild(script);
+      })
+      .catch(error => {
+        console.log('Footer加载失败:', error);
+        console.error('Error details:', error);
+      });
+  </script>
+</body>
+</html>

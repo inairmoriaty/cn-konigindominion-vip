@@ -5,6 +5,15 @@ console.log('Sidebar.js loaded');
 function initSidebar() {
   console.log('Initializing sidebar');
   
+  // 动态确定图标路径
+  const currentPath = window.location.pathname;
+  const iconPath = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
+    ? '../../svg/sidebar/' 
+    : '../svg/sidebar/';
+  
+  console.log('Current path:', currentPath);
+  console.log('Icon path:', iconPath);
+  
   // 创建侧边栏HTML结构
   const sidebarHTML = `
     <div class="sidebar-overlay" id="sidebarOverlay">
@@ -13,15 +22,15 @@ function initSidebar() {
           <div class="sidebar-logo"></div>
           <div class="sidebar-buttons">
             <a href="public.html" class="sidebar-btn">
-              <img src="../img/public_btn.png" alt="Public" />
+              <img src="${iconPath}public_btn.svg" alt="Public" />
               <span>公开篇目</span>
             </a>
             <a href="private.html" class="sidebar-btn">
-              <img src="../img/private_btn.png" alt="Private" />
+              <img src="${iconPath}private_btn.svg" alt="Private" />
               <span>私密客单</span>
             </a>
-            <a href="favourite.html" class="sidebar-btn">
-              <img src="../img/render.png" alt="Render" />
+            <a href="public/render.html" class="sidebar-btn">
+              <img src="${iconPath}render_btn.svg" alt="Render" />
               <span>图集存放</span>
             </a>
           </div>

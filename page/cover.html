@@ -3,15 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link rel="stylesheet" href="/style/cover.css">
-  <link rel="stylesheet" href="/style/footer.css">
-  <link rel="stylesheet" href="/style/mobile.css">
+  <title>KÖNIGIN - Index</title>
+  <link rel="stylesheet" href="../style/cover.css">
+  <link rel="stylesheet" href="../style/footer.css">
+  <link rel="stylesheet" href="../style/mobile.css">
   <style>
-:root{
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-}
-
 .page-anim-container {
   position: relative;
   width: 100%;
@@ -20,15 +16,15 @@
   z-index: 1;
 }
  html, body {
-      margin: 0; 
+      margin: 0; padding: 0;
       width: 100vw;
       height: 100vh;
       background: #191919;
       overflow: hidden;
     }
     .app-frame {
-      width: 100%;
-      height: 100%;
+      width: 390px;
+      height: 844px;
       position: relative;
       margin: 0 auto;
       border-radius: 24px;
@@ -39,12 +35,6 @@
       top: 0; left: 0; right: 0; bottom: 0;
       box-sizing: border-box;
     }
-    .screen{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
     .cover-bg {
       position: absolute;
       left: 0; top: 0;
@@ -54,16 +44,6 @@
       z-index: 1;
       /* 由app-frame控制圆角 */
     }
-    
-/* 热点：使用百分比定位，跟随不同机型比例 */
-.hotspot{
-  position: absolute;
-  width: 10vw; height: 10vw;           /* 例子：用 vw 让尺寸自适应 */
-  min-width: 44px; min-height: 44px;   /* 可触达最小尺寸 */
-  left: 62%; top: 58%;                 /* 例子：按图上相对位置给 % */
-  transform: translate(-50%,-50%);
-}
-    
     .bottom-mask {
       position: absolute;
       left: 0; bottom: 0;
@@ -77,7 +57,7 @@
     }
     .logo-btn {
       position: absolute;
-      top: 35%; left: 55%;
+      top: 350px; left: 55%;
       transform: translateX(-50%);
       width: 120px; height: 120px;
       border-radius: 50%;
@@ -98,17 +78,6 @@
       width: 200px; height: 200px; display: block;
       pointer-events: none;
     }
-    
-    .cover-title {
-      position: absolute;
-      top: 24%; left: 50%;
-      transform: translateX(-50%);
-      width: 300px; height: 80px;
-      background: url('../img/cover title.png') center center/contain no-repeat;
-      z-index: 3;
-      pointer-events: none;
-    }
-    
   /* 蜘蛛默认隐藏在顶部（未掉落状态） */
     .spider-anim {
       position: absolute;
@@ -116,7 +85,7 @@
       top: 5px; left: 18%;/* 藏在logo正上方 */
       transform: translateX(-50%) translateY(-48px); /* 初始悬空 */
       z-index: 4;
-      width: 180px; height: 180px;
+      width: 250px; height: 250px;
       opacity: 0;
       transition: opacity .2s;
       pointer-events: none;
@@ -144,6 +113,14 @@
         opacity: 1;
       }
     }
+    .page-fadeout {
+  animation: page-zoomfade 1.2s cubic-bezier(.3,1,.7,1) forwards;
+}
+@keyframes page-zoomfade {
+  0%   { opacity: 1;   transform: scale(1);      filter: blur(0px);}
+  80%  { opacity: 0.8; transform: scale(1.12);  filter: blur(2px);}
+  100% { opacity: 0;   transform: scale(1.18);  filter: blur(8px);}
+}
 
     </style>
 </head>
@@ -157,22 +134,8 @@
     <img src="../svg/cover/spider.svg" class="spider-anim" id="spiderAnim" />
   </div>
 </body>
-<script>
-const logoBtn = document.getElementById('logoBtn');
-const spiderAnim = document.getElementById('spiderAnim');
-const pageAnimContainer = document.querySelector('.page-anim-container');
+<script src="../js/mobile-optimization.js"></script>
+<script src="../js/cover.js"></script>
 
-logoBtn.addEventListener('click', () => {
-  spiderAnim.classList.add('drop');
-  logoBtn.disabled = true;
-
-  setTimeout(() => {
-    pageAnimContainer.classList.add('page-fadeout');
-    setTimeout(() => {
-      window.location.href = "home.html";
-    }, 1200); // 动画时长
-  }, 1200); // 蜘蛛动画时长
-});
-</script>
 </body>
 </html>
