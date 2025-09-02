@@ -35,7 +35,7 @@
       box-shadow: none;
       background: #191919;
       padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
 
       /* 完全填充屏幕 */
       top: 0; left: 0; right: 0; bottom: 0;

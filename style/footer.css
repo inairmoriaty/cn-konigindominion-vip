@@ -27,6 +27,26 @@
   z-index: 999;
 }
 
+/* 确保页面内容不被footer遮挡 */
+body {
+  padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
+}
+
+/* 页面容器底部间距 */
+.page-container,
+.main-container,
+.content-container,
+.article-container,
+.private-container,
+.public-container,
+.render-container,
+.commission-container,
+.konig-container {
+  padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
 /* 内部容器：铺满且等间距 */
 .bottom-nav nav {
   width: 100%;

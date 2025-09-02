@@ -242,9 +242,46 @@ class WineMenu {
       </div>
     `;
 
-    // 点击事件
-    item.addEventListener('click', () => {
+    // 点击事件 - 同时支持点击和触摸
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       this.selectDrink(index);
+    });
+
+    // 触摸事件 - 确保移动端也能正确响应
+    let touchStartTime = 0;
+    let touchStartY = 0;
+    
+    item.addEventListener('touchstart', (e) => {
+      touchStartTime = Date.now();
+      touchStartY = e.touches[0].clientY;
+      // 添加触摸状态样式
+      item.classList.add('touch-active');
+      console.log('Touch start for item:', index, drink.label);
+    });
+    
+    item.addEventListener('touchend', (e) => {
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchDistance = Math.abs(touchEndY - touchStartY);
+      
+      // 移除触摸状态样式
+      item.classList.remove('touch-active');
+      
+      // 只有短触摸且移动距离小才认为是点击
+      if (touchDuration < 300 && touchDistance < 10) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Touch click detected for item:', index, drink.label);
+        this.selectDrink(index);
+      }
+    });
+    
+    // 触摸取消事件
+    item.addEventListener('touchcancel', () => {
+      item.classList.remove('touch-active');
     });
 
     return item;
@@ -252,16 +289,27 @@ class WineMenu {
 
   // 选择酒水
   selectDrink(index) {
+    // 防止重复点击
+    if (this.isAnimating) return;
+    
     this.currentIndex = index;
     this.updateScrollPosition();
     
-    // 延迟跳转，让用户看到选中效果
-    setTimeout(() => {
-      const drink = this.drinksData[index];
-      if (drink && drink.link) {
-        window.location.href = drink.link;
+    // 立即跳转，提高移动端响应性
+    const drink = this.drinksData[index];
+    if (drink && drink.link) {
+      // 添加视觉反馈
+      const item = document.querySelector(`[data-index="${index}"]`);
+      if (item) {
+        item.style.transform = 'scale(0.95)';
+        item.style.transition = 'transform 0.1s ease';
       }
-    }, 300);
+      
+      // 短暂延迟后跳转，让用户看到反馈
+      setTimeout(() => {
+        window.location.href = drink.link;
+      }, 150);
+    }
   }
 
   // 下一个酒水

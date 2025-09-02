@@ -99,6 +99,39 @@
   transform: scale(0.98);
 }
 
+/* 移动端触摸优化 */
+@media (max-width: 768px) {
+  .wine-item {
+    /* 增加触摸区域 */
+    min-height: 60px;
+    min-width: 60px;
+    /* 确保触摸友好 */
+    touch-action: manipulation;
+    /* 防止文本选择 */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .wine-image {
+    /* 确保图片可以触摸 */
+    pointer-events: auto;
+    /* 触摸反馈 */
+    transition: transform 0.1s ease;
+  }
+  
+  .wine-image:active {
+    transform: scale(0.95);
+  }
+  
+  /* 触摸状态样式 */
+  .wine-item.touch-active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+}
+
 /* 选中状态效果 */
 .wine-item.active {
   transform: scale(1.05);
