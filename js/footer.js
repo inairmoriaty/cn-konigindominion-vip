@@ -7,6 +7,10 @@ let footerPath = '../components/footer.html';
 if (currentPath.includes('/page/public/') || currentPath.includes('/page/private/')) {
   footerPath = '../../components/footer.html';
 }
+// 如果页面在 article/private/ 或 article/public/ 目录下，需要调整路径
+else if (currentPath.includes('/article/private/') || currentPath.includes('/article/public/')) {
+  footerPath = '../../../components/footer.html';
+}
 
 fetch(footerPath)
   .then(res => res.text())
@@ -21,6 +25,12 @@ fetch(footerPath)
         adjustedHtml = html.replace(/\.\.\/page\//g, '../../page/');
         // 将 ../img/ 替换为 ../../img/
         adjustedHtml = html.replace(/\.\.\/img\//g, '../../img/');
+      }
+      else if (currentPath.includes('/article/private/') || currentPath.includes('/article/public/')) {
+        // 将 ../page/ 替换为 ../../../page/
+        adjustedHtml = html.replace(/\.\.\/page\//g, '../../../page/');
+        // 将 ../img/ 替换为 ../../../img/
+        adjustedHtml = html.replace(/\.\.\/img\//g, '../../../img/');
       }
       
       footerPlaceholder.innerHTML = adjustedHtml;
@@ -70,6 +80,8 @@ function loadSidebar() {
     link.rel = 'stylesheet';
     link.href = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
       ? '../../style/sidebar.css' 
+      : currentPath.includes('/article/private/') || currentPath.includes('/article/public/')
+      ? '../../../style/sidebar.css'
       : '../style/sidebar.css';
     document.head.appendChild(link);
   }
@@ -79,6 +91,8 @@ function loadSidebar() {
     const script = document.createElement('script');
     script.src = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
       ? '../../js/sidebar.js' 
+      : currentPath.includes('/article/private/') || currentPath.includes('/article/public/')
+      ? '../../../js/sidebar.js'
       : '../js/sidebar.js';
     script.onload = function() {
       window.sidebarLoaded = true;
