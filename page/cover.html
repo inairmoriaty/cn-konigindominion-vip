@@ -57,7 +57,7 @@
     }
     .logo-btn {
       position: absolute;
-      top: 350px; left: 55%;
+      top: 42%; left: 55%;
       transform: translateX(-50%);
       width: 120px; height: 120px;
       border-radius: 50%;
@@ -77,6 +77,25 @@
     .logo-btn img {
       width: 200px; height: 200px; display: block;
       pointer-events: none;
+    }
+    
+    /* 提示文字样式 */
+    .logo-hint {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translateX(-50%);
+      color: #808080;
+      font-size: 14px;
+      font-family: "SimSun", "宋体", serif;
+      text-align: center;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 1;
+      transition: opacity 1s ease-out;
+    }
+    
+    .logo-hint.fade-out {
+      opacity: 0;
     }
   /* 蜘蛛默认隐藏在顶部（未掉落状态） */
     .spider-anim {
@@ -131,11 +150,29 @@
     <button class="logo-btn" id="logoBtn">
       <img src="../svg/cover/logo.svg" />
     </button>
+    <div class="logo-hint" id="logoHint">点击logo进入主厅</div>
     <img src="../svg/cover/spider.svg" class="spider-anim" id="spiderAnim" />
   </div>
 </body>
 <script src="../js/mobile-optimization.js"></script>
 <script src="../js/cover.js"></script>
+<script>
+// 提示文字三秒后消失
+document.addEventListener('DOMContentLoaded', function() {
+  const logoHint = document.getElementById('logoHint');
+  if (logoHint) {
+    setTimeout(() => {
+      logoHint.classList.add('fade-out');
+      // 淡出动画完成后移除元素
+      setTimeout(() => {
+        if (logoHint.parentNode) {
+          logoHint.parentNode.removeChild(logoHint);
+        }
+      }, 1000);
+    }, 3000);
+  }
+});
+</script>
 
 </body>
 </html>
