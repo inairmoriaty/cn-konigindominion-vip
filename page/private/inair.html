@@ -156,14 +156,14 @@
     transform: translateX(-50%);
 
     /* 下移：避开刘海/地址栏 */
-    top: calc(var(--safe-top, 0px) + 10vh);
+    top: calc(var(--safe-top, 0px) + 8vh);
 
     /* 尺寸：显著增大，让门牌更显眼 */
-    width: clamp(320px, 70vw, 720px);
-    aspect-ratio: 3.6 / 1;   /* 你的牌匾比例，可微调 */
-    height: auto;
+    width: clamp(400px, 85vw, 900px);
+    height: clamp(120px, 25vh, 250px);
+    /* 移除 aspect-ratio 限制，让门牌可以更大 */
 
-  background: url('../../img/master/inair.png') center/contain no-repeat;
+  background: url('../../img/master/inair.png') center/cover no-repeat;
   z-index: 6;
   pointer-events: none;
   opacity: 0;
@@ -174,16 +174,18 @@
   /* 超小屏（≤390，典型 iPhone 12/13 mini 或窄窗口）显著放大 */
   @media (max-width: 390px){
     .inair-title{
-      top: calc(var(--safe-top, 0px) + 12vh);
-      width: clamp(360px, 75vw, 600px);
+      top: calc(var(--safe-top, 0px) + 10vh);
+      width: clamp(350px, 90vw, 500px);
+      height: clamp(100px, 20vh, 150px);
     }
   }
 
   /* 平板 & 桌面：保持较大尺寸 */
   @media (min-width: 768px){
     .inair-title{
-      top: calc(var(--safe-top, 0px) + 8vh);
-      width: clamp(400px, 45vw, 800px);
+      top: calc(var(--safe-top, 0px) + 6vh);
+      width: clamp(500px, 50vw, 1000px);
+      height: clamp(150px, 30vh, 300px);
     }
   }
 
@@ -403,7 +405,7 @@
       justify-content: center;
       color: #fff;
       font-size: 4vw;
-      max-font-size: 16px;
+      font-size: clamp(12px, 4vw, 16px);
       font-family: "SimSun", "宋体", serif; /* 改为宋体 */
       letter-spacing: .5px;
       user-select: none;
