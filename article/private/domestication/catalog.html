@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - 驯化目录</title>
   <link rel="stylesheet" href="../../../style/home.css">
-  <link rel="stylesheet" href="../../../style/footer.css">
   <style>
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
@@ -223,11 +222,6 @@
       <button class="chapter-btn" data-chapter="11">第十一章 · unlocked door(3)</button>
     </div>
     
-    <button class="back-btn" id="backBtn">
-      <span>←</span>
-      <span>回首页</span>
-    </button>
-    <div class="bottom-mask"></div>
   </div>
 
   <!-- 收藏按钮 -->
@@ -255,13 +249,6 @@ document.addEventListener('DOMContentLoaded', function() {
     favouriteContainer.appendChild(favouriteBtn);
   }
   
-  const backBtn = document.getElementById('backBtn');
-  if (backBtn) {
-    backBtn.addEventListener('click', function() {
-      // 返回上一页
-      window.history.back();
-    });
-  }
   
   // 章节按钮点击事件
   const chapterBtns = document.querySelectorAll('.chapter-btn');

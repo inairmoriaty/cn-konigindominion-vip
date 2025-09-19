@@ -72,65 +72,62 @@ window.testHomeButton = function() {
   }
 };
 
-// 加载侧边栏功能
 function loadSidebar() {
   // 动态加载CSS
   if (!document.querySelector('link[href*="sidebar.css"]')) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
-      ? '../../style/sidebar.css' 
-      : currentPath.includes('/article/private/') || currentPath.includes('/article/public/')
-      ? '../../../style/sidebar.css'
-      : '../style/sidebar.css';
+    link.href = '/style/sidebar.css';
     document.head.appendChild(link);
   }
-  
+
   // 动态加载JS
   if (!window.sidebarLoaded) {
     const script = document.createElement('script');
-    script.src = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
-      ? '../../js/sidebar.js' 
-      : currentPath.includes('/article/private/') || currentPath.includes('/article/public/')
-      ? '../../../js/sidebar.js'
-      : '../js/sidebar.js';
+    script.src = '/js/sidebar.js';
     script.onload = function() {
       window.sidebarLoaded = true;
       console.log('Sidebar loaded successfully');
+      // ⚠️ 关键：在这里再去绑定 sidebarBtn 的事件
+      bindSidebarBtn();
     };
     script.onerror = function() {
       console.error('Failed to load sidebar.js');
     };
     document.head.appendChild(script);
+  } else {
+    // 已经加载过，直接绑定
+    bindSidebarBtn();
   }
-  
-  // 确保sidebar按钮事件绑定
-  setTimeout(() => {
-    const sidebarBtn = document.getElementById('sidebarBtn');
-    if (sidebarBtn) {
-      console.log('Sidebar button found in footer.js');
-      // 移除可能存在的旧事件监听器
-      sidebarBtn.removeEventListener('click', sidebarBtn.sidebarClickHandler);
-      
-      // 添加新的事件监听器
-      sidebarBtn.sidebarClickHandler = function(e) {
-        e.preventDefault();
-        console.log('Sidebar button clicked from footer.js');
-        if (window.showSidebar) {
-          console.log('Calling showSidebar from footer.js');
-          window.showSidebar();
-        } else {
-          console.log('showSidebar not available');
-        }
-      };
-      
-      sidebarBtn.addEventListener('click', sidebarBtn.sidebarClickHandler);
+}
+
+// 事件绑定逻辑抽出来，确保只有在 sidebar.js ready 后才执行
+function bindSidebarBtn() {
+  const sidebarBtn = document.getElementById('sidebarBtn');
+  if (!sidebarBtn) {
+    console.log('Sidebar button not found in footer.js');
+    return;
+  }
+  console.log('Sidebar button found in footer.js');
+  sidebarBtn.removeEventListener('click', sidebarBtn.sidebarClickHandler);
+
+  sidebarBtn.sidebarClickHandler = function(e) {
+    e.preventDefault();
+    console.log('Sidebar button clicked from footer.js');
+    if (typeof window.showSidebar === 'function') {
+      console.log('Calling showSidebar from footer.js');
+      window.showSidebar();
     } else {
-      console.log('Sidebar button not found in footer.js');
+      console.warn('showSidebar not ready yet');
     }
-    
-    // 确保home按钮事件绑定
-    const homeBtn = document.getElementById('homeBtn');
+  };
+  sidebarBtn.addEventListener('click', sidebarBtn.sidebarClickHandler);
+}
+
+// 确保按钮事件绑定
+setTimeout(() => {
+  // 确保home按钮事件绑定
+  const homeBtn = document.getElementById('homeBtn');
     if (homeBtn) {
       console.log('Home button found in footer.js');
       // 移除可能存在的旧事件监听器
@@ -204,4 +201,3 @@ function loadSidebar() {
       console.log('Favourite button not found in footer.js');
     }
   }, 100);
-}

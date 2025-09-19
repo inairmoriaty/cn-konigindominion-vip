@@ -3,10 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KÖNIGIN - 图集存放</title>
-  <link rel="stylesheet" href="../../style/home.css">
-  <link rel="stylesheet" href="../../style/footer.css">
-  <link rel="stylesheet" href="../../style/mobile.css">
+  <title>KÖNIGIN - 渲染图集</title>
   <style>
     * {
       margin: 0;
@@ -14,446 +11,880 @@
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'Arial', sans-serif;
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
       background: #191919;
-      color: #ffffff;
+      font-family: 'Arial', sans-serif;
       overflow-x: hidden;
     }
 
-    .render-container {
-      min-height: 100vh;
-      background: linear-gradient(180deg, #191919 0%, #2d2d2d 50%, #1a1a1a 100%);
-      position: relative;
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
-    }
-
-    /* 顶部标题区域 */
-    .header-section {
+    .app-frame {
+      width: 100vw;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
       position: relative;
-      overflow: hidden;
+      background: #191919;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
-    .header-bg {
-      position: absolute;
-      top: 0;
+    .main-bg {
+      position: fixed;
       left: 0;
+      top: 0;
       width: 100%;
       height: 100%;
-      background: url('../../img/public/public_bg.png') center center/cover no-repeat;
-      opacity: 0.3;
+      background: url('../../img/home_bg.png') center center/cover no-repeat;
       z-index: 1;
+      opacity: 0.3;
     }
 
-    .header-content {
+    .gallery-container {
       position: relative;
       z-index: 2;
-      max-width: 800px;
-      padding: 0 20px;
+      padding: 20px 10px;
+      padding-top: 80px;
+      padding-bottom: calc(clamp(56px, 9vh, 72px) + env(safe-area-inset-bottom, 0px) + 20px);
+      min-height: 100vh;
+      box-sizing: border-box;
     }
 
-    .render-icon {
-      font-size: 120px;
-      margin-bottom: 30px;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .render-title {
-      font-size: 48px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #ffd700;
-      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    }
-
-    .render-subtitle {
-      font-size: 20px;
-      line-height: 1.6;
-      margin-bottom: 40px;
-      color: #e0e0e0;
-      opacity: 0.9;
-    }
-
-    .scroll-indicator {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      animation: bounce 2s infinite;
-      cursor: pointer;
-    }
-
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-      40% { transform: translateX(-50%) translateY(-10px); }
-      60% { transform: translateX(-50%) translateY(-5px); }
-    }
-
-    .scroll-arrow {
-      font-size: 24px;
-      color: #ffd700;
-    }
-
-    /* 图集展示区域 */
-    .gallery-section {
-      padding: 80px 20px;
-      background: rgba(0, 0, 0, 0.4);
-      position: relative;
-      z-index: 2;
-    }
-
-    .section-title {
+    .gallery-title {
       text-align: center;
-      font-size: 36px;
+      color: #ffffff;
+      font-size: 28px;
       font-weight: bold;
-      margin-bottom: 60px;
-      color: #ffd700;
+      margin-bottom: 30px;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
-      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 100vw;
       margin: 0 auto;
+      padding: 0 20px;
     }
 
     .gallery-item {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
 
     .gallery-item:hover {
-      transform: translateY(-10px);
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
-    .gallery-item-icon {
-      font-size: 60px;
-      margin-bottom: 20px;
+    .gallery-item img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.3s ease;
     }
 
-    .gallery-item-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      color: #ffd700;
+    .gallery-item:hover img {
+      opacity: 0.9;
     }
 
-    .gallery-item-desc {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #e0e0e0;
-    }
-
-    /* 功能预览区域 */
-    .features-section {
-      padding: 80px 20px;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      position: relative;
-      z-index: 2;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 30px;
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    .feature-card {
-      background: rgba(255, 215, 0, 0.1);
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      border-radius: 15px;
-      padding: 25px;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-      transform: scale(1.05);
-      background: rgba(255, 215, 0, 0.15);
-    }
-
-    .feature-icon {
-      font-size: 40px;
-      margin-bottom: 15px;
-    }
-
-    .feature-title {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #ffd700;
-    }
-
-    .feature-desc {
+    .gallery-item-caption {
+      padding: 12px 16px;
       font-size: 14px;
       line-height: 1.5;
-      color: #e0e0e0;
+      color: #262626;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      word-wrap: break-word;
+      word-break: break-word;
+      hyphens: auto;
+      white-space: normal;
     }
 
-    /* 底部区域 */
-    .bottom-section {
-      padding: 80px 20px;
-      background: rgba(0, 0, 0, 0.6);
-      text-align: center;
+    .gallery-item-caption strong {
+      font-size: 16px;
+      font-weight: 700;
+      color: #000000;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .loading-placeholder {
+      width: 100%;
+      aspect-ratio: 1;
+      background: linear-gradient(45deg, #f5f5f5, #e8e8e8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 14px;
+      border-radius: 0;
+    }
+
+    /* Lightbox 样式 */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-content {
       position: relative;
-      z-index: 2;
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .back-button {
-      background: linear-gradient(45deg, #ffd700, #ffed4e);
-      color: #1a1a1a;
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -50px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.2);
       border: none;
-      padding: 18px 50px;
-      font-size: 20px;
-      font-weight: bold;
-      border-radius: 50px;
+      color: white;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-      text-decoration: none;
-      display: inline-block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
     }
 
-    .back-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-      background: linear-gradient(45deg, #ffed4e, #ffd700);
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.3);
     }
 
-    .back-button:active {
-      transform: translateY(-1px);
+    .lightbox-info {
+      margin-top: 15px;
+      color: white;
+      text-align: center;
+      font-size: 16px;
     }
 
     /* 响应式设计 */
     @media (max-width: 768px) {
-      .render-title {
-        font-size: 32px;
-      }
-      
-      .render-subtitle {
-        font-size: 16px;
-      }
-      
       .gallery-grid {
-        grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 16px;
+        padding: 0 16px;
       }
+
+      .gallery-item {
+        max-width: 100%;
+      }
+
+      .gallery-container {
+        padding: 15px 0;
+        padding-top: 60px;
+      }
+
+      .gallery-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .gallery-item-caption {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .gallery-item-caption strong {
+        font-size: 15px;
+        font-weight: 700;
+        color: #000000;
+        display: block;
+        margin-bottom: 3px;
+      }
+
+      .lightbox-content {
+        max-width: 95vw;
+        max-height: 95vh;
+      }
+
+      .lightbox-image {
+        max-height: 75vh;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .gallery-grid {
+        gap: 12px;
+        padding: 0 12px;
+      }
+
+      .gallery-item {
+        max-width: 100%;
+      }
+
+      .gallery-title {
+        font-size: 20px;
+      }
+
+      .gallery-item-caption {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+
+      .gallery-item-caption strong {
+        font-size: 14px;
+        font-weight: 700;
+        color: #000000;
+        display: block;
+        margin-bottom: 2px;
+      }
+    }
+
+    /* 加载动画 */
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #333;
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      color: #666;
+      padding: 60px 20px;
+    }
+
+    .empty-state h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #888;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Footer 样式 */
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
       
-      .features-grid {
-        grid-template-columns: 1fr;
-        gap: 25px;
-      }
+      width: min(92vw, 430px);
+      height: clamp(56px, 9vh, 72px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       
-      .section-title {
-        font-size: 28px;
-        margin-bottom: 40px;
-      }
+      background: #191919cc;
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 -8px 24px rgba(0,0,0,.25);
       
-      .gallery-section,
-      .features-section,
-      .bottom-section {
-        padding: 60px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .bottom-nav nav {
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: clamp(8px, 3vw, 16px);
+    }
+
+    .bottom-nav .nav-btn {
+      width: clamp(48px, 12vw, 56px);
+      height: clamp(48px, 12vw, 56px);
+      border-radius: 16px;
+      background: #232323;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      transition: background .2s, transform .15s;
+      text-decoration: none;
+    }
+
+    .bottom-nav .nav-btn:active,
+    .bottom-nav .nav-btn.selected {
+      background: #343434;
+      transform: translateY(-2px);
+    }
+
+    .bottom-nav .nav-btn img {
+      width: clamp(24px, 7vw, 32px);
+      height: clamp(24px, 7vw, 32px);
+      object-fit: contain;
+      display: block;
+    }
+
+    /* 确保页面内容不被footer遮挡 */
+    body {
+      padding-bottom: calc(clamp(56px, 9vh, 72px) + env(safe-area-inset-bottom, 0px) + 20px);
+    }
+
+    /* 滑动返回指示器样式 */
+    #swipe-back-indicator {
+      position: fixed;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* 页面滑动返回动画 */
+    .swipe-back-transition {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 左边缘滑动提示 */
+    .swipe-hint {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 60px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.3), transparent);
+      border-radius: 0 2px 2px 0;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .swipe-hint.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      #swipe-back-indicator {
+        left: 15px;
+        padding: 8px 12px;
+        font-size: 12px;
       }
     }
 
-    /* 滚动条样式 */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #2d2d2d;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #ffd700;
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #ffed4e;
+    /* 底部遮罩 */
+    .bottom-mask {
+      position: absolute;
+      left: 0; 
+      bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #191919;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 3;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div class="render-container">
-    <!-- 顶部标题区域 -->
-    <section class="header-section">
-      <div class="header-bg"></div>
-      <div class="header-content">
-        <div class="render-icon">🖼️</div>
-        <h1 class="render-title">图集存放</h1>
-        <p class="render-subtitle">
-          欢迎来到KÖNIGIN的图集存放空间！<br>
-          这里收藏着各种精美的图片和视觉素材，<br>
-          为您提供独特的视觉体验。
-        </p>
+  <div class="app-frame">
+    <div class="main-bg"></div>
+    
+    <div class="gallery-container">
+      <h1 class="gallery-title">渲染图集</h1>
+      
+      <div class="gallery-grid" id="galleryGrid">
+        <div class="loading-spinner"></div>
       </div>
-      <div class="scroll-indicator">
-        <div class="scroll-arrow">⬇️</div>
-      </div>
-    </section>
+    </div>
 
-    <!-- 图集展示区域 -->
-    <section class="gallery-section">
-      <h2 class="section-title">🖼️ 图集分类</h2>
-      <div class="gallery-grid">
-        <div class="gallery-item">
-          <div class="gallery-item-icon">🍷</div>
-          <h3 class="gallery-item-title">酒品图集</h3>
-          <p class="gallery-item-desc">
-            精选各种酒品的精美图片，<br>
-            展现酒品的独特魅力与艺术价值。
-          </p>
-        </div>
-        
-        <div class="gallery-item">
-          <div class="gallery-item-icon">🏛️</div>
-          <h3 class="gallery-item-title">场景图集</h3>
-          <p class="gallery-item-desc">
-            酒吧、餐厅等场景的实景图片，<br>
-            营造沉浸式的视觉体验。
-          </p>
-        </div>
-        
-        <div class="gallery-item">
-          <div class="gallery-item-icon">🎨</div>
-          <h3 class="gallery-item-title">艺术图集</h3>
-          <p class="gallery-item-desc">
-            与酒文化相关的艺术作品，<br>
-            包括插画、摄影等创意内容。
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 功能预览区域 -->
-    <section class="features-section">
-      <h2 class="section-title">🎯 即将推出的功能</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🔍</div>
-          <h3 class="feature-title">高清浏览</h3>
-          <p class="feature-desc">支持高清图片浏览和缩放功能</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">🏷️</div>
-          <h3 class="feature-title">智能分类</h3>
-          <p class="feature-desc">智能分类和标签管理系统</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">❤️</div>
-          <h3 class="feature-title">个人收藏</h3>
-          <p class="feature-desc">个人收藏和分享功能</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">🔎</div>
-          <h3 class="feature-title">搜索筛选</h3>
-          <p class="feature-desc">强大的图片搜索和筛选功能</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">☁️</div>
-          <h3 class="feature-title">云端同步</h3>
-          <p class="feature-desc">云端同步和自动备份</p>
-        </div>
-        
-        <div class="feature-card">
-          <div class="feature-icon">📱</div>
-          <h3 class="feature-title">移动适配</h3>
-          <p class="feature-desc">完美适配各种移动设备</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 底部区域 -->
-    <section class="gallery-section">
-      <div style="text-align: center;">
-        <a href="public.html" class="back-button">
-          返回酒单
-        </a>
-      </div>
-    </section>
+    <div class="bottom-mask"></div>
   </div>
 
-  <!-- Footer自动插入点 -->
+  <!-- Footer 占位符 -->
   <div id="footer-placeholder"></div>
-  
-  <!-- 加载底部导航栏 -->
+
+  <!-- 左边缘滑动提示 -->
+  <div class="swipe-hint" id="swipeHint"></div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxClose">&times;</button>
+      <img class="lightbox-image" id="lightboxImage" alt="">
+      <div class="lightbox-info" id="lightboxInfo"></div>
+    </div>
+  </div>
+
   <script>
-    // 平滑滚动效果
-    function initSmoothScroll() {
-      // 滚动指示器点击事件
-      const scrollIndicator = document.querySelector('.scroll-indicator');
-      if (scrollIndicator) {
-        scrollIndicator.addEventListener('click', () => {
-          const gallerySection = document.querySelector('.gallery-section');
-          if (gallerySection) {
-            gallerySection.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
-          }
+    class RenderGallery {
+      constructor() {
+        this.galleryGrid = document.getElementById('galleryGrid');
+        this.lightbox = document.getElementById('lightbox');
+        this.lightboxImage = document.getElementById('lightboxImage');
+        this.lightboxInfo = document.getElementById('lightboxInfo');
+        this.lightboxClose = document.getElementById('lightboxClose');
+        
+        this.images = [];
+        this.init();
+      }
+
+      async init() {
+        await this.loadImages();
+        this.renderGallery();
+        this.bindEvents();
+      }
+
+      // 新增：拉取清单
+      async fetchManifest() {
+        const url = `../../json/render.json?ts=${Date.now()}`; // 防缓存
+        const res = await fetch(url, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      }
+
+      // 替换：从 JSON 映射到内部 this.images
+      async loadImages() {
+        try {
+          const manifest = await this.fetchManifest();
+          this.images = (manifest.items || []).map(it => ({
+            src: it.src,                         // 大图（Lightbox）
+            thumb: it.thumb || it.src,           // 小图（网格）
+            alt: it.title || this.generateAltText(it.id || it.src),
+            title: it.title || "",
+            caption: it.caption || "",
+            author: it.author || "",
+            tags: it.tags || [],
+            created_at: it.created_at || "",
+            width: it.width,
+            height: it.height,
+            nsfw: !!it.nsfw
+          }));
+        } catch (err) {
+          console.error('加载清单失败:', err);
+          this.showEmptyState();
+        }
+      }
+
+      generateAltText(filename) {
+        // 从文件名生成 alt 文本
+        const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+        return nameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      }
+
+      renderGallery() {
+        if (this.images.length === 0) {
+          this.showEmptyState();
+          return;
+        }
+
+        this.galleryGrid.innerHTML = '';
+        
+        this.images.forEach((image, index) => {
+          const galleryItem = this.createGalleryItem(image, index);
+          this.galleryGrid.appendChild(galleryItem);
         });
       }
 
-      console.log('Smooth scroll initialized in render.html');
-    }
-
-    // 页面加载完成后初始化功能
-    document.addEventListener('DOMContentLoaded', initSmoothScroll);
-    
-    // 动态加载footer
-    fetch('../../components/footer.html')
-      .then(response => response.text())
-      .then(html => {
-        // 将 ../page/ 替换为 ../../page/
-        let adjustedHtml = html.replace(/\.\.\/page\//g, '../../page/');
-        // 将 ../img/ 替换为 ../../img/
-        adjustedHtml = adjustedHtml.replace(/\.\.\/img\//g, '../../img/');
+      createGalleryItem(image, index) {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.dataset.index = index;
         
-        const footerPlaceholder = document.getElementById('footer-placeholder');
-        if (footerPlaceholder) {
-          footerPlaceholder.innerHTML = adjustedHtml;
-          console.log('Footer loaded successfully in render.html');
+        const img = document.createElement('img');
+        img.src = image.thumb;                // 👈 列表用小图
+        img.alt = image.alt;
+        img.loading = 'lazy';
+        
+        // 添加加载状态
+        const placeholder = document.createElement('div');
+        placeholder.className = 'loading-placeholder';
+        placeholder.textContent = '加载中...';
+        
+        // 添加图片说明文字区域
+        const caption = document.createElement('div');
+        caption.className = 'gallery-item-caption';
+        
+        // 创建标题和配文内容：黑体加粗的title——（分行）——caption
+        const title = image.title || image.alt || '渲染作品';
+        const captionText = image.caption || '';
+        
+        if (captionText) {
+          // 将换行符转换为 <br> 标签，保持分段显示
+          const formattedCaption = captionText.replace(/\n/g, '<br>');
+          caption.innerHTML = `<strong>${title}</strong><br>${formattedCaption}`;
+        } else {
+          caption.innerHTML = `<strong>${title}</strong>`;
         }
         
-        // 加载footer.js
-        const script = document.createElement('script');
-        script.src = '../../js/footer.js';
-        document.head.appendChild(script);
-      })
-      .catch(error => {
-        console.log('Footer加载失败:', error);
-        console.error('Error details:', error);
-      });
+        item.appendChild(placeholder);
+        item.appendChild(img);
+        item.appendChild(caption);
+        
+        // 图片加载完成后隐藏占位符
+        img.onload = () => {
+          placeholder.style.display = 'none';
+        };
+        
+        img.onerror = () => {
+          placeholder.textContent = '加载失败';
+          placeholder.style.color = '#ff6b6b';
+        };
+        
+        return item;
+      }
+
+      showEmptyState() {
+        this.galleryGrid.innerHTML = `
+          <div class="empty-state">
+            <h3>暂无图片</h3>
+            <p>渲染图集中暂时没有图片，请稍后再来查看。</p>
+          </div>
+        `;
+      }
+
+      bindEvents() {
+        // 点击图片打开 lightbox
+        this.galleryGrid.addEventListener('click', (e) => {
+          const galleryItem = e.target.closest('.gallery-item');
+          if (galleryItem) {
+            const index = parseInt(galleryItem.dataset.index);
+            this.openLightbox(index);
+          }
+        });
+
+        // 关闭 lightbox
+        this.lightboxClose.addEventListener('click', () => {
+          this.closeLightbox();
+        });
+
+        // 点击背景关闭 lightbox
+        this.lightbox.addEventListener('click', (e) => {
+          if (e.target === this.lightbox) {
+            this.closeLightbox();
+          }
+        });
+
+        // ESC 键关闭 lightbox
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && this.lightbox.classList.contains('active')) {
+            this.closeLightbox();
+          }
+        });
+
+        // 键盘导航
+        document.addEventListener('keydown', (e) => {
+          if (!this.lightbox.classList.contains('active')) return;
+          
+          if (e.key === 'ArrowLeft') {
+            this.previousImage();
+          } else if (e.key === 'ArrowRight') {
+            this.nextImage();
+          }
+        });
+
+        // 移动端触摸优化
+        this.addMobileOptimizations();
+      }
+
+      addMobileOptimizations() {
+        // 为图集项目添加触摸反馈
+        this.galleryGrid.addEventListener('touchstart', (e) => {
+          const galleryItem = e.target.closest('.gallery-item');
+          if (galleryItem) {
+            galleryItem.style.transform = 'scale(0.95)';
+            galleryItem.style.transition = 'transform 0.1s ease';
+          }
+        }, { passive: true });
+
+        this.galleryGrid.addEventListener('touchend', (e) => {
+          const galleryItem = e.target.closest('.gallery-item');
+          if (galleryItem) {
+            galleryItem.style.transform = '';
+            galleryItem.style.transition = 'transform 0.3s ease';
+          }
+        }, { passive: true });
+
+        this.galleryGrid.addEventListener('touchcancel', (e) => {
+          const galleryItem = e.target.closest('.gallery-item');
+          if (galleryItem) {
+            galleryItem.style.transform = '';
+            galleryItem.style.transition = 'transform 0.3s ease';
+          }
+        }, { passive: true });
+
+        // 为 lightbox 添加滑动切换功能
+        if (window.MobileOptimization && window.mobileOptimization) {
+          window.mobileOptimization.optimizeSwipeEvents(this.lightbox, {
+            onSwipeLeft: () => this.nextImage(),
+            onSwipeRight: () => this.previousImage(),
+            onSwipeUp: () => this.closeLightbox(),
+            minSwipeDistance: 50,
+            maxSwipeTime: 300
+          });
+        }
+
+        // 添加页面级别的左滑返回功能
+        this.addSwipeBackNavigation();
+
+        // 防止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+          const now = (new Date()).getTime();
+          if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+          }
+          lastTouchEnd = now;
+        }, false);
+
+        // 优化滚动性能
+        this.galleryGrid.style.webkitOverflowScrolling = 'touch';
+        this.galleryGrid.style.overflowScrolling = 'touch';
+      }
+
+      addSwipeBackNavigation() {
+        let startX = 0;
+        let startY = 0;
+        let startTime = 0;
+        let isSwipeBackActive = false;
+        let swipeHintTimeout = null;
+
+        // 显示滑动提示
+        this.showSwipeHint();
+
+        // 页面级别的触摸事件监听
+        document.addEventListener('touchstart', (e) => {
+          // 如果 lightbox 打开，不处理页面级别的滑动
+          if (this.lightbox.classList.contains('active')) {
+            return;
+          }
+
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          startTime = Date.now();
+          isSwipeBackActive = false;
+
+          // 隐藏滑动提示
+          this.hideSwipeHint();
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+          if (this.lightbox.classList.contains('active')) {
+            return;
+          }
+
+          const currentX = e.touches[0].clientX;
+          const currentY = e.touches[0].clientY;
+          const deltaX = currentX - startX;
+          const deltaY = currentY - startY;
+
+          // 检测是否为水平右滑（从左边缘开始，与public.html的滑动检测逻辑一致）
+          if (startX < 50 && deltaX > 20 && Math.abs(deltaY) < 100) {
+            isSwipeBackActive = true;
+            // 添加视觉反馈
+            this.showSwipeBackIndicator(deltaX);
+          }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+          if (this.lightbox.classList.contains('active')) {
+            return;
+          }
+
+          const endX = e.changedTouches[0].clientX;
+          const endY = e.changedTouches[0].clientY;
+          const deltaX = endX - startX;
+          const deltaY = endY - startY;
+          const deltaTime = Date.now() - startTime;
+
+          // 隐藏滑动指示器
+          this.hideSwipeBackIndicator();
+
+          // 检查是否满足右滑返回条件（与public.html的滑动检测逻辑一致）
+          if (isSwipeBackActive && 
+              deltaX > 50 && 
+              Math.abs(deltaY) < 100 && 
+              deltaTime < 500) {
+            this.navigateBack();
+          } else {
+            // 如果没有触发返回，延迟显示滑动提示
+            swipeHintTimeout = this.scheduleSwipeHint(swipeHintTimeout);
+          }
+        }, { passive: true });
+
+        document.addEventListener('touchcancel', (e) => {
+          this.hideSwipeBackIndicator();
+          swipeHintTimeout = this.scheduleSwipeHint(swipeHintTimeout);
+        }, { passive: true });
+      }
+
+      showSwipeHint() {
+        const hint = document.getElementById('swipeHint');
+        if (hint) {
+          hint.classList.add('show');
+        }
+      }
+
+      hideSwipeHint() {
+        const hint = document.getElementById('swipeHint');
+        if (hint) {
+          hint.classList.remove('show');
+        }
+      }
+
+      scheduleSwipeHint(timeoutRef) {
+        // 清除之前的定时器
+        if (timeoutRef) {
+          clearTimeout(timeoutRef);
+        }
+        
+        // 延迟显示滑动提示
+        return setTimeout(() => {
+          this.showSwipeHint();
+        }, 2000);
+      }
+
+      showSwipeBackIndicator(deltaX) {
+        // 创建或更新滑动指示器
+        let indicator = document.getElementById('swipe-back-indicator');
+        if (!indicator) {
+          indicator = document.createElement('div');
+          indicator.id = 'swipe-back-indicator';
+          indicator.innerHTML = '← 返回';
+          indicator.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+          `;
+          document.body.appendChild(indicator);
+        }
+
+        // 根据滑动距离调整透明度
+        const opacity = Math.min(deltaX / 100, 1);
+        indicator.style.opacity = opacity;
+      }
+
+      hideSwipeBackIndicator() {
+        const indicator = document.getElementById('swipe-back-indicator');
+        if (indicator) {
+          indicator.style.opacity = '0';
+        }
+      }
+
+      navigateBack() {
+        // 添加返回动画
+        document.body.style.transition = 'transform 0.3s ease';
+        document.body.style.transform = 'translateX(100%)';
+        
+        // 延迟跳转，让动画完成
+        setTimeout(() => {
+          window.location.href = 'public.html';
+        }, 300);
+      }
+
+      openLightbox(index) {
+        if (index < 0 || index >= this.images.length) return;
+        const image = this.images[index];
+        this.currentIndex = index;
+
+        this.lightboxImage.src = image.src; // 👈 用大图
+        this.lightboxImage.alt = image.alt;
+
+        const infoParts = [image.title || image.alt];
+        if (image.author) infoParts.push(`by ${image.author}`);
+        if (image.created_at) infoParts.push(image.created_at);
+        this.lightboxInfo.textContent = `${infoParts.filter(Boolean).join(' · ')} (${index+1}/${this.images.length})`;
+
+        this.lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      closeLightbox() {
+        this.lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      previousImage() {
+        if (this.currentIndex > 0) {
+          this.openLightbox(this.currentIndex - 1);
+        }
+      }
+
+      nextImage() {
+        if (this.currentIndex < this.images.length - 1) {
+          this.openLightbox(this.currentIndex + 1);
+        }
+      }
+    }
+
+    // 初始化图集
+    document.addEventListener('DOMContentLoaded', () => {
+      new RenderGallery();
+    });
   </script>
+
+  <!-- 引入 Footer 和移动端优化脚本 -->
+  <script src="../../js/footer.js"></script>
+  <script src="../../js/mobile-optimization.js"></script>
 </body>
 </html>

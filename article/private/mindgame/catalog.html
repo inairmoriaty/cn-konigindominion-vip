@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - 俘心游戏目录</title>
   <link rel="stylesheet" href="../../../style/home.css">
-  <link rel="stylesheet" href="../../../style/footer.css">
   <style>
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
@@ -215,13 +214,9 @@
       <button class="chapter-btn" data-chapter="3">第三章·审讯室</button>
       <button class="chapter-btn" data-chapter="4">第四章·迟来的烛光晚餐</button>
       <button class="chapter-btn" data-chapter="5">第五章·逃离</button>
+      <button class="chapter-btn" data-chapter="6">the letter for Misty Rain</button>
     </div>
     
-    <button class="back-btn" id="backBtn">
-      <span>←</span>
-      <span>回首页</span>
-    </button>
-    <div class="bottom-mask"></div>
   </div>
 
   <!-- 收藏按钮 -->
@@ -237,7 +232,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   // 初始化收藏按钮
   const articleInfo = {
-    title: '俘心游戏目录',
+    title: '俘心游戏',
     url: window.location.href,
     author: 'Inair & Misty Rain',
     category: 'private'
@@ -249,13 +244,6 @@ document.addEventListener('DOMContentLoaded', function() {
     favouriteContainer.appendChild(favouriteBtn);
   }
   
-  const backBtn = document.getElementById('backBtn');
-  if (backBtn) {
-    backBtn.addEventListener('click', function() {
-      // 返回上一页
-      window.history.back();
-    });
-  }
   
   // 章节按钮点击事件
   const chapterBtns = document.querySelectorAll('.chapter-btn');
@@ -275,7 +263,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'chapter4.html';
       } else if (chapter === '5') {
         window.location.href = 'chapter5.html';
-
+      } else if (chapter === '6') {
+        window.location.href = 'rain_letter.html';
+      } else {
         alert(`第${chapter}章 - ${this.textContent} 正在开发中...`);
       }
     });

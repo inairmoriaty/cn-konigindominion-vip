@@ -1,105 +1,191 @@
-// 侧边栏控制脚本
+// /js/sidebar.js
 console.log('Sidebar.js loaded');
 
-// 初始化侧边栏函数
+let __sidebarInited = false;
+
 function initSidebar() {
-  console.log('Initializing sidebar');
-  
-  // 动态确定图标路径
-  const currentPath = window.location.pathname;
-  const iconPath = currentPath.includes('/page/public/') || currentPath.includes('/page/private/') 
-    ? '../../svg/sidebar/' 
-    : '../svg/sidebar/';
-  
-  console.log('Current path:', currentPath);
-  console.log('Icon path:', iconPath);
-  
-  // 创建侧边栏HTML结构
+  if (__sidebarInited) {
+    console.log('Sidebar already initialized, skip');
+    return;
+  }
+  __sidebarInited = true;
+
+  // 统一使用根相对路径
+  const iconPath   = '/svg/sidebar/';
+  const publicPath = '/page/public/public.html';
+  const privatePath= '/page/private.html';
+  const renderPath = '/page/public/render.html';
+
+  // 侧边栏结构
   const sidebarHTML = `
-    <div class="sidebar-overlay" id="sidebarOverlay">
-      <div class="sidebar-container" id="sidebarContainer">
-        <div class="sidebar-content">
-          <div class="sidebar-logo"></div>
-          <div class="sidebar-buttons">
-            <a href="public.html" class="sidebar-btn">
-              <img src="${iconPath}public_btn.svg" alt="Public" />
-              <span>公开篇目</span>
-            </a>
-            <a href="private.html" class="sidebar-btn">
-              <img src="${iconPath}private_btn.svg" alt="Private" />
-              <span>私密客单</span>
-            </a>
-            <a href="public/render.html" class="sidebar-btn">
-              <img src="${iconPath}render_btn.svg" alt="Render" />
-              <span>图集存放</span>
-            </a>
-          </div>
+  <div class="sidebar-overlay" id="sidebarOverlay">
+    <div class="sidebar-container" id="sidebarContainer">
+      <div class="sidebar-content" id="sidebarContent">
+        <div class="sidebar-logo"></div>
+        <div class="sidebar-buttons">
+          <a href="${publicPath}" class="sidebar-btn" id="sidebarPublicLink">
+            <img src="${iconPath}public_btn.svg" alt="Public" />
+            <span>公开篇目</span>
+          </a>
+          <a href="${privatePath}" class="sidebar-btn">
+            <img src="${iconPath}private_btn.svg" alt="Private" />
+            <span>私密客单</span>
+          </a>
+          <a href="${renderPath}" class="sidebar-btn">
+            <img src="${iconPath}render_btn.svg" alt="Render" />
+            <span>图集存放</span>
+          </a>
         </div>
       </div>
+
+      <!-- 二级面板：覆盖同尺寸容器，默认隐藏 -->
+      <section class="characters-panel" id="charactersPanel" aria-hidden="true">
+        <div class="characters-inner">
+          <h2 class="characters-title">公开篇目</h2>
+          <nav class="characters-buttons">
+            <a href="/page/public/ghost.html"   class="character-btn">Ghost</a>
+            <a href="/page/public/konig.html"   class="character-btn">König</a>
+            <a href="/page/public/nikto.html"   class="character-btn">Nikto</a>
+            <a href="/page/public/keegan.html"  class="character-btn">Keegan</a>
+            <a href="/page/public/krueger.html" class="character-btn">Krueger</a>
+          </nav>
+        </div>
+      </section>
     </div>
+  </div>
+
+  <style>
+    .sidebar-container{ position: relative; overflow: hidden; }
+
+    /* 只覆盖侧边栏容器本身（不是全屏） */
+    .characters-panel{
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 15vh;
+      padding-left: 24px;
+      padding-right: 24px;
+      box-sizing: border-box;
+      transform: translateX(100%);
+      transition: transform .3s ease;
+      pointer-events: none;
+      cursor: default;
+    }
+    .characters-panel.show-characters{
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .characters-inner{
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .characters-title{
+      margin: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #333;
+      padding-top: 10px;
+      padding-bottom: 40px;
+    }
+    .characters-buttons{ display:flex; flex-direction:column; gap:12px; }
+    .character-btn{
+      display:flex; align-items:center; justify-content:center;
+      width:100%; padding:15px 20px; box-sizing:border-box;
+      background:#f5f5f5; border-radius:12px; text-decoration:none;
+      color:#000; font-size:16px; font-weight:500;
+      transition: background-color .2s ease;
+    }
+    .character-btn:hover{ background:#e8e8e8; }
+    .character-btn:active{ background:#d8d8d8; }
+  </style>
   `;
 
-  // 将侧边栏添加到页面
   document.body.insertAdjacentHTML('beforeend', sidebarHTML);
   console.log('Sidebar HTML added to page');
 
-  // 获取元素
-  const sidebarBtn = document.getElementById('sidebarBtn');
-  const sidebarOverlay = document.getElementById('sidebarOverlay');
+  // 元素
+  const sidebarBtn       = document.getElementById('sidebarBtn');
+  const sidebarOverlay   = document.getElementById('sidebarOverlay');
   const sidebarContainer = document.getElementById('sidebarContainer');
+  const publicLink       = document.getElementById('sidebarPublicLink');
+  const charactersPanel  = document.getElementById('charactersPanel');
 
-  // 显示侧边栏
+  // API
   function showSidebar() {
-    console.log('showSidebar called');
     sidebarOverlay.classList.add('active');
     sidebarContainer.classList.add('active');
-    document.body.style.overflow = 'hidden'; // 防止背景滚动
+    document.body.style.overflow = 'hidden';
   }
-  
-  // 将showSidebar函数设为全局可用
-  window.showSidebar = showSidebar;
-
-  // 隐藏侧边栏
   function hideSidebar() {
     sidebarOverlay.classList.remove('active');
     sidebarContainer.classList.remove('active');
-    document.body.style.overflow = ''; // 恢复滚动
+    hideCharactersPanel();
+    document.body.style.overflow = '';
+  }
+  function showCharactersPanel(){
+    if (!charactersPanel) return;
+    charactersPanel.classList.add('show-characters');
+    charactersPanel.setAttribute('aria-hidden','false');
+  }
+  function hideCharactersPanel(){
+    if (!charactersPanel) return;
+    charactersPanel.classList.remove('show-characters');
+    charactersPanel.setAttribute('aria-hidden','true');
   }
 
-  // 绑定事件
+  // 暴露给 footer.js
+  window.showSidebar = showSidebar;
+  window.sidebarLoaded = true;
+
+  // 事件
   if (sidebarBtn) {
-    console.log('Sidebar button found, adding event listener');
-    sidebarBtn.addEventListener('click', function(e) {
+    sidebarBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log('Sidebar button clicked');
       showSidebar();
     });
-  } else {
-    console.log('Sidebar button not found');
   }
-
-
-
-  if (sidebarOverlay) {
-    sidebarOverlay.addEventListener('click', function(e) {
-      if (e.target === sidebarOverlay) {
-        hideSidebar();
-      }
+  if (publicLink) {
+    ['click','touchend'].forEach(evt => {
+      publicLink.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showCharactersPanel();
+      }, { passive:false });
     });
   }
-
-  // ESC键关闭侧边栏
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && sidebarOverlay.classList.contains('active')) {
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', (e) => {
+      if (e.target === sidebarOverlay) hideSidebar();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (charactersPanel && charactersPanel.classList.contains('show-characters')) {
+      hideCharactersPanel();
+    } else if (sidebarOverlay && sidebarOverlay.classList.contains('active')) {
       hideSidebar();
     }
   });
+  if (charactersPanel) {
+    const inner = charactersPanel.querySelector('.characters-inner');
+    charactersPanel.addEventListener('click', (e) => {
+      if (inner && !inner.contains(e.target)) hideCharactersPanel();
+    });
+  }
 }
 
-// 如果DOM已经加载完成，立即初始化
+// ✅ 把 DOM ready 包装 **放在函数外**
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSidebar);
 } else {
-  // DOM已经加载完成，立即初始化
   initSidebar();
 }

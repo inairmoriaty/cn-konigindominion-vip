@@ -64,85 +64,184 @@
       z-index: 3;
       pointer-events: none;
     }
-    
 
-    
-    /* Yes按钮样式 */
-    .yes-button {
+    /* 酒瓶热点样式 */
+    .wine-hotspot {
       position: absolute;
-      top: 70%; left: 50%;
-      transform: translateX(-50%);
-      width: 120px; height: 50px;
-      background: #7e7d7d;
-      border: 2px solid #42403d;
-      border-radius: 25px;
+      /* 定位在第二层架子的酒瓶位置 */
+      top: 35%;
+      left: 43%;
+      width: 8%;
+      height: 10%;
+      background: transparent;
+      border: 2px solid rgba(218, 165, 32, 0.3);
+      border-radius: 8px;
       cursor: pointer;
-      opacity: 0;
-      transition: all 0.6s ease-out;
-      box-shadow: 0 4px 15px rgba(218, 165, 32, 0.3);
-      z-index: 4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      z-index: 5;
+      /* 发光效果 */
+      box-shadow: 
+        0 0 30px rgba(218, 165, 32, 0.6),
+        0 0 60px rgba(218, 165, 32, 0.4),
+        0 0 90px rgba(218, 165, 32, 0.2),
+        inset 0 0 30px rgba(218, 165, 32, 0.2);
+      /* 呼吸动画 */
+      animation: wine-breathe 2.5s ease-in-out infinite;
+      /* 过渡效果 */
+      transition: all 0.3s ease;
+      /* 无障碍支持 */
+      outline: none;
     }
-    
-    .yes-button.show {
-      opacity: 1;
-    }
-    
-    .yes-button:hover {
-      transform: translateX(-50%) scale(1.05);
-      box-shadow: 0 6px 20px rgba(218, 165, 32, 0.5);
-    }
-    
-    .yes-button:active {
-      transform: translateX(-50%) scale(0.95);
-      box-shadow: 0 2px 10px rgba(218, 165, 32, 0.2);
-    }
-    
-    .yes-text {
-      color: #e3c67e;
-      font-size: 18px;
-      font-weight: 700;
-      font-family: "Arial", sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-      user-select: none;
-    }
-    
 
-    
-    /* 装饰性public title图片 */
-    .public-title-decoration {
-      position: absolute;
-      top: 58%; left: 50%;
-      transform: translateX(-50%) scale(0.8);
-      width: 80vw; height: 20vw;
-      max-width: 300px; max-height: 80px;
-      min-width: 200px; min-height: 50px;
-      background: url('../../img/public/public_title.png') center center/contain no-repeat;
-      z-index: 2;
-      opacity: 0;
-      transition: transform 0.8s ease-out, opacity 0.8s ease-out;
-      animation: decoration-breathing 3s ease-in-out infinite;
+    /* 悬停效果 */
+    .wine-hotspot:hover {
+      border-color: rgba(218, 165, 32, 0.8);
+      box-shadow: 
+        0 0 40px rgba(218, 165, 32, 0.8),
+        0 0 80px rgba(218, 165, 32, 0.6),
+        0 0 120px rgba(218, 165, 32, 0.4),
+        inset 0 0 40px rgba(218, 165, 32, 0.3);
+      animation: wine-breathe-hover 1.8s ease-in-out infinite;
+      transform: scale(1.05);
     }
-    
-    .public-title-decoration.show {
-      transform: translateX(-50%) scale(1);
-      opacity: 1;
+
+    /* 激活效果 */
+    .wine-hotspot:active {
+      transform: scale(0.95);
+      box-shadow: 
+        0 0 15px rgba(218, 165, 32, 0.3),
+        0 0 30px rgba(218, 165, 32, 0.1);
     }
-    
-    @keyframes decoration-breathing {
+
+    /* 焦点效果（无障碍） */
+    .wine-hotspot:focus {
+      border-color: rgba(218, 165, 32, 0.8);
+      box-shadow: 
+        0 0 25px rgba(218, 165, 32, 0.5),
+        0 0 50px rgba(218, 165, 32, 0.3),
+        0 0 0 3px rgba(218, 165, 32, 0.2);
+    }
+
+    /* 呼吸动画 */
+    @keyframes wine-breathe {
       0%, 100% {
-        transform: translateX(-50%) scale(1);
-        filter: brightness(1);
+        box-shadow: 
+          0 0 30px rgba(218, 165, 32, 0.6),
+          0 0 60px rgba(218, 165, 32, 0.4),
+          0 0 90px rgba(218, 165, 32, 0.2),
+          inset 0 0 30px rgba(218, 165, 32, 0.2);
+        border-color: rgba(218, 165, 32, 0.4);
       }
       50% {
-        transform: translateX(-50%) scale(1.02);
-        filter: brightness(1.1);
+        box-shadow: 
+          0 0 50px rgba(218, 165, 32, 0.9),
+          0 0 100px rgba(218, 165, 32, 0.7),
+          0 0 150px rgba(218, 165, 32, 0.5),
+          inset 0 0 50px rgba(218, 165, 32, 0.4);
+        border-color: rgba(218, 165, 32, 0.7);
       }
     }
+
+    /* 悬停时的呼吸动画 */
+    @keyframes wine-breathe-hover {
+      0%, 100% {
+        box-shadow: 
+          0 0 40px rgba(218, 165, 32, 0.8),
+          0 0 80px rgba(218, 165, 32, 0.6),
+          0 0 120px rgba(218, 165, 32, 0.4),
+          inset 0 0 40px rgba(218, 165, 32, 0.3);
+        border-color: rgba(218, 165, 32, 0.8);
+      }
+      50% {
+        box-shadow: 
+          0 0 60px rgba(218, 165, 32, 1),
+          0 0 120px rgba(218, 165, 32, 0.8),
+          0 0 180px rgba(218, 165, 32, 0.6),
+          inset 0 0 60px rgba(218, 165, 32, 0.5);
+        border-color: rgba(218, 165, 32, 1);
+      }
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .wine-hotspot {
+        /* 移动端稍微调整位置和大小 */
+        top: 40%;
+        left: 32%;
+        width: 9%;
+        height: 12%;
+        border-width: 1px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .wine-hotspot {
+        /* 小屏幕进一步调整 */
+        top: 42%;
+        left: 33%;
+        width: 14%;
+        height: 12%;
+      }
+    }
+
+    /* 提示语样式 */
+    .instruction-tooltip {
+      position: fixed;
+      bottom: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: transparent;
+      color: #ffffff;
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: 500;
+      text-align: center;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.8s ease;
+      max-width: 90%;
+      line-height: 1.6;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      white-space: pre-line;
+    }
+
+    .instruction-tooltip.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .instruction-tooltip.fade-out {
+      opacity: 0;
+    }
+
+    /* 响应式提示语 */
+    @media (max-width: 768px) {
+      .instruction-tooltip {
+        bottom: 25%;
+        font-size: 14px;
+        padding: 12px 20px;
+        max-width: 85%;
+        line-height: 1.5;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .instruction-tooltip {
+        bottom: 30%;
+        font-size: 13px;
+        padding: 10px 18px;
+        max-width: 80%;
+        line-height: 1.4;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      }
+    }
+    
+
+    
+    
+
+    
     
 
     .bottom-mask {
@@ -376,15 +475,20 @@
   <div class="app-frame">
     <div class="main-bg"></div>
     <div class="title"></div>
-    <!-- Yes按钮 -->
-    <button class="yes-button" id="yesButton">
-      <span class="yes-text">yes</span>
+    <!-- 酒瓶热点 -->
+    <button class="wine-hotspot" id="wineHotspot" 
+            aria-label="点击打开酒单" 
+            title="点击查看酒单">
     </button>
-    <!-- 装饰性图片 -->
-    <div class="public-title-decoration" id="decoration"></div>
   </div>
   <!-- 如果你底部有圆角遮罩可以用 -->
   <div class="bottom-mask"></div>
+
+  <!-- 提示语 -->
+  <div class="instruction-tooltip" id="instructionTooltip">
+    点击发光酒瓶查看文章
+    向右滑动进入图集存放
+  </div>
 
   <!-- 酒单弹窗 -->
   <div class="wine-menu-overlay" id="wineMenuOverlay">
@@ -429,54 +533,131 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Title element not found');
   }
   
-  // 检查装饰图片元素
-  const decorationElement = document.querySelector('.public-title-decoration');
-  if (decorationElement) {
-    console.log('Decoration element found');
-    // 添加装饰图片的浮出动画
-    setTimeout(() => {
-      decorationElement.classList.add('show');
-      console.log('Added show class to decoration');
-    }, 300);
-  } else {
-    console.error('Decoration element not found');
-  }
+  // 酒瓶热点事件处理
+  const wineHotspot = document.getElementById('wineHotspot');
   
-  // 检查Yes按钮元素
-  const yesButtonElement = document.querySelector('.yes-button');
-  if (yesButtonElement) {
-    console.log('Yes button element found');
-  } else {
-    console.error('Yes button element not found');
-  }
-  
-  // Yes按钮点击事件
-  const yesButton = document.getElementById('yesButton');
-  
-  if (yesButton) {
-    console.log('Yes button found, adding event listeners');
+  if (wineHotspot) {
+    console.log('Wine hotspot found, adding event listeners');
     
-    // 添加浮出动画
-    setTimeout(() => {
-      yesButton.classList.add('show');
-      console.log('Added show class to yes button');
-    }, 400);
-    
-    const handleYesButtonClick = function(e) {
+    // 点击/触摸事件处理
+    const handleWineHotspotClick = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Yes button clicked/touched');
+      console.log('Wine hotspot clicked/touched');
+      
+      // 添加点击反馈动画
+      wineHotspot.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        wineHotspot.style.transform = '';
+      }, 150);
       
       // 打开酒单
       openWineMenu();
     };
     
-    yesButton.addEventListener('click', handleYesButtonClick);
-    yesButton.addEventListener('touchend', handleYesButtonClick);
-    console.log('Yes button event listeners added');
+    // 添加事件监听器
+    wineHotspot.addEventListener('click', handleWineHotspotClick);
+    wineHotspot.addEventListener('touchend', handleWineHotspotClick);
+    
+    // 键盘支持（无障碍）
+    wineHotspot.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleWineHotspotClick(e);
+      }
+    });
+    
+    console.log('Wine hotspot event listeners added');
   } else {
-    console.error('Yes button not found');
+    console.error('Wine hotspot not found');
   }
+  
+  // 提示语显示控制
+  const instructionTooltip = document.getElementById('instructionTooltip');
+  
+  if (instructionTooltip) {
+    console.log('Instruction tooltip found, setting up display');
+    
+    // 页面加载后立即显示提示语
+    instructionTooltip.classList.add('show');
+    console.log('Instruction tooltip shown');
+    
+    // 3秒后开始淡出
+    setTimeout(() => {
+      instructionTooltip.classList.add('fade-out');
+      console.log('Instruction tooltip fading out');
+      
+      // 淡出动画完成后隐藏元素
+      setTimeout(() => {
+        instructionTooltip.style.display = 'none';
+        console.log('Instruction tooltip hidden');
+      }, 800); // 等待淡出动画完成
+    }, 3000); // 3秒后开始淡出
+    
+    // 如果用户开始交互，立即隐藏提示语
+    const hideTooltipOnInteraction = () => {
+      if (instructionTooltip.classList.contains('show')) {
+        instructionTooltip.classList.add('fade-out');
+        setTimeout(() => {
+          instructionTooltip.style.display = 'none';
+        }, 500);
+      }
+    };
+    
+    // 监听各种交互事件
+    document.addEventListener('click', hideTooltipOnInteraction);
+    document.addEventListener('touchstart', hideTooltipOnInteraction);
+    document.addEventListener('keydown', hideTooltipOnInteraction);
+    
+    console.log('Instruction tooltip event listeners added');
+  } else {
+    console.error('Instruction tooltip not found');
+  }
+  
+  // 右滑跳转功能
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+  let isSwipeGesture = false;
+  
+  // 添加触摸事件监听器到整个页面
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    isSwipeGesture = false;
+    console.log('Touch start - X:', touchStartX, 'Y:', touchStartY);
+  });
+  
+  document.addEventListener('touchmove', function(e) {
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const deltaX = currentX - touchStartX;
+    const deltaY = currentY - touchStartY;
+    
+    // 如果水平滑动距离大于垂直滑动距离，且超过阈值，标记为滑动手势
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 20) {
+      isSwipeGesture = true;
+      console.log('Swipe gesture detected - deltaX:', deltaX, 'deltaY:', deltaY);
+    }
+  });
+  
+  document.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].clientX;
+    touchEndY = e.changedTouches[0].clientY;
+    
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    
+    console.log('Touch end - deltaX:', deltaX, 'deltaY:', deltaY, 'isSwipeGesture:', isSwipeGesture);
+    
+    // 检测左滑手势
+    if (isSwipeGesture && deltaX < -50 && Math.abs(deltaY) < 100) {
+      console.log('Left swipe detected, navigating to render.html');
+      // 跳转到 render.html
+      window.location.href = 'render.html';
+    }
+  });
   
   // 检查footer是否加载
   setTimeout(() => {

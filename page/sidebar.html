@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - Sidebar</title>
-  <link rel="stylesheet" href="../style/home.css">
-  <link rel="stylesheet" href="../style/footer.css">
+  <link rel="stylesheet" href="/style/home.css">
+  <link rel="stylesheet" href="/style/footer.css">
   <style>
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
@@ -114,6 +114,89 @@
       z-index: 3;
       pointer-events: none;
     }
+
+    /* 二级面板样式 */
+    .characters-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      z-index: 10;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    .characters-panel.show-characters {
+      transform: translateX(0);
+    }
+
+    .characters-bg {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      z-index: 1;
+    }
+
+    .characters-title {
+      position: absolute;
+      top: 15%; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 80px;
+      background: url('../img/logo.png') center center/contain no-repeat;
+      z-index: 2;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      background: none;
+    }
+
+    .characters-buttons {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 2;
+    }
+
+    .character-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 25px;
+      background: #f5f5f5;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: black;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      width: 160px;
+    }
+
+    .character-btn:hover {
+      background: #e8e8e8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .character-btn:active {
+      background: #d8d8d8;
+      transform: translateY(0);
+    }
   </style>
 </head>
 <body>
@@ -121,24 +204,105 @@
     <div class="sidebar-bg"></div>
     <div class="sidebar-logo"></div>
     <div class="sidebar-buttons">
-      <a href="public/public.html" class="sidebar-btn">
-        <img src="../svg/sidebar/public_btn.svg" alt="Public" />
+      <a href="#" class="sidebar-btn" id="public_btn">
+        <img src="/svg/sidebar/public_btn.svg" alt="Public" />
         <span>公开篇目</span>
       </a>
-      <a href="private.html" class="sidebar-btn">
-        <img src="../svg/sidebar/private_btn.svg" alt="Private" />
+      <a href="/page/private.html" class="sidebar-btn">
+        <img src="/svg/sidebar/private_btn.svg" alt="Private" />
         <span>私密客单</span>
       </a>
-      <a href="public/render.html" class="sidebar-btn">
-        <img src="../svg/sidebar/render_btn.svg" alt="Render" />
+      <a href="/page/public/render.html" class="sidebar-btn">
+        <img src="/svg/sidebar/render_btn.svg" alt="Render" />
         <span>图集存放</span>
       </a>
     </div>
+
+<!-- 二级面板：角色选择 -->
+<section class="characters-panel" id="charactersPanel" aria-hidden="true">
+  <div class="characters-inner">
+    <h2 class="characters-title">公开篇目</h2>
+    <nav class="characters-buttons">
+      <a href="/page/public/ghost.html"   class="character-btn">Ghost</a>
+      <a href="/page/public/konig.html"   class="character-btn">König</a>
+      <a href="/page/public/nikto.html"   class="character-btn">Nikto</a>
+      <a href="/page/public/keegan.html"  class="character-btn">Keegan</a>
+      <a href="/page/public/krueger.html" class="character-btn">Krueger</a>
+    </nav>
+  </div>
+</section>
     <div class="bottom-mask"></div>
   </div>
 
   <!-- Footer自动插入点 -->
   <div id="footer-placeholder"></div>
-<script src="../js/footer.js"></script>
+
+<script src="/js/footer.js"></script>
+<script>
+  // 二级面板控制
+  document.addEventListener('DOMContentLoaded', function() {
+    const publicBtn = document.getElementById('public_btn');
+    const charactersPanel = document.getElementById('charactersPanel');
+    
+    if (publicBtn && charactersPanel) {
+      // 点击公开篇目按钮显示二级面板
+      publicBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        charactersPanel.classList.add('show-characters');
+        console.log('Characters panel shown');
+      });
+      
+      // 点击空白处隐藏二级面板
+      charactersPanel.addEventListener('click', function(e) {
+        // 如果点击的是面板本身（空白区域），则隐藏面板
+        if (e.target === charactersPanel || e.target.classList.contains('characters-bg')) {
+          charactersPanel.classList.remove('show-characters');
+          console.log('Characters panel hidden');
+        }
+      });
+      
+      // 阻止角色按钮的点击事件冒泡
+      const characterBtns = charactersPanel.querySelectorAll('.character-btn');
+      characterBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          console.log('Character button clicked:', this.textContent.trim());
+        });
+      });
+      
+      // ESC键关闭二级面板
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && charactersPanel && charactersPanel.classList.contains('show-characters')) {
+          charactersPanel.classList.remove('show-characters');
+          document.body.style.overflow = '';
+          console.log('Characters panel hidden via ESC key');
+        }
+      });
+      
+      console.log('Sidebar panel controls initialized');
+    } else {
+      console.error('Required elements not found for sidebar panel');
+    }
+    
+    // 暴露全局函数供 sidebar.js 调用
+    window.showCharactersPanel = function() {
+      const charactersPanel = document.getElementById('charactersPanel');
+      if (charactersPanel) {
+        charactersPanel.classList.add('show-characters');
+        document.body.style.overflow = 'hidden';
+        console.log('Characters panel shown via global function');
+      }
+    };
+    
+    window.hideCharactersPanel = function() {
+      const charactersPanel = document.getElementById('charactersPanel');
+      if (charactersPanel) {
+        charactersPanel.classList.remove('show-characters');
+        document.body.style.overflow = '';
+        console.log('Characters panel hidden via global function');
+      }
+    };
+  });
+</script>
 </body>
 </html>

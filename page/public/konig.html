@@ -32,8 +32,9 @@ body {
 }
 
 .konig-container {
+  position: relative;  /* 为底部遮罩提供定位参考 */
   width: 100%;
-  height: 100%;
+  height: 100vh;
   padding: 20px;
   padding-top: 80px;
   padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
@@ -41,6 +42,7 @@ body {
   scroll-behavior: smooth;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  box-sizing: border-box;
 }
 
 .konig-container::-webkit-scrollbar {
@@ -362,6 +364,25 @@ body {
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+
+    /* 底部遮罩样式 */
+    .bottom-mask {
+      position: absolute;
+      left: 0; 
+      bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #19171b;  /* 使用与页面背景一致的颜色 */
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* 确保底部导航栏在遮罩之上 */
+    #footer-placeholder {
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
@@ -377,6 +398,12 @@ body {
       <div class="loading">正在加载作品信息...</div>
     </div>
   </div>
+
+  <!-- 底部遮罩 -->
+  <div class="bottom-mask"></div>
+
+  <!-- 底部导航栏 -->
+  <div id="footer-placeholder"></div>
 
 
 
@@ -670,5 +697,8 @@ body {
       new KonigTouchOptimization();
     });
   </script>
+
+  <!-- 加载底部导航栏 -->
+  <script src="../../js/footer.js"></script>
 </body>
 </html>
