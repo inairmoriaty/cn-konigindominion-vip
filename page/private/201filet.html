@@ -187,7 +187,7 @@
 
     .btn-whisky {
       top: 65%; /* 威士忌的位置，大约60%从顶部 */
-      left: 48%; /* 威士忌的位置，在左侧 */
+      left: 65%; /* 威士忌的位置，在左侧 */
       transform: translate(-50%, -50%);
     }
 
@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // 计算可以滑动的距离
         if (displayWidth > containerWidth) {
           const actualSlideDistance = displayWidth - containerWidth;
-          maxSlideDistance = (actualSlideDistance / containerWidth) * 100 * 0.29; // 缩小到30% 适配背景图宽度
+          maxSlideDistance = (actualSlideDistance / containerWidth) * 100 * 0.30; // 缩小到30% 适配背景图宽度
         } else {
           maxSlideDistance = 50; // 设置一个默认值
         }
