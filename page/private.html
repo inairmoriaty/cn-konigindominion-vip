@@ -10,212 +10,174 @@
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* 滚轮参数 */
+  --item-h: 44px;         /* 单项高度（iOS感） */
+  --visible: 5;           /* 可视条数（奇数，确保中间有高亮条） */
+  --wheel-h: calc(var(--item-h) * var(--visible));
 }
 
 html, body {
-      margin: 0; padding: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #191919;
-      overflow: hidden;
-    }
-
-    .app-frame {
-      width: 100%;
-      height: 100vh;
-      max-width: 1440px;
-      position: relative;
-      margin: 0 auto;
-      border-radius: 0;
-      overflow: hidden;
-      box-shadow: none;
-      background: #191919;
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
-
-      /* 完全填充屏幕 */
-      top: 0; left: 0; right: 0; bottom: 0;
-      box-sizing: border-box;
-    }
+  margin: 0; padding: 0;
+  width: 100vw; height: 100vh;
+  background: #191919; overflow: hidden;
+}
+.app-frame {
+  width: 100%; height: 100vh; max-width: 1440px;
+  position: relative; margin: 0 auto; border-radius: 0; overflow: hidden;
+  box-shadow: none; background: #191919;
+  padding-top: var(--safe-top);
+  padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
+  top: 0; left: 0; right: 0; bottom: 0; box-sizing: border-box;
+}
 
 .private-bg {
-  position: absolute;
-  inset: 0; /* 相当于 top:0; left:0; right:0; bottom:0 */
-  width: 100%;
-  height: 100%;
+  position: absolute; inset: 0;
   background: url('../img/private.png') center / cover no-repeat;
   z-index: 1;
-  /* 圆角还是由 app-frame 控制 */
+}
+.private-title {
+  position: absolute; top: -3%; left: 50%; transform: translateX(-50%);
+  width: 750px; height: 300px;
+  background: url('../svg/private/door brand.svg') center/contain no-repeat;
+  z-index: 2; pointer-events: none;
 }
 
-.private-title {
-  position: absolute;
-  top: -3%; left: 50%;
-  transform: translateX(-50%);
-  width: 750px; height: 300px;
-  background: url('../svg/private/door brand.svg') center center/contain no-repeat;
-  z-index: 2;
-  pointer-events: none;
-}
- 
- /* 客单滚轮选项区域 */
-.guest-list-wrapper{
+/* —— iOS 风格滚轮 —— */
+.guest-wheel {
   position: absolute;
   left: 53%;
   transform: translateX(-50%);
-  width: 180px; /* 容器宽度：在这里调大/调小 */
   top: 30%;
-  height: 240px; /* 3 条可见：72 高 + 16 上下间距*2 = 104/条，这里按72+32=104约等 => 288 */
-  z-index: 2;
-  display: flex;
-  align-items: stretch;
-  gap: 12px;
+  width: 200px;                 /* 滚轮宽度 */
+  height: var(--wheel-h);       /* 固定可视高度（5行） */
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 14px;  /* 列表 + 细滚条 */
+  gap: 8px;
 }
- .guest-list{
-   position: relative;
-  flex: 1 1 auto;
+.wheel-viewport {
+  position: relative;
   height: 100%;
-  overflow: hidden; /* 超出区域隐藏，由遮罩/裁剪处理 */
-  /* 上下遮罩（渐隐）以只露出中间三个选项 */
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
- }
- .guest-list-viewport{
-  height: 288px; /* 固定3行可视高度（与 wrapper 对齐） */
-   overflow-y: auto;
-   padding-right: 8px; /* 让内容不贴边 */
-   scrollbar-width: none; /* Firefox */
- }
- .guest-list-viewport::-webkit-scrollbar{ display: none; }
- 
-.guest-item{
-  height: 48px; /* 在这里改单条高度 */
-  margin: 16px 0; /* 上下间距 */
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 15px; /* 在这里改字号 */
-  letter-spacing: .5px;
-  user-select: none;
-  pointer-events: auto; /* 允许交互 */
-  cursor: pointer; /* 添加鼠标指针 */
-  /* 纯CSS绘制的方形圆角容器（替代SVG） */
-  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
-  border: 1px solid #696969;
-  border-radius: 14px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
-  transition: all 0.2s ease; /* 添加过渡效果 */
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;     /* 吸附 */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.wheel-viewport::-webkit-scrollbar { display: none; }
 
-/* 添加悬停效果 */
-.guest-item:hover {
-  background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
-  transform: scale(1.02);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.15), inset 0 -2px 4px rgba(0,0,0,.4), 0 4px 15px rgba(0,0,0,.3);
-}
-
-.guest-item:active {
-  transform: scale(0.98);
-}
-
-/* 门的透明热点区域（点击进入密码验证） */
-.door-hotspot{
-  position: absolute;
-  left: 50%;
-  top: 55%; /* 下移，避免被scroll option遮挡 */
-  transform: translateX(-50%);
-  width: 22%;   /* 调整为门的大致宽度 */
-  height: 20%;  /* 调整为门的大致高度 */
-  z-index: 6;   /* 高于列表与背景，低于底部导航 */
-  cursor: pointer;
-  background: transparent; /* 透明点击区 */
-}
- 
- /* 右侧自定义滚动条 */
- .guest-scrollbar{
-   position: relative;
-   width: 14px;
-   height: 100%;
- }
- .guest-scrollbar .track{
-   position: absolute; inset: 0;
-   background: url('../svg/private/scroll options.svg') center / 100% 100% no-repeat;
-   opacity: .9;
- }
- .guest-scrollbar .thumb{
-   position: absolute; left: 0; right: 0;
-   height: 40px; /* 将由脚本调整 */
-   background: url('../svg/private/option.svg') center center/contain no-repeat;
- }
-
-
-/* 热点：使用百分比定位，跟随不同机型比例 */
-.hotspot{
-  position: absolute;
-  width: 10vw; height: 10vw;           /* 例子：用 vw 让尺寸自适应 */
-  min-width: 44px; min-height: 44px;   /* 可触达最小尺寸 */
-  left: 62%; top: 40%;                 /* 例子：按图上相对位置给 % */
-  transform: translate(-50%,-50%);
-}
-    
-    .bottom-mask {
-      position: absolute;
-      left: 0; bottom: 0;
-      width: 100%;
-      height: 92px;  /* 可覆盖footer高度+阴影 */
-      background: #191919;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      z-index: 3;
-      pointer-events: none;
-    }
-
-.nav-circle-btn {
-  position: absolute;
-  z-index: 10;
+/* 渐隐遮罩（上下淡出） */
+.wheel-viewport::before,
+.wheel-viewport::after {
+  content: "";
+  position: sticky;
   display: block;
-  /* 你可以加transition/hover样式等 */
-  }
+  left: 0; right: 0;
+  height: calc((var(--wheel-h) - var(--item-h)) / 2);
+  z-index: 2; pointer-events: none;
+}
+.wheel-viewport::before { top: 0; background: linear-gradient(to bottom, rgba(25,25,25,1), rgba(25,25,25,0)); }
+.wheel-viewport::after  { bottom: 0; background: linear-gradient(to top, rgba(25,25,25,1), rgba(25,25,25,0)); }
 
+/* 中间高亮选择条 */
+.wheel-highlight {
+  position: absolute;
+  left: 0; right: 14px;  /* 让出右侧细滚条 */
+  top: 50%;
+  transform: translateY(calc(-50% + 1px));
+  height: var(--item-h);
+  border-radius: 12px;
+  z-index: 3; pointer-events: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -2px 4px rgba(0,0,0,.35);
+  border: 1px solid #69696955;
+  background: linear-gradient(180deg, rgba(90,90,90,.15) 0%, rgba(65,65,65,.1) 100%);
+}
 
-    </style>
+/* 列表项 */
+.wheel-list { position: relative; }
+.wheel-item {
+  height: var(--item-h);
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:15px; letter-spacing:.5px;
+  user-select:none; cursor:pointer;
+  scroll-snap-align: center;           /* 让每项吸附到中线 */
+  transition: transform .12s ease, color .12s ease;
+}
+.wheel-item.is-center {
+  transform: scale(1.06);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 右侧自定义细滚条（同步视觉，不可拖拽） */
+.guest-scrollbar{
+  position: relative; width: 14px; height: 100%;
+}
+.guest-scrollbar .track{
+  position: absolute; inset: 0; background: #333; border-radius: 4px; opacity:.9;
+}
+.guest-scrollbar .thumb{
+  position: absolute; left: 0; right: 0; height: 40px; background: #666; border-radius: 4px;
+  transition: top .08s linear;
+}
+
+/* 门透明热点 */
+.door-hotspot{
+  position: absolute; left: 50%; top: 55%;
+  transform: translateX(-50%);
+  width: 22%; height: 20%;
+  z-index: 6; cursor: pointer; background: transparent;
+}
+
+/* 其他 */
+.bottom-mask {
+  position: absolute; left: 0; bottom: 0; width: 100%; height: 92px;
+  background: #191919; z-index: 3; pointer-events: none;
+}
+
+.nav-circle-btn { position: absolute; z-index: 10; display: block; }
+  </style>
 </head>
 <body>
   <div class="app-frame">
     <div class="private-bg"></div>
     <div class="private-title"></div>
+
     <!-- 门的透明互动区域：点击跳转到密码页 -->
     <a class="door-hotspot" id="doorHotspot" aria-label="Enter Locked Area"></a>
-    
-    <div class="guest-list-wrapper" id="guestList">
-      <div class="guest-list">
-        <div class="guest-list-viewport" id="guestViewport">
-          <div class="guest-item" data-link="../locked_files/201.html">麦香鱼</div>
-          <div class="guest-item" data-link="../locked_files/202.html">燕麦</div>
-          <div class="guest-item" data-link="../locked_files/203.html">十七</div>
-          <div class="guest-item" data-link="../locked_files/204.html">Misty Rain</div>
-          <div class="guest-item" data-link="../locked_files/205.html">阿普</div>
-          <div class="guest-item" data-link="../locked_files/206.html">黑菓</div>
-          <div class="guest-item" data-link="../locked_files/207.html">Lloigor</div>
-          <div class="guest-item" data-link="../locked_files/208.html">氦气</div>
-          <div class="guest-item" data-link="../locked_files/209.html">咖啡</div>
-          <div class="guest-item" data-link="../locked_files/210.html">Maro</div>
-          <div class="guest-item" data-link="../locked_files/211.html">猹</div>
-          <div class="guest-item" data-link="../locked_files/212.html">清岚</div>
-          <div class="guest-item" data-link="../locked_files/213.html">Nieves</div>
-          <div class="guest-item" data-link="../locked_files/214.html">睡个好觉</div>
-          <div class="guest-item" data-link="../locked_files/215.html">明灭</div>
-          <div class="guest-item" data-link="../locked_files/216.html">冷面</div>
-          <div class="guest-item" data-link="../locked_files/217.html">夜鸦</div>
-          <div class="guest-item" data-link="../locked_files/218.html">塑料</div>
-          <div class="guest-item" data-link="../locked_files/219.html">星辰</div>
-          <div class="guest-item" data-link="../locked_files/220.html">执</div>
-          <div class="guest-item" data-link="../locked_files/221.html">赵客</div>
-          <div class="guest-item" data-link="../locked_files/222.html">猩猩狗</div>
-          <div class="guest-item" data-link="../locked_files/223.html">姬芜追</div>
-          <div class="guest-item" data-link="../locked_files/224.html">小安</div>
+
+    <!-- iOS 风格无限滚轮 -->
+    <div class="guest-wheel" id="guestWheel">
+      <div class="wheel-viewport" id="wheelViewport" aria-label="Guests Picker">
+        <div class="wheel-highlight"></div>
+        <div class="wheel-list" id="wheelList">
+          <!-- 初始内容仅用于提供数据，渲染时会重建 -->
+          <div class="wheel-item" data-link="../locked_files/201.html">麦香鱼</div>
+          <div class="wheel-item" data-link="../locked_files/202.html">燕麦</div>
+          <div class="wheel-item" data-link="../locked_files/203.html">十七</div>
+          <div class="wheel-item" data-link="../locked_files/204.html">Misty Rain</div>
+          <div class="wheel-item" data-link="../locked_files/205.html">阿普</div>
+          <div class="wheel-item" data-link="../locked_files/206.html">黑菓</div>
+          <div class="wheel-item" data-link="../locked_files/207.html">Lloigor</div>
+          <div class="wheel-item" data-link="../locked_files/208.html">氦气</div>
+          <div class="wheel-item" data-link="../locked_files/209.html">咖啡</div>
+          <div class="wheel-item" data-link="../locked_files/210.html">Maro</div>
+          <div class="wheel-item" data-link="../locked_files/211.html">猹</div>
+          <div class="wheel-item" data-link="../locked_files/212.html">清岚</div>
+          <div class="wheel-item" data-link="../locked_files/213.html">Nieves</div>
+          <div class="wheel-item" data-link="../locked_files/214.html">睡个好觉</div>
+          <div class="wheel-item" data-link="../locked_files/215.html">明灭</div>
+          <div class="wheel-item" data-link="../locked_files/216.html">冷面</div>
+          <div class="wheel-item" data-link="../locked_files/217.html">夜鸦</div>
+          <div class="wheel-item" data-link="../locked_files/218.html">塑料</div>
+          <div class="wheel-item" data-link="../locked_files/219.html">星辰</div>
+          <div class="wheel-item" data-link="../locked_files/220.html">执</div>
+          <div class="wheel-item" data-link="../locked_files/221.html">赵客</div>
+          <div class="wheel-item" data-link="../locked_files/222.html">猩猩狗</div>
+          <div class="wheel-item" data-link="../locked_files/223.html">姬芜追</div>
+          <div class="wheel-item" data-link="../locked_files/224.html">小安</div>
         </div>
       </div>
       <div class="guest-scrollbar" id="guestScrollbar">
@@ -223,92 +185,176 @@ html, body {
         <div class="thumb" id="guestThumb"></div>
       </div>
     </div>
+
     <div class="bottom-mask"></div>
   </div>
 
   <!-- Footer自动插入点 -->
   <div id="footer-placeholder"></div>
-<script src="../js/footer.js"></script>
-<script>
-// 自定义滚动条与滚轮同步
-(function(){
-  const viewport = document.getElementById('guestViewport');
-  const thumb = document.getElementById('guestThumb');
-  const scrollbar = document.getElementById('guestScrollbar');
-  if(!viewport || !thumb || !scrollbar) return;
+  <script src="../js/footer.js"></script>
 
-  function updateThumb(){
-    const viewH = viewport.clientHeight;
-    const scrollH = viewport.scrollHeight;
-    const trackH = scrollbar.clientHeight;
-    const minThumb = 24;
-    const thumbH = Math.max(minThumb, Math.round(viewH * viewH / Math.max(scrollH, 1))); // 与可视高度成比例
-    const maxTop = Math.max(trackH - thumbH, 0);
-    const top = (viewport.scrollTop / Math.max(scrollH - viewH, 1)) * maxTop;
-    thumb.style.height = thumbH + 'px';
-    thumb.style.top = top + 'px';
-  }
-
-  // 监听滚动和尺寸变化
-  viewport.addEventListener('scroll', updateThumb, { passive: true });
-  window.addEventListener('resize', updateThumb);
-  // 初始化
-  updateThumb();
-})();
-
-// 门的热点点击：跳转到密码验证页面
+  <script>
+/* —— 门热点 —— */
 (function(){
   const door = document.getElementById('doorHotspot');
-  console.log('Door hotspot element:', door);
-  if (!door) {
-    console.error('Door hotspot element not found!');
-    return;
-  }
-  console.log('Adding click event listener to door hotspot');
-  door.addEventListener('click', function(e){
-    console.log('Door hotspot clicked!');
+  if (!door) return;
+  door.addEventListener('click', (e) => {
     e.preventDefault();
     window.location.href = '../locked_files/master.html';
   });
-  
-  // 添加鼠标悬停事件用于调试
-  door.addEventListener('mouseenter', function(){
-    console.log('Mouse entered door hotspot area');
-  });
 })();
 
-// 客单项目点击事件处理
+/* —— iOS 无限滚轮 —— */
 (function(){
-  console.log('Setting up guest item click handlers...');
-  const guestItems = document.querySelectorAll('.guest-item');
-  console.log('Found', guestItems.length, 'guest items');
-  
-  guestItems.forEach((item, index) => {
-    console.log('Setting up click handler for item', index, ':', item.textContent);
-    
-    item.addEventListener('click', function(e) {
-      console.log('Guest item clicked:', this.textContent);
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const link = this.getAttribute('data-link');
-      console.log('Data link attribute:', link);
-      
-      if (link) {
-        console.log('Navigating to:', link);
-        window.location.href = link;
-      } else {
-        console.log('No link specified for:', this.textContent);
-        // 可以在这里添加默认行为或提示
-      }
+  const viewport = document.getElementById('wheelViewport');
+  const listEl   = document.getElementById('wheelList');
+  const thumb    = document.getElementById('guestThumb');
+  const track    = document.getElementById('guestScrollbar');
+
+  if (!viewport || !listEl || !thumb || !track) return;
+
+  // 读出初始数据
+  const baseItems = Array.from(listEl.querySelectorAll('.wheel-item')).map(n => ({
+    text: n.textContent.trim(),
+    link: n.getAttribute('data-link') || '#'
+  }));
+  const N = baseItems.length;
+
+  // 重建：为了无限滚动，复制三份
+  listEl.innerHTML = '';
+  const COPIES = 3;
+  const data = [];
+  for (let c = 0; c < COPIES; c++){
+    baseItems.forEach((it, idx) => {
+      const d = { ...it, baseIndex: idx };
+      data.push(d);
+      const div = document.createElement('div');
+      div.className = 'wheel-item';
+      div.textContent = it.text;
+      div.dataset.link = it.link;
+      listEl.appendChild(div);
     });
-    
-    // 添加鼠标悬停事件用于调试
-    item.addEventListener('mouseenter', function() {
-      console.log('Mouse entered guest item:', this.textContent);
-    });
+  }
+
+  const ITEM_H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--item-h')) || 44;
+  const VISIBLE = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--visible')) || 5;
+  const WHEEL_H = ITEM_H * VISIBLE;
+
+  // 初始位置：滚到第二份的首项（中间那份），方便两边回环
+  const startIndex = N; // 第二份的开始
+  viewport.scrollTop = startIndex * ITEM_H;
+
+  // 根据 scrollTop 映射到 0..N-1 的“当前中心项”
+  function getCenterIndex(){
+    const top = viewport.scrollTop;
+    const rawIndexTop = Math.round(top / ITEM_H);           // 对齐到最接近的项
+    const centerOffset = Math.floor(VISIBLE/2);              // 中心位置偏移
+    const centerRaw = rawIndexTop + centerOffset;            // 视口中心行的 raw 索引
+    const baseIndex = ((centerRaw % (N*COPIES)) + (N*COPIES)) % (N*COPIES);
+    return data[baseIndex].baseIndex;                        // 映射到原始索引 0..N-1
+  }
+
+   // 高亮中心项（添加/移除 is-center）
+   function highlightCenter(){
+     const all = listEl.querySelectorAll('.wheel-item');
+     all.forEach(n => n.classList.remove('is-center'));
+     
+     // 计算视口中心位置对应的item
+     const top = viewport.scrollTop;
+     const centerRowRaw = Math.round(top / ITEM_H) + Math.floor(VISIBLE/2);
+     const centerIndex = ((centerRowRaw % all.length) + all.length) % all.length;
+     const centerItem = all[centerIndex];
+     
+     if (centerItem) {
+       centerItem.classList.add('is-center');
+     }
+   }
+
+  // 无限回环逻辑：滚到边缘时把 scrollTop 拉回中间那份
+  function loopGuard(){
+    const total = N * COPIES;
+    const min = ITEM_H * (N * 0.5);                      // 稍微留些缓冲
+    const max = ITEM_H * (total - N * 0.5);
+    if (viewport.scrollTop < min){
+      viewport.scrollTop += ITEM_H * N;                  // 向下平移一份
+    }else if (viewport.scrollTop > max){
+      viewport.scrollTop -= ITEM_H * N;                  // 向上平移一份
+    }
+  }
+
+  // 吸附到最近项
+  let snapTimer = null;
+  function snapToNearest(){
+    if (snapTimer) clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      const idx = Math.round(viewport.scrollTop / ITEM_H);
+      viewport.scrollTo({ top: idx * ITEM_H, behavior: 'smooth' });
+    }, 80);
+  }
+
+  // 同步右侧小滚条（只是视觉提示）
+  function syncThumb(){
+    const totalH = ITEM_H * (N * COPIES);
+    const trackH = track.clientHeight;
+    const viewH  = viewport.clientHeight;
+    const thumbH = Math.max(24, Math.round(viewH * viewH / Math.max(totalH, 1)));
+    const maxTop = Math.max(trackH - thumbH, 0);
+    const top = (viewport.scrollTop / Math.max(totalH - viewH, 1)) * maxTop;
+    thumb.style.height = thumbH + 'px';
+    thumb.style.top    = top + 'px';
+  }
+
+   // 点击某一项：直接跳转到对应页面
+   listEl.addEventListener('click', (e) => {
+     const item = e.target.closest('.wheel-item');
+     if (!item) return;
+     
+     // 获取当前中心项的索引
+     const centerIndex = getCenterIndex();
+     const all = Array.from(listEl.children);
+     const itemIndex = all.indexOf(item);
+     
+     // 计算当前点击项相对于中心的位置
+     const centerRowRaw = Math.round(viewport.scrollTop / ITEM_H) + Math.floor(VISIBLE/2);
+     const currentCenterItem = all[((centerRowRaw % all.length) + all.length) % all.length];
+     const currentCenterIndex = all.indexOf(currentCenterItem);
+     
+     // 如果点击的不是中心项，先滚动到中心
+     if (itemIndex !== currentCenterIndex) {
+       const delta = itemIndex - currentCenterIndex;
+       const targetTop = viewport.scrollTop + delta * ITEM_H;
+       viewport.scrollTo({ top: targetTop, behavior: 'smooth' });
+       
+       // 滚动完成后跳转
+       setTimeout(() => {
+         const link = item.dataset.link || '#';
+         if (link && link !== '#') {
+           window.location.href = link;
+         }
+       }, 300);
+     } else {
+       // 如果已经是中心项，直接跳转
+       const link = item.dataset.link || '#';
+       if (link && link !== '#') {
+         window.location.href = link;
+       }
+     }
+   });
+
+  // 滚动事件
+  viewport.addEventListener('scroll', () => {
+    loopGuard();
+    highlightCenter();
+    syncThumb();
+    snapToNearest();
+  }, { passive: true });
+
+  // 初始同步
+  requestAnimationFrame(() => {
+    highlightCenter();
+    syncThumb();
   });
 })();
-</script>
+  </script>
 </body>
 </html>
