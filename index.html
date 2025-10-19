@@ -1,199 +1,194 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KÖNIGIN - 预警页面</title>
+  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - Index</title>
+  <link rel="stylesheet" href="../style/cover.css">
+  <link rel="stylesheet" href="../style/footer.css">
+  <link rel="stylesheet" href="../style/mobile.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      color: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+.page-anim-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+ html, body {
+      margin: 0; padding: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #191919;
       overflow: hidden;
     }
-
-    .warning-container {
-      text-align: center;
-      max-width: 600px;
-      padding: 40px 20px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-
-    .warning-icon {
-      font-size: 80px;
-      margin-bottom: 30px;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-
-    .warning-title {
-      font-size: 36px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #ff6b6b;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .warning-message {
-      font-size: 18px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      color: #e0e0e0;
-    }
-
-    .warning-details {
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid rgba(255, 107, 107, 0.3);
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 30px;
-      text-align: left;
-    }
-
-    .warning-details h3 {
-      color: #ff6b6b;
-      margin-bottom: 15px;
-      font-size: 20px;
-    }
-
-    .warning-details ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .warning-details li {
-      margin-bottom: 8px;
-      padding-left: 20px;
+    .app-frame {
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      height: 100dvh;
+      max-width: 1440px;
       position: relative;
+      margin: 0 auto;
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: none;
+      background: #191919;
+      /* 居中，适配大屏 */
+      top: 0; left: 0; right: 0; bottom: 0;
+      box-sizing: border-box;
     }
-
-    .warning-details li:before {
-      content: "⚠️";
+    
+    /* 如果浏览器不支持 dvh/svh，就用 --vh 方案 */
+    @supports not (height: 100dvh) {
+      html, body, .app-frame { height: calc(var(--vh) * 100); }
+    }
+    .cover-bg {
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 0; top: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../img/cover.png') center center/cover no-repeat;
+      z-index: 1;
+      /* 由app-frame控制圆角 */
     }
-
-    .enter-button {
-      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-      color: white;
+    .bottom-mask {
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #191919;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      z-index: 3;
+      pointer-events: none;
+    }
+    .logo-btn {
+      position: absolute;
+      top: 42%; left: 55%;
+      transform: translateX(-50%);
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: transparent;
       border: none;
-      padding: 15px 40px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 50px;
+      box-shadow: none;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow .18s;
     }
-
-    .enter-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    .logo-btn:active {
+      box-shadow: 0 2px 32px #191919cc;
     }
-
-    .enter-button:active {
-      transform: translateY(0);
+    .logo-btn img {
+      width: 200px; height: 200px; display: block;
+      pointer-events: none;
     }
-
-    .footer-note {
-      margin-top: 30px;
+    
+    /* 提示文字样式 */
+    .logo-hint {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translateX(-50%);
+      color: #808080;
       font-size: 14px;
-      color: #888;
-      opacity: 0.8;
+      font-family: "SimSun", "宋体", serif;
+      text-align: center;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 1;
+      transition: opacity 1s ease-out;
     }
+    
+    .logo-hint.fade-out {
+      opacity: 0;
+    }
+  /* 蜘蛛默认隐藏在顶部（未掉落状态） */
+    .spider-anim {
+      position: absolute;
+      left: 50%;
+      top: 5px; left: 18%;/* 藏在logo正上方 */
+      transform: translateX(-50%) translateY(-48px); /* 初始悬空 */
+      z-index: 4;
+      width: 250px; height: 250px;
+      opacity: 0;
+      transition: opacity .2s;
+      pointer-events: none;
+    }
+    /* 掉落时加 active 类，触发下落动画 */
+    .spider-anim.drop {
+      animation: spider-drop 1.3s cubic-bezier(.38,2.3,.6,1) forwards;
+      opacity: 1;
+    }
+    @keyframes spider-drop {
+      0% {
+        transform: translateX(-50%) translateY(-130px) ;
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      78% {
+        transform: translateX(-50%) translateY(0px);
+        opacity: 1;
+      }
+      95% {
+        transform: translateX(-50%) translateY(0px);
+      }
+      100% {
+        transform: translateX(-50%) translateY(2px);
+        opacity: 1;
+      }
+    }
+    .page-fadeout {
+  animation: page-zoomfade 1.2s cubic-bezier(.3,1,.7,1) forwards;
+}
+@keyframes page-zoomfade {
+  0%   { opacity: 1;   transform: scale(1);      filter: blur(0px);}
+  80%  { opacity: 0.8; transform: scale(1.12);  filter: blur(2px);}
+  100% { opacity: 0;   transform: scale(1.18);  filter: blur(8px);}
+}
 
-    @media (max-width: 768px) {
-      .warning-container {
-        margin: 20px;
-        padding: 30px 15px;
-      }
-      
-      .warning-title {
-        font-size: 28px;
-      }
-      
-      .warning-message {
-        font-size: 16px;
-      }
-      
-      .enter-button {
-        padding: 12px 30px;
-        font-size: 16px;
-      }
-    }
-  </style>
+    </style>
 </head>
 <body>
-  <div class="warning-container">
-    <div class="warning-icon">⚠️</div>
-    
-    <h1 class="warning-title">内容预警</h1>
-    
-    <p class="warning-message">
-      本网站包含成人内容、暴力描写和敏感主题，可能不适合所有年龄段。
-      请确认您已年满18岁，并了解相关内容可能对您造成的影响。
-    </p>
-    
-    <div class="warning-details">
-      <h3>内容类型包括：</h3>
-      <ul>
-        <li>成人主题和内容</li>
-        <li>暴力、非自愿情节描写</li>
-        <li>敏感社会话题讨论</li>
-      </ul>
-    </div>
-    
-    <button class="enter-button" onclick="enterSite()">
-      我已了解，进入网站
+  <div class="page-anim-container">
+    <div class="cover-bg"></div>
+    <div class="cover-title"></div>
+    <button class="logo-btn" id="logoBtn">
+      <img src="../svg/cover/logo.svg" />
     </button>
-    
-    <div class="footer-note">
-       如果您未满18岁或对相关内容感到不适，请立即离开此页面。</p>
-      <p>进入网站即表示您已确认符合访问条件。</p>
-    </div>
+    <div class="logo-hint" id="logoHint">点击logo进入主厅</div>
+    <img src="../svg/cover/spider.svg" class="spider-anim" id="spiderAnim" />
   </div>
-
-  <script>
-    function enterSite() {
-      // 添加淡出动画
-      document.body.style.transition = 'opacity 0.5s ease';
-      document.body.style.opacity = '0';
-      
-      // 延迟跳转到cover页面
+</body>
+<script src="../js/mobile-optimization.js"></script>
+<script src="../js/cover.js"></script>
+<script>
+// 提示文字三秒后消失
+document.addEventListener('DOMContentLoaded', function() {
+  const logoHint = document.getElementById('logoHint');
+  if (logoHint) {
+    setTimeout(() => {
+      logoHint.classList.add('fade-out');
+      // 淡出动画完成后移除元素
       setTimeout(() => {
-        window.location.href = 'page/cover.html';
-      }, 500);
-    }
+        if (logoHint.parentNode) {
+          logoHint.parentNode.removeChild(logoHint);
+        }
+      }, 1000);
+    }, 3000);
+  }
+});
 
-    // 防止右键菜单
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    
-    // 防止F12开发者工具
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-        e.preventDefault();
-        return false;
-      }
-    });
-  </script>
+// 浏览器视口高度适配
+function setVH(){
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+setVH(); 
+window.addEventListener('resize', setVH);
+</script>
+
 </body>
 </html>

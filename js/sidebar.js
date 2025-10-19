@@ -11,10 +11,11 @@ function initSidebar() {
   __sidebarInited = true;
 
   // 统一使用根相对路径
-  const iconPath   = '/svg/sidebar/';
-  const publicPath = '/page/public/public.html';
-  const privatePath= '/page/private.html';
-  const renderPath = '/page/public/render.html';
+  const iconPath       = '/svg/sidebar/';
+  const publicPath     = '/page/public/public.html';
+  const privatePath    = '/page/private.html';
+  const renderPath     = '/page/public/render.html';
+  const commissionPath = '/page/public/commission.html'; // ★ 新增
 
   // 侧边栏结构
   const sidebarHTML = `
@@ -34,6 +35,12 @@ function initSidebar() {
           <a href="${renderPath}" class="sidebar-btn">
             <img src="${iconPath}render_btn.svg" alt="Render" />
             <span>图集存放</span>
+          </a>
+          <!-- ★ 新增：合作联系 -->
+          <a href="${commissionPath}" class="sidebar-btn" id="sidebarCommissionLink">
+            <!-- 你也可以换成 /svg/sidebar/commission_btn.svg -->
+            <img src="/img/commission.png" alt="Commission" />
+            <span>合作联系</span>
           </a>
         </div>
       </div>
@@ -183,7 +190,7 @@ function initSidebar() {
   }
 }
 
-// ✅ 把 DOM ready 包装 **放在函数外**
+// ✅ DOM ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initSidebar);
 } else {

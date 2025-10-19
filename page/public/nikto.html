@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KÖNIGIN - Nikto 公开篇目</title>
+  <link rel="stylesheet" href="../../style/home.css">
+  <link rel="stylesheet" href="../../style/footer.css">
+  <link rel="stylesheet" href="../../style/mobile.css">
+  <style>
+/* Redesigned color scheme using red-black-gold tones */
+
+:root {
+  --bg-deep: #19171b;
+  --bg-dark: #2b0307;
+  --gold-plain: #ae7f62;
+  --gold-light: #fccdac;
+  --red-main: #75020f;
+  --red-dark: #51080d;
+  --black-pure: #080808;
+  --gray-muted: #625f5d;
+  --font-base: 'Arial', sans-serif;
+}
+
+body {
+  font-family: var(--font-base);
+  background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-dark) 100%);
+  color: var(--gold-light);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.nikto-container {
+  position: relative;  /* 为底部遮罩提供定位参考 */
+  width: 100%;
+  height: 100vh;
+  padding: 20px;
+  padding-top: 80px;
+  padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+.nikto-container::-webkit-scrollbar {
+  display: none;
+}
+
+ .header-section {
+   text-align: center;
+   margin-bottom: 40px;
+   padding: 40px 20px;
+   background: transparent;
+   border-radius: 0;
+   box-shadow: none;
+   border: none;
+ }
+
+.header-title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: var(--gold-plain);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header-subtitle {
+  font-size: 20px;
+  color: var(--gray-muted);
+  opacity: 0.85;
+}
+
+ .works-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+   gap: 40px;
+   row-gap: 40px;
+   column-gap: 40px;
+   max-width: 1200px;
+   margin: 0 auto;
+   padding: 20px 0;
+ }
+
+ .work-card {
+   background: rgba(255, 255, 255, 0.02);
+   border-radius: 0;
+   padding: 30px;
+   margin: 20px 0;
+   box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+   border: 1px solid rgba(255, 255, 255, 0.08);
+   transition: all 0.3s ease;
+   cursor: pointer;
+   position: relative;
+   overflow: hidden;
+   /* 触摸优化 */
+   -webkit-tap-highlight-color: transparent;
+   touch-action: manipulation;
+ }
+
+
+
+ .work-header {
+   margin-bottom: 20px;
+ }
+
+ .work-author {
+   font-size: 16px;
+   color: var(--gray-muted);
+   margin-bottom: 15px;
+ }
+
+ .work-meta {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+   margin-bottom: 20px;
+ }
+
+ .rating-badge {
+   padding: 4px 12px;
+   border-radius: 20px;
+   font-size: 12px;
+   font-weight: bold;
+   text-transform: uppercase;
+ }
+
+ .rating-mature {
+   background: var(--gold-plain);
+   color: var(--bg-deep);
+ }
+
+ .rating-teen {
+   background: var(--gold-light);
+   color: var(--bg-deep);
+ }
+
+ .rating-18+ {
+   background: #75020f;
+   color: white;
+ }
+
+ .status-badge {
+   padding: 4px 12px;
+   border-radius: 20px;
+   font-size: 12px;
+   font-weight: bold;
+ }
+
+ .status-progress {
+   background: var(--gold-plain);
+   color: var(--bg-deep);
+ }
+
+ .status-planned {
+   background: var(--gray-muted);
+   color: white;
+ }
+
+ .work-summary {
+   font-size: 16px;
+   color: var(--gray-muted);
+   margin-bottom: 20px;
+   font-style: italic;
+   line-height: 1.5;
+ }
+
+ .work-description {
+   font-size: 14px;
+   color: var(--gray-muted);
+   margin-bottom: 20px;
+   padding: 15px;
+   background: rgba(255, 255, 255, 0.02);
+   border-radius: 8px;
+   border-left: 3px solid var(--red-main);
+ }
+
+ .tags-section {
+   margin-bottom: 20px;
+ }
+
+ .section-title {
+   font-size: 14px;
+   font-weight: bold;
+   color: var(--gold-plain);
+   margin-bottom: 10px;
+   text-transform: uppercase;
+ }
+
+ .tags-list {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 6px;
+ }
+
+ .tag {
+   padding: 4px 8px;
+   background: rgba(182, 157, 157, 0.05);
+   border: 1px solid rgba(255, 255, 255, 0.1);
+   border-radius: 12px;
+   font-size: 12px;
+   color: var(--gold-light);
+ }
+
+ .warning-tag {
+   background: rgba(255, 0, 0, 0.1);
+   border-color: rgba(255, 0, 0, 0.2);
+   color: white;
+ }
+
+ .work-footer {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-top: 20px;
+   padding-top: 20px;
+   border-top: 1px solid rgba(255, 255, 255, 0.1);
+ }
+
+ .work-meta-info {
+   font-size: 12px;
+   color: var(--gray-muted);
+ }
+
+
+
+
+
+.work-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--gold-light);
+}
+
+.work-summary,
+.work-description {
+  color: white;
+}
+
+.rating-explicit {
+  background: var(--red-main);
+  color: white;
+}
+
+.status-completed {
+  background: var(--gold-plain);
+  color: var(--bg-deep);
+}
+
+ .read-button {
+   background: linear-gradient(45deg, var(--red-main), var(--red-dark));
+   color: white;
+   border: none;
+   padding: 5px 15px;
+   font-size: 12px;
+   font-weight: bold;
+   border-radius: 0;
+   cursor: pointer;
+   text-decoration: none;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   line-height: 1;
+   /* 触摸优化 */
+   -webkit-tap-highlight-color: transparent;
+   touch-action: manipulation;
+   transition: all 0.3s ease;
+ }
+
+
+
+ .read-button:active {
+   transform: translateY(0);
+   box-shadow: 0 2px 8px rgba(255, 0, 0, 0.1);
+ }
+
+.read-button:hover {
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+
+
+ /* 触摸反馈样式 */
+ .touch-active {
+   transform: scale(0.95) !important;
+   transition: transform 0.1s ease !important;
+ }
+
+ .loading {
+   text-align: center;
+   padding: 40px;
+   color: var(--gray-muted);
+ }
+
+ .error {
+   text-align: center;
+   padding: 40px;
+   color: var(--red-main);
+ }
+
+
+ 
+ /* 移动端全屏滚动优化 */
+ @media (max-width: 768px) {
+   .nikto-container {
+     padding: 15px;
+     padding-top: 60px;
+     /* 确保移动端全屏滚动 */
+     width: 100% !important;
+     height: 100% !important;
+   }
+
+   .header-title {
+     font-size: 32px;
+   }
+
+   .header-subtitle {
+     font-size: 16px;
+   }
+
+   .works-grid {
+     grid-template-columns: 1fr;
+     gap: 30px;
+     row-gap: 30px;
+     column-gap: 30px;
+     padding: 15px 0;
+   }
+
+   .work-card {
+     padding: 20px;
+   }
+
+   .work-title {
+     font-size: 24px;
+   }
+
+
+
+   /* 移动端触摸优化 */
+   .work-card {
+     -webkit-touch-callout: none;
+     -webkit-user-select: none;
+     user-select: none;
+   }
+   
+   /* 移动端全屏滚动优化 */
+   html, body {
+     overflow: hidden !important;
+     position: fixed;
+     width: 100% !important;
+     height: 100% !important;
+   }
+ }
+
+    /* 滚动条样式 - 全屏滚动时隐藏 */
+    .nikto-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nikto-container {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* 底部遮罩样式 */
+    .bottom-mask {
+      position: absolute;
+      left: 0; 
+      bottom: 0;
+      width: 100%;
+      height: 92px;  /* 可覆盖footer高度+阴影 */
+      background: #19171b;  /* 使用与页面背景一致的颜色 */
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    /* 确保底部导航栏在遮罩之上 */
+    #footer-placeholder {
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+    <div class="nikto-container">
+    <!-- 页面标题 -->
+    <div class="header-section">
+      <h1 class="header-title">Nikto 公开篇目</h1>
+      <p class="header-subtitle">KÖNIGIN系列作品集</p>
+    </div>
+
+    <!-- 作品列表容器 -->
+    <div id="works-container">
+      <div class="loading">正在加载作品信息...</div>
+    </div>
+  </div>
+
+  <!-- 底部遮罩 -->
+  <div class="bottom-mask"></div>
+
+  <!-- 底部导航栏 -->
+  <div id="footer-placeholder"></div>
+
+
+
+  <script>
+    // 移动端触摸优化类
+    class NiktoTouchOptimization {
+      constructor() {
+        this.touchStartY = 0;
+        this.touchStartTime = 0;
+        this.isScrolling = false;
+        this.init();
+      }
+
+      init() {
+        this.addTouchFeedback();
+        this.addSwipeSupport();
+        this.optimizeScroll();
+      }
+
+      // 添加触摸反馈
+      addTouchFeedback() {
+        const interactiveElements = document.querySelectorAll('.work-card, .read-button');
+        
+        interactiveElements.forEach(element => {
+          element.addEventListener('touchstart', (e) => {
+            element.classList.add('touch-active');
+            this.touchStartY = e.touches[0].clientY;
+            this.touchStartTime = Date.now();
+            // 不阻止事件冒泡，让滑动检测能正常工作
+          }, { passive: true });
+
+          element.addEventListener('touchend', (e) => {
+            element.classList.remove('touch-active');
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - this.touchStartTime;
+            
+            // 如果触摸时间很短，可能是点击
+            if (touchDuration < 200) {
+              this.handleTouchClick(element, e);
+            }
+            // 不阻止事件冒泡
+          }, { passive: true });
+
+          element.addEventListener('touchcancel', (e) => {
+            element.classList.remove('touch-active');
+          }, { passive: true });
+        });
+      }
+
+      // 处理触摸点击
+      handleTouchClick(element, event) {
+        if (element.classList.contains('work-card')) {
+          const link = element.querySelector('.read-button')?.href;
+          if (link) {
+            window.location.href = link;
+          }
+        }
+      }
+
+      // 添加滑动支持
+      addSwipeSupport() {
+        const container = document.querySelector('.nikto-container');
+        const body = document.body;
+        let startX = 0;
+        let startY = 0;
+        let startTime = 0;
+        let isHorizontalSwipe = false;
+
+        // 为整个页面添加触摸事件
+        body.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          startTime = Date.now();
+          this.isScrolling = false;
+          isHorizontalSwipe = false;
+        }, { passive: true });
+
+        body.addEventListener('touchmove', (e) => {
+          if (!this.isScrolling) {
+            const deltaY = Math.abs(e.touches[0].clientY - startY);
+            const deltaX = Math.abs(e.touches[0].clientX - startX);
+            
+            // 判断是水平滑动还是垂直滑动
+            if (deltaX > deltaY && deltaX > 20) {
+              isHorizontalSwipe = true;
+            } else if (deltaY > 10) {
+              this.isScrolling = true;
+            }
+          }
+        }, { passive: true });
+
+        body.addEventListener('touchend', (e) => {
+          const endX = e.changedTouches[0].clientX;
+          const endY = e.changedTouches[0].clientY;
+          const deltaX = endX - startX;
+          const deltaY = endY - startY;
+          const deltaTime = Date.now() - startTime;
+          
+          // 右滑检测：从左向右滑动，距离大于40px，时间小于500ms
+          if (isHorizontalSwipe && deltaTime < 500 && deltaX > 40) {
+            console.log('右滑检测成功:', { deltaX, deltaTime });
+            this.handleRightSwipe();
+            return;
+          }
+          
+          // 垂直滑动检测
+          if (!this.isScrolling && deltaTime < 300 && Math.abs(deltaY) > 50) {
+            this.handleSwipe(deltaY);
+          }
+        }, { passive: true });
+      }
+
+      // 处理滑动
+      handleSwipe(deltaY) {
+        const container = document.querySelector('.nikto-container');
+        const scrollAmount = deltaY > 0 ? -300 : 300; // 向上滑动向下滚动，向下滑动向上滚动
+        
+        container.scrollBy({
+          top: scrollAmount,
+          behavior: 'smooth'
+        });
+      }
+
+      // 处理右滑返回
+      handleRightSwipe() {
+        console.log('右滑返回触发');
+        // 直接返回，无需提示
+        window.location.href = 'public.html';
+      }
+
+      // 显示滑动提示
+      showSwipeHint() {
+        // 创建提示元素
+        const hint = document.createElement('div');
+        hint.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(0, 0, 0, 0.8);
+          color: var(--gold-light);
+          padding: 15px 25px;
+          border-radius: 5px;
+          font-size: 16px;
+          z-index: 10000;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        `;
+        hint.textContent = '← 返回酒单';
+        document.body.appendChild(hint);
+
+        // 显示提示
+        setTimeout(() => {
+          hint.style.opacity = '1';
+        }, 10);
+
+        // 隐藏提示
+        setTimeout(() => {
+          hint.style.opacity = '0';
+          setTimeout(() => {
+            document.body.removeChild(hint);
+          }, 300);
+        }, 1000);
+      }
+
+
+
+      // 优化滚动
+      optimizeScroll() {
+        const container = document.querySelector('.nikto-container');
+        
+        // 启用平滑滚动
+        container.style.scrollBehavior = 'smooth';
+        
+        // 触摸滚动优化
+        container.style.webkitOverflowScrolling = 'touch';
+        container.style.overflowScrolling = 'touch';
+        
+        // 确保全屏滚动
+        container.style.width = '100%';
+        container.style.height = '100%';
+        
+        // 防止页面整体滚动
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+      }
+    }
+
+    // 加载作品数据
+    async function loadWorks() {
+      try {
+        const response = await fetch('../../json/nikto.json');
+        const works = await response.json();
+        renderWorks(works);
+      } catch (error) {
+        console.error('Error loading works:', error);
+        document.getElementById('works-container').innerHTML = 
+          '<div class="error">加载失败，请刷新页面重试</div>';
+      }
+    }
+
+    // 渲染作品列表
+    function renderWorks(works) {
+      const container = document.getElementById('works-container');
+      
+      if (!works || works.length === 0) {
+        container.innerHTML = '<div class="error">暂无作品</div>';
+        return;
+      }
+
+      const worksHTML = works.map(work => `
+        <div class="work-card" onclick="openWork('${work.link}')">
+          <div class="work-header">
+            <h2 class="work-title">${work.title}</h2>
+            <div class="work-author">by ${work.author}</div>
+          </div>
+
+          <div class="work-meta">
+            <span class="rating-badge rating-${work.rating.toLowerCase()}">${work.rating}</span>
+            <span class="status-badge status-${work.status.toLowerCase()}">${getStatusText(work.status)}</span>
+          </div>
+
+          <div class="work-summary">"${work.summary}"</div>
+          
+          <div class="work-description">${work.description}</div>
+
+          ${work.warnings && work.warnings.length > 0 ? `
+            <div class="tags-section">
+              <div class="section-title">⚠️ 预警标签</div>
+              <div class="tags-list">
+                ${work.warnings.map(warning => 
+                  `<span class="tag warning-tag">${warning}</span>`
+                ).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          ${work.tags && work.tags.length > 0 ? `
+            <div class="tags-section">
+              <div class="section-title">🏷️ 标签</div>
+              <div class="tags-list">
+                ${work.tags.slice(0, 8).map(tag => 
+                  `<span class="tag">${tag}</span>`
+                ).join('')}
+                ${work.tags.length > 8 ? `<span class="tag">+${work.tags.length - 8} more</span>` : ''}
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="work-footer">
+            <div class="work-meta-info">
+              ${work.originalDate} • ${work.copyright} • ${work.length}
+            </div>
+            <a href="${work.link}" class="read-button" onclick="event.stopPropagation()">
+              阅读全文
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      container.innerHTML = worksHTML;
+    }
+
+    // 获取状态文本
+    function getStatusText(status) {
+      const statusMap = {
+        'Completed': '已完成',
+        'In Progress': '进行中',
+        'Planned': '计划中'
+      };
+      return statusMap[status] || status;
+    }
+
+    // 打开作品
+    function openWork(link) {
+      if (link) {
+        window.location.href = link;
+      }
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 设置全屏滚动
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      
+      loadWorks();
+      
+      // 初始化触摸优化
+      new NiktoTouchOptimization();
+    });
+  </script>
+
+  <!-- 加载底部导航栏 -->
+  <script src="../../js/footer.js"></script>
+</body>
+</html>

@@ -1,276 +1,138 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KÖNIGIN - 定制饮品</title>
-  <link rel="stylesheet" href="../../style/home.css">
-  <link rel="stylesheet" href="../../style/footer.css">
-  <link rel="stylesheet" href="../../style/mobile.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>KÖNIGIN — 合作联系</title>
+  <link rel="stylesheet" href="/style/commission.css" />
   <style>
-    .commission-container {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      color: #ffffff;
-      padding: 20px;
-      padding-top: 80px; /* 增加顶部间距，让内容往下移 */
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
+    body{
+      margin:0;background:#191919;color:#eaeaea;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial
     }
+    .wrap{max-width:720px;margin:0 auto;padding:24px 16px 120px}
+    h1{font-size:24px;margin:18px 0 16px}
+    form{display:grid;gap:14px}
 
-    .main-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 100px); /* 确保内容区域有足够高度 */
-    }
+    /* ✅ 统一改为“单列显示” */
+    .row{display:grid;gap:12px}
+    .row2{display:grid;grid-template-columns:1fr;gap:12px} /* 不管里面有几个子项，都一行一个 */
 
-    .commission-card {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 20px;
-      padding: 60px 40px;
-      text-align: center;
-      max-width: 500px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    label{font-size:13px;opacity:.85}
+    input,textarea,select{
+      width:100%;padding:12px 14px;border-radius:12px;
+      border:1px solid #333;background:#1f1f1f;color:#fff;outline:none
     }
+    textarea{min-height:140px;resize:vertical}
+    .hint{font-size:12px;opacity:.7}
+    .btn{
+      height:48px;border-radius:12px;background:#fff;color:#000;
+      border:0;font-weight:700;cursor:pointer
 
-    .commission-icon {
-      font-size: 80px;
-      margin-bottom: 30px;
-      opacity: 0.6;
-    }
+     }  /* ✅ 同意条款单行、垂直居中 */
+.agree-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* 水平居中 */
+  gap: 8px;
+  font-size: 13px;
+  white-space: nowrap;     /* 防止换行 */
+  width: 100%;              /* 占满容器宽度 */
+}
 
-    .commission-title {
-      font-size: 32px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #ff6b6b;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .commission-message {
-      font-size: 18px;
-      line-height: 1.6;
-      margin-bottom: 30px;
-      color: #e0e0e0;
-    }
-
-    .coming-soon {
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid rgba(255, 107, 107, 0.3);
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 30px;
-    }
-
-    .coming-soon h3 {
-      color: #ff6b6b;
-      margin-bottom: 15px;
-      font-size: 20px;
-    }
-
-    .coming-soon p {
-      color: #e0e0e0;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    .back-button {
-      background: linear-gradient(45deg, #4a4a4a, #6a6a6a);
-      color: white;
-      border: none;
-      padding: 15px 40px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .back-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-      background: linear-gradient(45deg, #5a5a5a, #7a7a7a);
-    }
-
-    .back-button:active {
-      transform: translateY(0);
-    }
-
-    .features-preview {
-      margin-top: 40px;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .features-preview h4 {
-      color: #ffd700;
-      margin-bottom: 15px;
-      font-size: 18px;
-    }
-
-    .features-list {
-      list-style: none;
-      padding: 0;
-      text-align: left;
-    }
-
-    .features-list li {
-      margin-bottom: 10px;
-      padding-left: 25px;
-      position: relative;
-      color: #e0e0e0;
-    }
-
-    .features-list li:before {
-      content: "🍷";
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-
-    @media (max-width: 768px) {
-      .commission-container {
-        padding-top: 60px; /* 移动端减少顶部间距 */
-      }
-      
-      .main-content {
-        min-height: calc(100vh - 80px); /* 移动端调整高度 */
-      }
-      
-      .commission-card {
-        padding: 40px 20px;
-        margin: 20px;
-      }
-      
-      .commission-title {
-        font-size: 24px;
-      }
-      
-      .commission-message {
-        font-size: 16px;
-      }
-      
-      .back-button {
-        padding: 12px 30px;
-        font-size: 16px;
-      }
-    }
-
-    /* 优化滚动体验 */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    /* 自定义滚动条样式 */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #2d2d2d;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #ffd700;
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #ffed4e;
-    }
+    
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .success,.error{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:14px}
+    .success{background:#123f27;border:1px solid #2a7f52;color:#bff3d4}
+    .error{background:#3f1212;border:1px solid #7f2a2a;color:#ffd3d3}
+    /* 蜜罐（反机器人） */
+    .hp{position:absolute;left:-9999px;visibility:hidden}
   </style>
 </head>
 <body>
-  <div class="commission-container">
-    <div class="main-content">
-      <div class="commission-card">
-        <div class="commission-icon">🍹</div>
-        
-        <h1 class="commission-title">定制饮品</h1>
-        
-        <p class="commission-message">
-          欢迎来到KÖNIGIN的定制饮品服务！
-          我们正在精心准备为您提供独一无二的饮品体验。
-        </p>
-        
-        <div class="coming-soon">
-          <h3>🚧 暂未开放</h3>
-          <p>
-            定制饮品功能正在开发中，预计将在不久的将来与您见面。
-            我们将为您提供个性化的饮品配方和专属调酒服务。
-          </p>
+  <div class="wrap">
+    <h1>合作联系 / Commission</h1>
+    <p class="hint">请尽可能完整地描述您的需求，不限定乙女或梦女性质，提交后表单会单向发送到写手邮箱（静态个人站不具备交互功能，不会披露您的个人信息）。</p>
+    <p class="hint">写手在绝大多数情况下会接受委托，仅在预算不符，或内容题材超出擅长范围时（如BL、生理GB取向等特殊题材）会婉拒。如在提交表单后三天内未收到写手的回复，请理解为该委托尚不适合展开，视为婉拒。</p>
+    <p class="hint">非常感谢您的理解与尊重，期待与您合作！</p>
+
+    <form id="commissionForm" method="post" action="/api/commission" novalidate>
+      <div class="row row2">
+        <div>
+          <label>称呼 / Name</label>
+          <input name="name" required placeholder="您的称呼" />
         </div>
-        
-        <a href="../public.html" class="back-button">
-          返回酒单
-        </a>
-        
-        <div class="features-preview">
-          <h4>🎯 即将推出的功能</h4>
-          <ul class="features-list">
-            <li>个性化饮品配方定制</li>
-            <li>专属调酒师一对一服务</li>
-            <li>独特风味组合推荐</li>
-            <li>私人收藏酒单管理</li>
-            <li>VIP会员专属权益</li>
-          </ul>
-        </div>
-        
-        <!-- 添加额外内容确保页面可滚动 -->
-        <div style="margin-top: 40px; padding: 20px; background: rgba(255, 255, 255, 0.02); border-radius: 10px;">
-          <h4 style="color: #ffd700; margin-bottom: 15px;">🌟 服务特色</h4>
-          <p style="color: #e0e0e0; line-height: 1.6; margin-bottom: 15px;">
-            我们的定制饮品服务将为您带来前所未有的体验，从原料选择到调制工艺，每一个细节都将精心打造。
-          </p>
-          <p style="color: #e0e0e0; line-height: 1.6;">
-            敬请期待，我们将为您呈现最完美的定制饮品体验！
-          </p>
+        <div>
+          <label>联系方式 / contact</label>
+          <input name="contact" type="contact" required placeholder="便于沟通的联系方式" />
         </div>
       </div>
-    </div>
+
+      <div class="row row2">
+        <div>
+          <label>过往是否有合作 / Has Collaborated</label>
+          <select name="type" required>
+            <option value="">请选择</option>
+            <option>是 / Yes</option>
+            <option>否 / No</option>
+          </select>
+        </div>
+        <div>
+          <label>预算（字数范围）/ Budget</label>
+          <input name="budget" placeholder="预算与字数范围（如 500 CNY / 5000 字）" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label>基本需求描述 / Brief</label>
+        <textarea name="message" required placeholder="如：乙女向、角色名称、偏好剧情（完整大纲非必须，提供关键信息即可）"></textarea>
+      </div>
+
+      <!-- 蜜罐字段（正常用户不会填写） -->
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" />
+
+      <div class="row">
+        <label class="agree-label">
+          <input type="checkbox" name="agree" required />
+          我同意提交的信息仅用于联系
+        </label>
+      </div>
+
+      <button class="btn" type="submit" id="submitBtn">提交</button>
+      <div id="msgBox"></div>
+    </form>
   </div>
 
-  <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
-  
-  <!-- 加载底部导航栏 -->
   <script>
-    // 动态加载footer
-    fetch('../../components/footer.html')
-      .then(response => response.text())
-      .then(html => {
-        // 将 ../page/ 替换为 ../../page/
-        let adjustedHtml = html.replace(/\.\.\/page\//g, '../../page/');
-        // 将 ../img/ 替换为 ../../img/
-        adjustedHtml = adjustedHtml.replace(/\.\.\/img\//g, '../../img/');
-        
-        const footerPlaceholder = document.getElementById('footer-placeholder');
-        if (footerPlaceholder) {
-          footerPlaceholder.innerHTML = adjustedHtml;
-          console.log('Footer loaded successfully in commission.html');
+    const form = document.getElementById('commissionForm');
+    const msgBox = document.getElementById('msgBox');
+    const btn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msgBox.innerHTML = '';
+      btn.disabled = true;
+
+      try {
+        const fd = new FormData(form);
+        const res = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: fd
+        });
+        const data = await res.json();
+        if (res.ok) {
+          msgBox.innerHTML = '<div class="success">已收到！我会尽快与您取得联系～</div>';
+          form.reset();
+        } else {
+          msgBox.innerHTML = '<div class="error">' + (data.error || '提交失败，请稍后再试。') + '</div>';
         }
-        
-        // 加载footer.js
-        const script = document.createElement('script');
-        script.src = '../../js/footer.js';
-        document.head.appendChild(script);
-      })
-      .catch(error => {
-        console.log('Footer加载失败:', error);
-        console.error('Error details:', error);
-      });
+      } catch (err) {
+        msgBox.innerHTML = '<div class="error">网络异常，请稍后再试。</div>';
+      } finally {
+        btn.disabled = false;
+      }
+    });
   </script>
 </body>
 </html>

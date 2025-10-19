@@ -1,460 +1,116 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KÖNIGIN - 渲染图集</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root { --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); }
+
+    html, body { width:100vw; height:100vh; background:#191919; font-family:Arial, sans-serif; overflow-x:hidden; }
+
+    .app-frame { width:100vw; height:100vh; position:relative; background:#191919; padding-top:var(--safe-top); padding-bottom:var(--safe-bottom); overflow-y:auto; overflow-x:hidden; }
+
+    .main-bg { position:fixed; inset:0; background:url('../../img/home_bg.png') center/cover no-repeat; z-index:1; opacity:.3; }
+
+    .gallery-container { 
+      position: relative; z-index: 2; 
+      padding: 20px 10px; padding-top: 80px; 
+      padding-bottom: calc(clamp(56px, 9vh, 72px) + env(safe-area-inset-bottom, 0px) + 50px); 
+      min-height: 100vh; 
     }
 
-    :root {
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    .gallery-title { text-align:center; color:#fff; font-size:28px; font-weight:700; margin-bottom:30px; text-shadow:0 2px 4px rgba(0,0,0,.5); }
+
+    .gallery-grid { display:flex; flex-direction:column; align-items:center; gap:20px; max-width:100vw; margin:0 auto; padding:0 20px; }
+
+    .gallery-item { position:relative; width:100%; max-width:400px; background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.1); overflow:hidden; transition:transform .3s, box-shadow .3s; cursor:pointer; }
+    .gallery-item:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.15); }
+
+    .gallery-item img { width:100%; aspect-ratio:1; object-fit:cover; display:block; transition:opacity .3s; }
+    .gallery-item:hover img { opacity:.9; }
+
+    .gallery-item-caption { padding: 12px 16px 20px 16px; color:#262626; }
+    /* 文字整块作为链接时 */
+    .caption-link { display:block; color:inherit; text-decoration:none; position:relative; z-index:2; }
+    /* 分行样式（不依赖 <br>） */
+    .cap-title { display:block; font-weight:700; font-size:16px; color:#000; margin-bottom:4px; }
+    .cap-text  { display:block; font-size:14px; line-height:1.5; }
+    .caption-link:hover .cap-title { text-decoration: underline; }
+
+    .loading-placeholder { width:100%; aspect-ratio:1; background:linear-gradient(45deg,#f5f5f5,#e8e8e8); display:flex; align-items:center; justify-content:center; color:#999; font-size:14px; }
+
+    .lightbox { position:fixed; inset:0; background:rgba(0,0,0,.95); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(10px); }
+    .lightbox.active { display:flex; }
+    .lightbox-content { position:relative; max-width:90vw; max-height:90vh; display:flex; flex-direction:column; align-items:center; }
+    .lightbox-image { max-width:100%; max-height:80vh; object-fit:contain; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+    .lightbox-close { position:absolute; top:-50px; right:0; background:rgba(255,255,255,.2); border:none; color:#fff; font-size:24px; width:40px; height:40px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .3s; }
+    .lightbox-close:hover { background:rgba(255,255,255,.3); }
+    .lightbox-info { margin-top:15px; color:#fff; text-align:center; font-size:16px; }
+
+    @media (max-width:768px){
+      .gallery-grid{ gap:16px; padding:0 16px; }
+      .gallery-item{ max-width:100%; }
+      .gallery-container{ padding: 15px 0; padding-top: 60px; padding-bottom: calc(clamp(56px, 9vh, 72px) + env(safe-area-inset-bottom, 0px) + 40px); }
+      .gallery-title{ font-size:24px; margin-bottom:20px; }
+      .cap-title{ font-size:15px; }
+      .cap-text{ font-size:13px; }
+      .lightbox-content{ max-width:95vw; max-height:95vh; }
+      .lightbox-image{ max-height:75vh; }
     }
 
-    html, body {
-      width: 100vw;
-      height: 100vh;
-      background: #191919;
-      font-family: 'Arial', sans-serif;
-      overflow-x: hidden;
+    @media (max-width:480px){
+      .gallery-grid{ gap:12px; padding:0 12px; }
+      .gallery-item{ max-width:100%; }
+      .gallery-title{ font-size:20px; }
+      .cap-title{ font-size:14px; }
+      .cap-text{ font-size:12px; }
     }
 
-    .app-frame {
-      width: 100vw;
-      height: 100vh;
-      position: relative;
-      background: #191919;
-      padding-top: var(--safe-top);
-      padding-bottom: var(--safe-bottom);
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+    .loading-spinner { width:40px; height:40px; border:3px solid #333; border-top:3px solid #fff; border-radius:50%; animation:spin 1s linear infinite; margin:20px auto; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-    .main-bg {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: url('../../img/home_bg.png') center center/cover no-repeat;
-      z-index: 1;
-      opacity: 0.3;
-    }
+    .empty-state { text-align:center; color:#666; padding:60px 20px; }
+    .empty-state h3 { font-size:24px; margin-bottom:15px; color:#888; }
+    .empty-state p { font-size:16px; line-height:1.5; }
 
-    .gallery-container {
-      position: relative;
-      z-index: 2;
-      padding: 20px 10px;
-      padding-top: 80px;
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + env(safe-area-inset-bottom, 0px) + 20px);
-      min-height: 100vh;
-      box-sizing: border-box;
-    }
+    /* 底部导航（保持你的现有风格） */
+    .bottom-nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); width: min(92vw, 430px); height: clamp(56px, 9vh, 72px); padding-bottom: env(safe-area-inset-bottom, 0px); background: #191919cc; backdrop-filter: blur(10px); border-radius: 20px; box-shadow: 0 -8px 24px rgba(0,0,0,.25); display: flex; justify-content: center; align-items: center; z-index: 999; }
+    .bottom-nav nav{ width:100%; max-width:380px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; gap: clamp(8px, 3vw, 16px); }
+    .bottom-nav .nav-btn{ width: clamp(48px, 12vw, 56px); height: clamp(48px, 12vw, 56px); border-radius: 16px; background: #232323; display:flex; justify-content:center; align-items:center; transition: background .2s, transform .15s; text-decoration: none; }
+    .bottom-nav .nav-btn:active, .bottom-nav .nav-btn.selected{ background:#343434; transform: translateY(-2px); }
+    .bottom-nav .nav-btn img{ width: clamp(24px, 7vw, 32px); height: clamp(24px, 7vw, 32px); object-fit: contain; display: block; }
 
-    .gallery-title {
-      text-align: center;
-      color: #ffffff;
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 30px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    }
-
-    .gallery-grid {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      max-width: 100vw;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    .gallery-item {
-      position: relative;
-      width: 100%;
-      max-width: 400px;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-
-    .gallery-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .gallery-item img {
-      width: 100%;
-      aspect-ratio: 1;
-      object-fit: cover;
-      display: block;
-      transition: opacity 0.3s ease;
-    }
-
-    .gallery-item:hover img {
-      opacity: 0.9;
-    }
-
-    .gallery-item-caption {
-      padding: 12px 16px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: #262626;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      word-wrap: break-word;
-      word-break: break-word;
-      hyphens: auto;
-      white-space: normal;
-    }
-
-    .gallery-item-caption strong {
-      font-size: 16px;
-      font-weight: 700;
-      color: #000000;
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .loading-placeholder {
-      width: 100%;
-      aspect-ratio: 1;
-      background: linear-gradient(45deg, #f5f5f5, #e8e8e8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #999;
-      font-size: 14px;
-      border-radius: 0;
-    }
-
-    /* Lightbox 样式 */
-    .lightbox {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-    }
-
-    .lightbox.active {
-      display: flex;
-    }
-
-    .lightbox-content {
-      position: relative;
-      max-width: 90vw;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .lightbox-image {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .lightbox-close {
-      position: absolute;
-      top: -50px;
-      right: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      font-size: 24px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s ease;
-    }
-
-    .lightbox-close:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .lightbox-info {
-      margin-top: 15px;
-      color: white;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    /* 响应式设计 */
-    @media (max-width: 768px) {
-      .gallery-grid {
-        gap: 16px;
-        padding: 0 16px;
-      }
-
-      .gallery-item {
-        max-width: 100%;
-      }
-
-      .gallery-container {
-        padding: 15px 0;
-        padding-top: 60px;
-      }
-
-      .gallery-title {
-        font-size: 24px;
-        margin-bottom: 20px;
-      }
-
-      .gallery-item-caption {
-        padding: 10px 12px;
-        font-size: 13px;
-      }
-
-      .gallery-item-caption strong {
-        font-size: 15px;
-        font-weight: 700;
-        color: #000000;
-        display: block;
-        margin-bottom: 3px;
-      }
-
-      .lightbox-content {
-        max-width: 95vw;
-        max-height: 95vh;
-      }
-
-      .lightbox-image {
-        max-height: 75vh;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .gallery-grid {
-        gap: 12px;
-        padding: 0 12px;
-      }
-
-      .gallery-item {
-        max-width: 100%;
-      }
-
-      .gallery-title {
-        font-size: 20px;
-      }
-
-      .gallery-item-caption {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-
-      .gallery-item-caption strong {
-        font-size: 14px;
-        font-weight: 700;
-        color: #000000;
-        display: block;
-        margin-bottom: 2px;
-      }
-    }
-
-    /* 加载动画 */
-    .loading-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid #333;
-      border-top: 3px solid #fff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* 空状态 */
-    .empty-state {
-      text-align: center;
-      color: #666;
-      padding: 60px 20px;
-    }
-
-    .empty-state h3 {
-      font-size: 24px;
-      margin-bottom: 15px;
-      color: #888;
-    }
-
-    .empty-state p {
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
-    /* Footer 样式 */
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
-      
-      width: min(92vw, 430px);
-      height: clamp(56px, 9vh, 72px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      
-      background: #191919cc;
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      box-shadow: 0 -8px 24px rgba(0,0,0,.25);
-      
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-
-    .bottom-nav nav {
-      width: 100%;
-      max-width: 380px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: clamp(8px, 3vw, 16px);
-    }
-
-    .bottom-nav .nav-btn {
-      width: clamp(48px, 12vw, 56px);
-      height: clamp(48px, 12vw, 56px);
-      border-radius: 16px;
-      background: #232323;
-      display: flex; 
-      justify-content: center; 
-      align-items: center;
-      transition: background .2s, transform .15s;
-      text-decoration: none;
-    }
-
-    .bottom-nav .nav-btn:active,
-    .bottom-nav .nav-btn.selected {
-      background: #343434;
-      transform: translateY(-2px);
-    }
-
-    .bottom-nav .nav-btn img {
-      width: clamp(24px, 7vw, 32px);
-      height: clamp(24px, 7vw, 32px);
-      object-fit: contain;
-      display: block;
-    }
-
-    /* 确保页面内容不被footer遮挡 */
-    body {
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + env(safe-area-inset-bottom, 0px) + 20px);
-    }
-
-    /* 滑动返回指示器样式 */
-    #swipe-back-indicator {
-      position: fixed;
-      top: 50%;
-      left: 20px;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 10px 15px;
-      border-radius: 20px;
-      font-size: 14px;
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    /* 页面滑动返回动画 */
-    .swipe-back-transition {
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* 左边缘滑动提示 */
-    .swipe-hint {
-      position: fixed;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 4px;
-      height: 60px;
-      background: linear-gradient(to right, rgba(255, 255, 255, 0.3), transparent);
-      border-radius: 0 2px 2px 0;
-      z-index: 100;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .swipe-hint.show {
-      opacity: 1;
-    }
-
-    @media (max-width: 768px) {
-      #swipe-back-indicator {
-        left: 15px;
-        padding: 8px 12px;
-        font-size: 12px;
-      }
-    }
-
-    /* 底部遮罩 */
-    .bottom-mask {
-      position: absolute;
-      left: 0; 
-      bottom: 0;
-      width: 100%;
-      height: 92px;  /* 可覆盖footer高度+阴影 */
-      background: #191919;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      z-index: 3;
-      pointer-events: none;
-    }
+    /* 左滑返回提示 */
+    #swipe-back-indicator{ position:fixed; top:50%; left:20px; transform:translateY(-50%); background:rgba(0,0,0,.8); color:#fff; padding:10px 15px; border-radius:20px; font-size:14px; z-index:1000; opacity:0; transition:opacity .2s; pointer-events:none; }
+    .swipe-hint{ position:fixed; left:0; top:50%; transform:translateY(-50%); width:4px; height:60px; background:linear-gradient(to right, rgba(255,255,255,.3), transparent); border-radius:0 2px 2px 0; z-index:100; opacity:0; transition:opacity .3s; }
+    .swipe-hint.show{ opacity:1; }
   </style>
 </head>
 <body>
   <div class="app-frame">
     <div class="main-bg"></div>
-    
     <div class="gallery-container">
       <h1 class="gallery-title">渲染图集</h1>
-      
       <div class="gallery-grid" id="galleryGrid">
         <div class="loading-spinner"></div>
       </div>
     </div>
-
-    <div class="bottom-mask"></div>
   </div>
 
-  <!-- Footer 占位符 -->
-  <div id="footer-placeholder"></div>
+  <!-- 底部导航栏 -->
+  <div class="bottom-nav">
+    <nav>
+      <a href="../sidebar.html" class="nav-btn"><img src="../../svg/bottombar/sidebar.svg" alt="菜单"></a>
+      <a href="../home.html" class="nav-btn"><img src="../../svg/bottombar/index.svg" alt="首页"></a>
+      <a href="../notification.html" class="nav-btn"><img src="../../svg/bottombar/notification.svg" alt="通知"></a>
+      <a href="../favourite.html" class="nav-btn"><img src="../../svg/bottombar/favourite.svg" alt="收藏"></a>
+    </nav>
+  </div>
 
-  <!-- 左边缘滑动提示 -->
+  <div id="footer-placeholder"></div>
   <div class="swipe-hint" id="swipeHint"></div>
 
   <!-- Lightbox -->
@@ -469,13 +125,13 @@
   <script>
     class RenderGallery {
       constructor() {
-        this.galleryGrid = document.getElementById('galleryGrid');
-        this.lightbox = document.getElementById('lightbox');
+        this.galleryGrid   = document.getElementById('galleryGrid');
+        this.lightbox      = document.getElementById('lightbox');
         this.lightboxImage = document.getElementById('lightboxImage');
-        this.lightboxInfo = document.getElementById('lightboxInfo');
+        this.lightboxInfo  = document.getElementById('lightboxInfo');
         this.lightboxClose = document.getElementById('lightboxClose');
-        
         this.images = [];
+        this.currentIndex = 0;
         this.init();
       }
 
@@ -485,21 +141,19 @@
         this.bindEvents();
       }
 
-      // 新增：拉取清单
       async fetchManifest() {
-        const url = `../../json/render.json?ts=${Date.now()}`; // 防缓存
+        const url = `../../json/render.json?ts=${Date.now()}`;
         const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.json();
       }
 
-      // 替换：从 JSON 映射到内部 this.images
       async loadImages() {
         try {
           const manifest = await this.fetchManifest();
           this.images = (manifest.items || []).map(it => ({
-            src: it.src,                         // 大图（Lightbox）
-            thumb: it.thumb || it.src,           // 小图（网格）
+            src: it.src,
+            thumb: it.thumb || it.src,
             alt: it.title || this.generateAltText(it.id || it.src),
             title: it.title || "",
             caption: it.caption || "",
@@ -508,7 +162,8 @@
             created_at: it.created_at || "",
             width: it.width,
             height: it.height,
-            nsfw: !!it.nsfw
+            nsfw: !!it.nsfw,
+            articleUrl: it.articleUrl || null
           }));
         } catch (err) {
           console.error('加载清单失败:', err);
@@ -517,19 +172,16 @@
       }
 
       generateAltText(filename) {
-        // 从文件名生成 alt 文本
-        const nameWithoutExt = filename.replace(/\.[^/.]+$/, "");
+        const nameWithoutExt = (filename || '').toString().replace(/\.[^/.]+$/, "");
         return nameWithoutExt.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       }
 
       renderGallery() {
-        if (this.images.length === 0) {
+        if (!Array.isArray(this.images) || this.images.length === 0) {
           this.showEmptyState();
           return;
         }
-
         this.galleryGrid.innerHTML = '';
-        
         this.images.forEach((image, index) => {
           const galleryItem = this.createGalleryItem(image, index);
           this.galleryGrid.appendChild(galleryItem);
@@ -540,47 +192,68 @@
         const item = document.createElement('div');
         item.className = 'gallery-item';
         item.dataset.index = index;
-        
+
         const img = document.createElement('img');
-        img.src = image.thumb;                // 👈 列表用小图
+        img.src = image.thumb;
         img.alt = image.alt;
         img.loading = 'lazy';
-        
-        // 添加加载状态
+
         const placeholder = document.createElement('div');
         placeholder.className = 'loading-placeholder';
         placeholder.textContent = '加载中...';
-        
-        // 添加图片说明文字区域
-        const caption = document.createElement('div');
-        caption.className = 'gallery-item-caption';
-        
-        // 创建标题和配文内容：黑体加粗的title——（分行）——caption
-        const title = image.title || image.alt || '渲染作品';
-        const captionText = image.caption || '';
-        
-        if (captionText) {
-          // 将换行符转换为 <br> 标签，保持分段显示
-          const formattedCaption = captionText.replace(/\n/g, '<br>');
-          caption.innerHTML = `<strong>${title}</strong><br>${formattedCaption}`;
+
+        const captionWrap = document.createElement('div');
+        captionWrap.className = 'gallery-item-caption';
+
+        const titleText   = image.title || image.alt || '渲染作品';
+        const captionHTML = image.caption ? image.caption.replace(/\n/g, '<br>') : '';
+
+        if (image.articleUrl) {
+          // 文字整块可点击跳转章节
+          const link = document.createElement('a');
+          link.href = image.articleUrl;
+          link.className = 'caption-link';
+          link.target = '_self';
+
+          const t = document.createElement('span');
+          t.className = 'cap-title';
+          t.textContent = titleText;
+
+          const c = document.createElement('span');
+          c.className = 'cap-text';
+          c.innerHTML = captionHTML;
+
+          link.appendChild(t);
+          if (captionHTML) link.appendChild(c);
+          captionWrap.appendChild(link);
+
+          // 显式处理跳转，避免父级点击导致打开大图
+          link.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            window.location.href = link.href;
+          });
         } else {
-          caption.innerHTML = `<strong>${title}</strong>`;
+          // 无章节链接，仅显示文字（分行）
+          const t = document.createElement('span');
+          t.className = 'cap-title';
+          t.textContent = titleText;
+          captionWrap.appendChild(t);
+          if (captionHTML) {
+            const c = document.createElement('span');
+            c.className = 'cap-text';
+            c.innerHTML = captionHTML;
+            captionWrap.appendChild(c);
+          }
         }
-        
+
         item.appendChild(placeholder);
         item.appendChild(img);
-        item.appendChild(caption);
-        
-        // 图片加载完成后隐藏占位符
-        img.onload = () => {
-          placeholder.style.display = 'none';
-        };
-        
-        img.onerror = () => {
-          placeholder.textContent = '加载失败';
-          placeholder.style.color = '#ff6b6b';
-        };
-        
+        item.appendChild(captionWrap);
+
+        img.onload  = () => { placeholder.style.display = 'none'; };
+        img.onerror = () => { placeholder.textContent = '加载失败'; placeholder.style.color = '#ff6b6b'; };
+
         return item;
       }
 
@@ -594,252 +267,29 @@
       }
 
       bindEvents() {
-        // 点击图片打开 lightbox
+        // 点标题/配文链接 => 让浏览器跳转；其它区域/图片 => 打开大图
         this.galleryGrid.addEventListener('click', (e) => {
+          if (e.target.closest('.caption-link')) return;
           const galleryItem = e.target.closest('.gallery-item');
-          if (galleryItem) {
-            const index = parseInt(galleryItem.dataset.index);
-            this.openLightbox(index);
+          if (!galleryItem) return;
+          if (e.target.tagName === 'IMG' || !e.target.closest('.gallery-item-caption')) {
+            const index = parseInt(galleryItem.dataset.index, 10);
+            if (!Number.isNaN(index)) this.openLightbox(index);
           }
         });
 
-        // 关闭 lightbox
-        this.lightboxClose.addEventListener('click', () => {
-          this.closeLightbox();
-        });
+        this.lightboxClose.addEventListener('click', () => this.closeLightbox());
+        this.lightbox.addEventListener('click', (e) => { if (e.target === this.lightbox) this.closeLightbox(); });
 
-        // 点击背景关闭 lightbox
-        this.lightbox.addEventListener('click', (e) => {
-          if (e.target === this.lightbox) {
-            this.closeLightbox();
-          }
-        });
-
-        // ESC 键关闭 lightbox
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape' && this.lightbox.classList.contains('active')) {
-            this.closeLightbox();
-          }
+          if (e.key === 'Escape' && this.lightbox.classList.contains('active')) this.closeLightbox();
         });
 
-        // 键盘导航
         document.addEventListener('keydown', (e) => {
           if (!this.lightbox.classList.contains('active')) return;
-          
-          if (e.key === 'ArrowLeft') {
-            this.previousImage();
-          } else if (e.key === 'ArrowRight') {
-            this.nextImage();
-          }
+          if (e.key === 'ArrowLeft') this.previousImage();
+          else if (e.key === 'ArrowRight') this.nextImage();
         });
-
-        // 移动端触摸优化
-        this.addMobileOptimizations();
-      }
-
-      addMobileOptimizations() {
-        // 为图集项目添加触摸反馈
-        this.galleryGrid.addEventListener('touchstart', (e) => {
-          const galleryItem = e.target.closest('.gallery-item');
-          if (galleryItem) {
-            galleryItem.style.transform = 'scale(0.95)';
-            galleryItem.style.transition = 'transform 0.1s ease';
-          }
-        }, { passive: true });
-
-        this.galleryGrid.addEventListener('touchend', (e) => {
-          const galleryItem = e.target.closest('.gallery-item');
-          if (galleryItem) {
-            galleryItem.style.transform = '';
-            galleryItem.style.transition = 'transform 0.3s ease';
-          }
-        }, { passive: true });
-
-        this.galleryGrid.addEventListener('touchcancel', (e) => {
-          const galleryItem = e.target.closest('.gallery-item');
-          if (galleryItem) {
-            galleryItem.style.transform = '';
-            galleryItem.style.transition = 'transform 0.3s ease';
-          }
-        }, { passive: true });
-
-        // 为 lightbox 添加滑动切换功能
-        if (window.MobileOptimization && window.mobileOptimization) {
-          window.mobileOptimization.optimizeSwipeEvents(this.lightbox, {
-            onSwipeLeft: () => this.nextImage(),
-            onSwipeRight: () => this.previousImage(),
-            onSwipeUp: () => this.closeLightbox(),
-            minSwipeDistance: 50,
-            maxSwipeTime: 300
-          });
-        }
-
-        // 添加页面级别的左滑返回功能
-        this.addSwipeBackNavigation();
-
-        // 防止双击缩放
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', (e) => {
-          const now = (new Date()).getTime();
-          if (now - lastTouchEnd <= 300) {
-            e.preventDefault();
-          }
-          lastTouchEnd = now;
-        }, false);
-
-        // 优化滚动性能
-        this.galleryGrid.style.webkitOverflowScrolling = 'touch';
-        this.galleryGrid.style.overflowScrolling = 'touch';
-      }
-
-      addSwipeBackNavigation() {
-        let startX = 0;
-        let startY = 0;
-        let startTime = 0;
-        let isSwipeBackActive = false;
-        let swipeHintTimeout = null;
-
-        // 显示滑动提示
-        this.showSwipeHint();
-
-        // 页面级别的触摸事件监听
-        document.addEventListener('touchstart', (e) => {
-          // 如果 lightbox 打开，不处理页面级别的滑动
-          if (this.lightbox.classList.contains('active')) {
-            return;
-          }
-
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
-          startTime = Date.now();
-          isSwipeBackActive = false;
-
-          // 隐藏滑动提示
-          this.hideSwipeHint();
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-          if (this.lightbox.classList.contains('active')) {
-            return;
-          }
-
-          const currentX = e.touches[0].clientX;
-          const currentY = e.touches[0].clientY;
-          const deltaX = currentX - startX;
-          const deltaY = currentY - startY;
-
-          // 检测是否为水平右滑（从左边缘开始，与public.html的滑动检测逻辑一致）
-          if (startX < 50 && deltaX > 20 && Math.abs(deltaY) < 100) {
-            isSwipeBackActive = true;
-            // 添加视觉反馈
-            this.showSwipeBackIndicator(deltaX);
-          }
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-          if (this.lightbox.classList.contains('active')) {
-            return;
-          }
-
-          const endX = e.changedTouches[0].clientX;
-          const endY = e.changedTouches[0].clientY;
-          const deltaX = endX - startX;
-          const deltaY = endY - startY;
-          const deltaTime = Date.now() - startTime;
-
-          // 隐藏滑动指示器
-          this.hideSwipeBackIndicator();
-
-          // 检查是否满足右滑返回条件（与public.html的滑动检测逻辑一致）
-          if (isSwipeBackActive && 
-              deltaX > 50 && 
-              Math.abs(deltaY) < 100 && 
-              deltaTime < 500) {
-            this.navigateBack();
-          } else {
-            // 如果没有触发返回，延迟显示滑动提示
-            swipeHintTimeout = this.scheduleSwipeHint(swipeHintTimeout);
-          }
-        }, { passive: true });
-
-        document.addEventListener('touchcancel', (e) => {
-          this.hideSwipeBackIndicator();
-          swipeHintTimeout = this.scheduleSwipeHint(swipeHintTimeout);
-        }, { passive: true });
-      }
-
-      showSwipeHint() {
-        const hint = document.getElementById('swipeHint');
-        if (hint) {
-          hint.classList.add('show');
-        }
-      }
-
-      hideSwipeHint() {
-        const hint = document.getElementById('swipeHint');
-        if (hint) {
-          hint.classList.remove('show');
-        }
-      }
-
-      scheduleSwipeHint(timeoutRef) {
-        // 清除之前的定时器
-        if (timeoutRef) {
-          clearTimeout(timeoutRef);
-        }
-        
-        // 延迟显示滑动提示
-        return setTimeout(() => {
-          this.showSwipeHint();
-        }, 2000);
-      }
-
-      showSwipeBackIndicator(deltaX) {
-        // 创建或更新滑动指示器
-        let indicator = document.getElementById('swipe-back-indicator');
-        if (!indicator) {
-          indicator = document.createElement('div');
-          indicator.id = 'swipe-back-indicator';
-          indicator.innerHTML = '← 返回';
-          indicator.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 20px;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            pointer-events: none;
-          `;
-          document.body.appendChild(indicator);
-        }
-
-        // 根据滑动距离调整透明度
-        const opacity = Math.min(deltaX / 100, 1);
-        indicator.style.opacity = opacity;
-      }
-
-      hideSwipeBackIndicator() {
-        const indicator = document.getElementById('swipe-back-indicator');
-        if (indicator) {
-          indicator.style.opacity = '0';
-        }
-      }
-
-      navigateBack() {
-        // 添加返回动画
-        document.body.style.transition = 'transform 0.3s ease';
-        document.body.style.transform = 'translateX(100%)';
-        
-        // 延迟跳转，让动画完成
-        setTimeout(() => {
-          window.location.href = 'public.html';
-        }, 300);
       }
 
       openLightbox(index) {
@@ -847,43 +297,26 @@
         const image = this.images[index];
         this.currentIndex = index;
 
-        this.lightboxImage.src = image.src; // 👈 用大图
+        this.lightboxImage.src = image.src;
         this.lightboxImage.alt = image.alt;
 
-        const infoParts = [image.title || image.alt];
-        if (image.author) infoParts.push(`by ${image.author}`);
-        if (image.created_at) infoParts.push(image.created_at);
-        this.lightboxInfo.textContent = `${infoParts.filter(Boolean).join(' · ')} (${index+1}/${this.images.length})`;
+        const parts = [image.title || image.alt];
+        if (image.author) parts.push(`by ${image.author}`);
+        if (image.created_at) parts.push(image.created_at);
+        this.lightboxInfo.textContent = `${parts.filter(Boolean).join(' · ')} (${index+1}/${this.images.length})`;
 
         this.lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
 
-      closeLightbox() {
-        this.lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-
-      previousImage() {
-        if (this.currentIndex > 0) {
-          this.openLightbox(this.currentIndex - 1);
-        }
-      }
-
-      nextImage() {
-        if (this.currentIndex < this.images.length - 1) {
-          this.openLightbox(this.currentIndex + 1);
-        }
-      }
+      closeLightbox(){ this.lightbox.classList.remove('active'); document.body.style.overflow=''; }
+      previousImage(){ if (this.currentIndex > 0) this.openLightbox(this.currentIndex - 1); }
+      nextImage(){ if (this.currentIndex < this.images.length - 1) this.openLightbox(this.currentIndex + 1); }
     }
 
-    // 初始化图集
-    document.addEventListener('DOMContentLoaded', () => {
-      new RenderGallery();
-    });
+    document.addEventListener('DOMContentLoaded', () => new RenderGallery());
   </script>
 
-  <!-- 引入 Footer 和移动端优化脚本 -->
   <script src="../../js/footer.js"></script>
   <script src="../../js/mobile-optimization.js"></script>
 </body>
