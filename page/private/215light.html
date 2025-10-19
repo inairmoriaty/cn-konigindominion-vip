@@ -112,7 +112,7 @@
       z-index: 10;
       display: block;
       cursor: pointer;
-      top: 58%; /* 按钮位置，大约75%从顶部 */
+      top: 65%; /* 按钮位置，大约75%从顶部 */
       left: 50%; /* 按钮位置，居中 */
       transform: translate(-50%, -50%);
     }
@@ -169,6 +169,75 @@
     }
 
     
+        /* 客单滚轮选项区域 */
+        .guest-list-wrapper{
+      position: absolute;
+      left: 53%;
+      transform: translateX(-50%);
+      width: 180px;
+      top: 22%;
+      height: 240px;
+      z-index: 20;
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .guest-list-wrapper.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .guest-list{
+      position: relative;
+      flex: 1 1 auto;
+      height: 100%;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
+    }
+    
+    .guest-list-viewport{
+      height: 288px;
+      overflow-y: auto;
+      padding-right: 8px;
+      scrollbar-width: none;
+    }
+    
+    .guest-list-viewport::-webkit-scrollbar{ display: none; }
+    
+    .guest-item{
+      height: 36px;
+      margin: 16px 0;
+      width: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+      font-family: "SimSun", "宋体", serif; /* 改为宋体 */
+      letter-spacing: .5px;
+      user-select: none;
+      pointer-events: auto; /* 改为可点击 */
+      cursor: pointer; /* 添加鼠标指针 */
+      background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
+      border: 1px solid #696969;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
+      transition: all 0.2s ease; /* 添加过渡效果 */
+    }
+    
+    .guest-item:hover {
+      background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
+      transform: scale(1.02);
+    }
+    
+    .guest-item:active {
+      transform: scale(0.98);
+    }
     
 
     .interaction-btn:active img {
@@ -199,6 +268,15 @@
       <img src="../../img/default btn.png" alt="Interaction Button"/>
     </a>
       
+    <!-- 客单滚轮选项（默认隐藏） -->
+    <div class="guest-list-wrapper" id="guestList">
+      <div class="guest-list">
+        <div class="guest-list-viewport" id="guestViewport">
+          <div class="guest-item" data-article="home.html">Home</div>
+          <div class="guest-item" data-article="three.html">几个你</div>
+        </div>
+      </div>
+    </div>
     
     <div class="bottom-mask"></div>
   </div>
@@ -210,7 +288,7 @@
 <script>
 // 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('oatmeal page loaded');
+  console.log('light page loaded');
   
   // 检查footer是否加载
   setTimeout(() => {
@@ -226,6 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 交互按钮点击事件
   const interactionButton = document.getElementById('interactionButton');
+  const guestList = document.getElementById('guestList');
+  let isGuestListVisible = false;
   
   if (interactionButton) {
     console.log('Interaction button found, adding event listeners');
@@ -233,10 +313,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const handleInteractionClick = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Interaction button clicked/touched - redirecting to jealous.html');
+      console.log('Interaction button clicked/touched');
       
-      // 直接跳转到 unsatisfied.html
-      window.location.href = '../../article/public/home.html';
+      // 切换滚轮选项的显示/隐藏
+      if (isGuestListVisible) {
+        guestList.classList.remove('show');
+        isGuestListVisible = false;
+        console.log('Guest list hidden');
+      } else {
+        guestList.classList.add('show');
+        isGuestListVisible = true;
+        console.log('Guest list shown');
+      }
     };
     
     // 确保按钮可以接收事件
@@ -250,6 +338,45 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Interaction button not found');
   }
   
+  // 点击空白收起客单滚轮
+  const dismissGuest = (e) => {
+    if (!isGuestListVisible) return;
+    const clickOnButton = interactionButton && interactionButton.contains(e.target);
+    const clickOnPanel = guestList && guestList.contains(e.target);
+    if (!clickOnButton && !clickOnPanel) {
+      isGuestListVisible = false;
+      guestList.classList.remove('show');
+    }
+  };
+  document.addEventListener('click', dismissGuest);
+  document.addEventListener('touchend', dismissGuest);
+  
+  // 保存article层级会话的函数
+  function saveArticleHierarchySession() {
+    const session = {
+      timestamp: Date.now(),
+      expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
+    };
+    sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
+    console.log('Article层级会话已保存');
+  }
+  
+  // 滚轮选项点击跳转
+  const guestItems = document.querySelectorAll('.guest-item');
+  guestItems.forEach(item => {
+    const handleGuestItemClick = function() {
+      const articleFile = this.getAttribute('data-article');
+      if (articleFile) {
+        console.log('Jumping to article:', articleFile);
+        // 保存article层级会话后跳转
+        saveArticleHierarchySession();
+        window.location.href = `../../article/private/${articleFile}`;
+      }
+    };
+    
+    item.addEventListener('click', handleGuestItemClick);
+    item.addEventListener('touchend', handleGuestItemClick);
+  });
   
   // 初始化页面元素检查
   console.log('=== Page Elements Check ===');
