@@ -1,8 +1,8 @@
 // /api/commission.js  —— Edge-friendly（直接调用 Resend REST API）
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RECIPIENT = process.env.COMMISSION_INBOX;      // 你的收件邮箱
-const FROM = process.env.COMMISSION_FROM || 'KONIGIN <onboarding@resend.dev>'; 
-// ↑ 未验证自域名前，用 onboarding@resend.dev；验证域名后改成：'KONIGIN <commission@konigindominion.com>'
+const FROM = process.env.COMMISSION_FROM || 'KONIGIN <onboarding@resend.dev>';
+// ↑ 域名验证后，把 Vercel 的 COMMISSION_FROM 改成：'KONIGIN <commission@konigindominion.com>'
 
 export const config = {
   runtime: 'edge',
@@ -53,21 +53,21 @@ export default async function handler(req) {
     // 表单数据
     const form = await req.formData();
 
-    // 蜜罐
+    // 蜜罐：正常用户不会填写
     if (form.get('website')) {
       return new Response(JSON.stringify({ ok: true }), { status: 200 });
     }
 
-    const name = sanitize(form.get('name'));
-    const contact = sanitize(form.get('contact'));
-    const type = sanitize(form.get('type'));
-    const budget = sanitize(form.get('budget'));
+    const name     = sanitize(form.get('name'));
+    const contact  = sanitize(form.get('contact'));
+    const type     = sanitize(form.get('type'));
+    const budget   = sanitize(form.get('budget'));
     const deadline = sanitize(form.get('deadline'));
-    const refs = sanitize(form.get('refs'));
-    const message = sanitize(form.get('message'));
-    const agree = form.get('agree');
+    const refs     = sanitize(form.get('refs'));
+    const message  = sanitize(form.get('message'));
+    const agree    = form.get('agree');
 
-    // 基础校验（放宽 contact，不强制邮箱）
+    // 基础校验（contact 不强制为邮箱；若是邮箱则用于 reply_to）
     if (!name || !contact || !message || !agree) {
       return new Response(JSON.stringify({ error: '请填写必填字段：称呼 / 联系方式 / 需求描述 / 同意条款' }), { status: 400 });
     }
@@ -76,7 +76,7 @@ export default async function handler(req) {
     }
 
     const subject = `【Commission】${name} - ${type || '未选择类型'}`;
-    const lines = [
+    const textLines = [
       `称呼: ${name}`,
       `联系方式: ${contact}`,
       `类型: ${type || '-'}`,
@@ -86,7 +86,7 @@ export default async function handler(req) {
       `——`,
       message,
       `——`,
-      `时间: ${new Date().toLocaleString('zh-CN', { hour12: false })}`
+      `时间: ${new Date().toLocaleString('zh-CN', { hour12: false })}`,
     ];
 
     const html = `
@@ -105,7 +105,6 @@ export default async function handler(req) {
       </div>
     `;
 
-    // 如果 contact 是邮箱就作为 reply_to；否则不设置
     const replyTo = isEmail(contact) ? contact : undefined;
 
     await sendEmail({
@@ -113,13 +112,12 @@ export default async function handler(req) {
       to: RECIPIENT,
       subject,
       html,
-      text: lines.join('\n'),
+      text: textLines.join('\n'),
       reply_to: replyTo,
     });
 
     return new Response(JSON.stringify({ ok: true }), { status: 200 });
   } catch (err) {
-    // 可选：把 err.message 打到 Vercel Logs 中
     console.error(err);
     return new Response(JSON.stringify({ error: '委托表单发送失败，请稍后再试。' }), { status: 500 });
   }

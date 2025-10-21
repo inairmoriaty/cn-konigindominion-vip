@@ -16,12 +16,14 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
- html, body {
+  html, body {
       margin: 0; padding: 0;
       width: 100vw;
-      height: 100vh;
+      min-height: 100vh;
       background: #191919;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .app-frame {
       width: 100vw;
@@ -35,7 +37,6 @@
       box-shadow: none;
       background: #191919;
       padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
 
       /* 完全填充屏幕 */
       top: 0; left: 0; right: 0; bottom: 0;
@@ -472,6 +473,7 @@
     </style>
 </head>
 <body>
+  <div class="page-container">
   <div class="app-frame">
     <div class="main-bg"></div>
     <div class="title"></div>
@@ -480,6 +482,7 @@
             aria-label="点击打开酒单" 
             title="点击查看酒单">
     </button>
+  </div>
   </div>
   <!-- 如果你底部有圆角遮罩可以用 -->
   <div class="bottom-mask"></div>

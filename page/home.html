@@ -14,12 +14,14 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
- html, body {
+    html, body {
       margin: 0; padding: 0;
       width: 100vw;
-      height: 100vh;
+      min-height: 100vh;              /* 避免 100vh 在 Safari 的跳动问题 */
       background: #191919;
-      overflow: hidden;
+      overflow-x: hidden;             /* 仅禁止横向滚动 */
+      overflow-y: auto;               /* 允许纵向滚动 */
+      -webkit-overflow-scrolling: touch; /* 惯性滚动 */
     }
     .app-frame {
       width: 100%;
@@ -32,7 +34,6 @@
       box-shadow: none;
       background: #191919;
       padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
 
       /* 完全填充屏幕 */
       top: 0; left: 0; right: 0; bottom: 0;
@@ -241,6 +242,7 @@
     </style>
 </head>
 <body>
+  <div class="page-container">
   <div class="app-frame">
     <div class="main-bg"></div>
     <div class="home-title"></div>
@@ -287,7 +289,7 @@
     
     <div class="bottom-mask"></div>
   </div>
-
+  </div>
   <!-- Footer自动插入点 -->
   <div id="footer-placeholder"></div>
 <script src="../js/footer.js"></script>

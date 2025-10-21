@@ -8,58 +8,52 @@
   <link rel="stylesheet" href="/style/footer.css">
   <link rel="stylesheet" href="/style/mobile.css">
   <style>
-    :root {
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --vh: 1vh;
+}
+@supports (height: 100svh){
+  :root{ --vh: 1svh; }
+}
 
-    html, body {
-      margin: 0; 
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #191919;
-      overflow: hidden;
-    }
+html, body{
+  margin:0; padding:0;
+  width:100%;
+  min-height: calc(var(--vh) * 100);
+  background:#191919;
+  overflow-x:hidden;       /* 只禁水平滚动 */
+  overflow-y:auto;         /* 允许竖向滚动 */
+}
 
-    .app-frame {
-      width: 100%;
-      height: 100vh;
-      max-width: 1440px;
-      position: relative;
-      margin: 0 auto;
-      border-radius: 0;
-      overflow: hidden;
-      box-shadow: none;
-      background: #191919;
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      top: 0; 
-      left: 0; 
-      right: 0; 
-      bottom: 0;
-      box-sizing: border-box;
-    }
+
+.app-frame{
+  width:100%;
+  max-width:1440px;
+  min-height: calc(var(--vh) * 100);
+  position:relative;
+  margin:0 auto;
+  box-shadow:none;
+  background:#191919;
+  border-radius:0;
+  overflow:visible;        /* 让内部元素能显示/滚动 */
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom); /* 底栏额外留白由 footer.css 统一处理 */
+  box-sizing:border-box;
+}
 
     /* 静态背景容器 */
-    .static-bg-container {
-      position: absolute;
-      left: 0; 
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-    }
+.static-bg-container,
+.bg-static{
+  position:absolute;
+  left:0; top:0;
+  width:100%; height:100%;
+  overflow:hidden;
+  z-index:1;
+}
 
     /* 背景图片容器 - 静态显示 */
-    .bg-static {
-      position: absolute;
-      left: 0; 
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('../../img/guest/guest_bg.png');
+.bg-static{      background-image: url('../../img/guest/guest_bg.png');
       background-size: cover; /* 覆盖整个容器 */
       background-position: center center;
       background-repeat: no-repeat;
@@ -117,18 +111,14 @@
       transform: translate(-50%, -50%);
     }
 
-    .interaction-btn img {
-      width: 8vw;
-      height: 8vw;
-      min-width: 60px;
-      min-height: 60px;
-      max-width: 100px;
-      max-height: 100px;
-      display: block;
-      pointer-events: auto;
-      transition: all 0.2s ease;
-    }
-
+.interaction-btn img{
+  /* 56px 到 100px，随视口缩放 */
+  width: clamp(56px, 12vmin, 100px);
+  height: clamp(56px, 12vmin, 100px);
+  display:block;
+  pointer-events:auto;
+  transition: transform .2s ease, filter .2s ease;
+}
     .interaction-btn:hover img {
       filter: brightness(1.2);
       transform: scale(1.05);
@@ -148,17 +138,10 @@
     }
 
     /* 底部遮罩 */
-    .bottom-mask {
-      position: absolute;
-      left: 0; 
-      bottom: 0;
-      width: 100%;
-      height: 92px;
-      background: #191919;
-      z-index: 3;
-      pointer-events: none;
-    }
-
+.bottom-mask{
+  position:absolute; left:0; bottom:0; width:100%;
+  height:92px; background:#191919; z-index:3; pointer-events:none;
+}
     /* 响应式调整 */
     @media (max-width: 768px) {
       /* 移动端背景图优化 */
@@ -225,30 +208,36 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 1000);
   
   // 交互按钮点击事件
-  const interactionButton = document.getElementById('interactionButton');
-  
+    const interactionButton = document.getElementById('interactionButton');
   if (interactionButton) {
-    console.log('Interaction button found, adding event listeners');
-    // 同时支持点击和触摸
-    const handleInteractionClick = function(e) {
+    console.log('Interaction button found, adding event listener');
+
+    // ✅ 只绑定一次 pointerup（兼容触摸+鼠标），避免 touchend/click 冲突
+    const handleInteraction = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      console.log('Interaction button clicked/touched - redirecting to jealous.html');
+      console.log('Interaction triggered →  redirecting to jealous.html');
       
       // 直接跳转到 unsatisfied.html
       window.location.href = '../../article/private/fwb.html';
     };
     
-    // 确保按钮可以接收事件
-    interactionButton.style.pointerEvents = 'auto';
-    interactionButton.style.zIndex = '20'; // 确保按钮在最上层
-    
-    interactionButton.addEventListener('click', handleInteractionClick);
-    interactionButton.addEventListener('touchend', handleInteractionClick);
-    console.log('Interaction button event listeners added');
+    // 清理旧事件
+    interactionButton.replaceWith(interactionButton.cloneNode(true));
+    const newBtn = document.getElementById('interactionButton') || document.querySelector('.interaction-btn');
+
+    // 确保按钮可点
+    newBtn.style.pointerEvents = 'auto';
+    newBtn.style.zIndex = '999';
+
+    // 使用 pointerup 代替 click/touchend
+    newBtn.addEventListener('pointerup', handleInteraction, { passive: false });
+
+    console.log('Interaction button event listener (pointerup) added');
   } else {
     console.error('Interaction button not found');
   }
+
   
   
   // 初始化页面元素检查

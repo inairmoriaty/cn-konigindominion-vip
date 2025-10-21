@@ -8,10 +8,14 @@
   <link rel="stylesheet" href="../../style/footer.css">
   <link rel="stylesheet" href="../../style/mobile.css">
   <style>
-    :root {
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --vh: 1vh;
+}
+@supports (height: 100svh){
+  :root{ --vh: 1svh; }
+}
 
     html, body {
       margin: 0; 
@@ -212,18 +216,14 @@
       transform: translate(-50%, -50%);
     }
 
-    .interaction-btn img {
-      width: 8vw;
-      height: 8vw;
-      min-width: 60px;
-      min-height: 60px;
-      max-width: 100px;
-      max-height: 100px;
-      display: block;
-      pointer-events: auto;
-      transition: all 0.2s ease;
-    }
-
+.interaction-btn img{
+  /* 56px 到 100px，随视口缩放 */
+  width: clamp(56px, 12vmin, 100px);
+  height: clamp(56px, 12vmin, 100px);
+  display:block;
+  pointer-events:auto;
+  transition: transform .2s ease, filter .2s ease;
+}
     .interaction-btn:hover img {
       filter: brightness(1.2);
       transform: scale(1.05);
@@ -249,17 +249,10 @@
     }
 
     /* 底部遮罩 */
-    .bottom-mask {
-      position: absolute;
-      left: 0; 
-      bottom: 0;
-      width: 100%;
-      height: 92px;
-      background: #191919;
-      z-index: 3;
-      pointer-events: none;
-    }
-
+.bottom-mask{
+  position:absolute; left:0; bottom:0; width:100%;
+  height:92px; background:#191919; z-index:3; pointer-events:none;
+}
     /* 边界提示效果 */
     .boundary-hint {
       position: absolute;

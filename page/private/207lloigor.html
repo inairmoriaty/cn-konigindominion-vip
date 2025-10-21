@@ -8,58 +8,52 @@
   <link rel="stylesheet" href="/style/footer.css">
   <link rel="stylesheet" href="/style/mobile.css">
   <style>
-    :root {
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-    }
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --vh: 1vh;
+}
+@supports (height: 100svh){
+  :root{ --vh: 1svh; }
+}
 
-    html, body {
-      margin: 0; 
-      padding: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #191919;
-      overflow: hidden;
-    }
+html, body{
+  margin:0; padding:0;
+  width:100%;
+  min-height: calc(var(--vh) * 100);
+  background:#191919;
+  overflow-x:hidden;       /* 只禁水平滚动 */
+  overflow-y:auto;         /* 允许竖向滚动 */
+}
 
-    .app-frame {
-      width: 100%;
-      height: 100vh;
-      max-width: 1440px;
-      position: relative;
-      margin: 0 auto;
-      border-radius: 0;
-      overflow: hidden;
-      box-shadow: none;
-      background: #191919;
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      top: 0; 
-      left: 0; 
-      right: 0; 
-      bottom: 0;
-      box-sizing: border-box;
-    }
+
+.app-frame{
+  width:100%;
+  max-width:1440px;
+  min-height: calc(var(--vh) * 100);
+  position:relative;
+  margin:0 auto;
+  box-shadow:none;
+  background:#191919;
+  border-radius:0;
+  overflow:visible;        /* 让内部元素能显示/滚动 */
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom); /* 底栏额外留白由 footer.css 统一处理 */
+  box-sizing:border-box;
+}
 
     /* 静态背景容器 */
-    .static-bg-container {
-      position: absolute;
-      left: 0; 
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-    }
+.static-bg-container,
+.bg-static{
+  position:absolute;
+  left:0; top:0;
+  width:100%; height:100%;
+  overflow:hidden;
+  z-index:1;
+}
 
     /* 背景图片容器 - 静态显示 */
-    .bg-static {
-      position: absolute;
-      left: 0; 
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('../../img/guest/207bg.png');
+.bg-static{      background-image: url('../../img/guest/207bg.png');
       background-size: cover; /* 覆盖整个容器 */
       background-position: center center;
       background-repeat: no-repeat;
@@ -104,18 +98,14 @@
       transform: translate(-50%, -50%);
     }
 
-    .interaction-btn img {
-      width: 8vw;
-      height: 8vw;
-      min-width: 60px;
-      min-height: 60px;
-      max-width: 100px;
-      max-height: 100px;
-      display: block;
-      pointer-events: auto;
-      transition: all 0.2s ease;
-    }
-
+.interaction-btn img{
+  /* 56px 到 100px，随视口缩放 */
+  width: clamp(56px, 12vmin, 100px);
+  height: clamp(56px, 12vmin, 100px);
+  display:block;
+  pointer-events:auto;
+  transition: transform .2s ease, filter .2s ease;
+}
     .interaction-btn:hover img {
       filter: brightness(1.2);
       transform: scale(1.05);
@@ -135,17 +125,10 @@
     }
 
     /* 底部遮罩 */
-    .bottom-mask {
-      position: absolute;
-      left: 0; 
-      bottom: 0;
-      width: 100%;
-      height: 92px;
-      background: #191919;
-      z-index: 3;
-      pointer-events: none;
-    }
-
+.bottom-mask{
+  position:absolute; left:0; bottom:0; width:100%;
+  height:92px; background:#191919; z-index:3; pointer-events:none;
+}
     /* 响应式调整 */
     @media (max-width: 768px) {
       /* 移动端背景图优化 */
@@ -156,76 +139,118 @@
     }
 
     
-        /* 客单滚轮选项区域 */
-        .guest-list-wrapper{
-      position: absolute;
-      left: 53%;
-      transform: translateX(-50%);
-      width: 180px;
-      top: 22%;
-      height: 240px;
-      z-index: 20;
-      display: flex;
-      align-items: stretch;
-      gap: 12px;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-    
-    .guest-list-wrapper.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    
-    .guest-list{
-      position: relative;
-      flex: 1 1 auto;
-      height: 100%;
-      overflow: hidden;
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,1) 36px, rgba(0,0,0,1) calc(100% - 36px), rgba(0,0,0,0) 100%);
-    }
-    
-    .guest-list-viewport{
-      height: 288px;
-      overflow-y: auto;
-      padding-right: 8px;
-      scrollbar-width: none;
-    }
-    
-    .guest-list-viewport::-webkit-scrollbar{ display: none; }
-    
-    .guest-item{
-      height: 36px;
-      margin: 16px 0;
-      width: 80%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 16px;
-      font-family: "SimSun", "宋体", serif; /* 改为宋体 */
-      letter-spacing: .5px;
-      user-select: none;
-      pointer-events: auto; /* 改为可点击 */
-      cursor: pointer; /* 添加鼠标指针 */
-      background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
-      border: 1px solid #696969;
-      border-radius: 14px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -2px 4px rgba(0,0,0,.35), 0 2px 10px rgba(0,0,0,.25);
-      transition: all 0.2s ease; /* 添加过渡效果 */
-    }
-    
-    .guest-item:hover {
-      background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
-      transform: scale(1.02);
-    }
-    
-    .guest-item:active {
-      transform: scale(0.98);
-    }
-    
+/* 客单滚轮选项区域 —— 默认不接收点击，显示时再打开 */
+.guest-list-wrapper{
+  position: absolute;
+  left: 53%;
+  transform: translateX(-50%);
+  top: 22%;
+  width: 180px;
+
+  /* 统一可视高度为 3 行*72 = 216px（行高稳定，手感类似 iOS） */
+  height: 216px;
+
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;              /* 👈 隐藏时不抢事件 */
+  transition: opacity .3s ease, visibility .3s ease;
+
+  /* 性能优化 */
+  will-change: opacity, transform;
+}
+.guest-list-wrapper.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;              /* 👈 显示时可点 */
+}
+
+/* 容器内层：保留渐隐蒙版，让中间区域更聚焦 */
+.guest-list{
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden;
+
+  /* 上下渐隐（36px 边缘） */
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,1) 36px,
+    rgba(0,0,0,1) calc(100% - 36px),
+    rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,1) 36px,
+    rgba(0,0,0,1) calc(100% - 36px),
+    rgba(0,0,0,0) 100%);
+}
+
+/* 视口：3 行可见（216px），吸附滚动、触摸滚动增强 */
+.guest-list-viewport{
+  height: 216px;                     /* 👈 固定 3 行可见 */
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: none;             /* Firefox 隐藏滚动条 */
+
+  /* 触摸优化 */
+  -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
+  overscroll-behavior: contain;      /* 防父级联动 */
+  touch-action: pan-y;               /* 告诉浏览器这是纵向滚动 */
+
+  /* 吸附滚动：停在“行中心”附近 */
+  scroll-snap-type: y mandatory;
+}
+.guest-list-viewport::-webkit-scrollbar{ display: none; }
+
+/* 单项：行高稳定（72px = 48 + 上下各 12px） */
+.guest-item{
+  /* 尽量占满，命中率更高 */
+  width: 100%;
+  box-sizing: border-box;
+
+  height: 48px;          /* 元素本体高度 */
+  padding: 0 10px;
+  margin: 12px 0;        /* 上下各 12px，总行距=72px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #fff;
+  font-size: 16px;
+  font-family: "SimSun","宋体",serif;
+  letter-spacing: .5px;
+  user-select: none;
+  cursor: pointer;
+
+  /* 视觉 */
+  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
+  border: 1px solid #696969;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -2px 4px rgba(0,0,0,.35),
+    0 2px 10px rgba(0,0,0,.25);
+  transition: transform .15s ease, background .2s ease;
+
+  /* 吸附对齐到容器中心线 */
+  scroll-snap-align: center;
+
+  /* 移动端体验 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  will-change: transform;
+}
+.guest-item:hover {
+  background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
+  transform: scale(1.02);
+}
+.guest-item:active {
+  transform: scale(0.98);
+}    
 
     .interaction-btn:active img {
   /* 可选：按下变暗或缩放 */
@@ -272,105 +297,90 @@
 <script src="../../js/mobile-optimization.js"></script>
 <script src="../../js/footer.js"></script>
 <script>
-// 页面初始化
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('oatmeal page loaded');
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('oatmeal page loaded');
   
-  // 检查footer是否加载
-  setTimeout(() => {
-    const footer = document.querySelector('.bottom-nav');
-    if (footer) {
-      console.log('Footer loaded successfully');
-    } else {
-      console.log('Footer not found, checking placeholder');
-      const placeholder = document.getElementById('footer-placeholder');
-      console.log('Footer placeholder:', placeholder);
-    }
-  }, 1000);
+    // （可选）检查 footer 是否注入
+    setTimeout(() => {
+      const footer = document.querySelector('.bottom-nav');
+      console.log(footer ? 'Footer loaded successfully' : 'Footer not found');
+    }, 1000);
   
-  // 交互按钮点击事件
-  const interactionButton = document.getElementById('interactionButton');
-  const guestList = document.getElementById('guestList');
-  let isGuestListVisible = false;
+    // 工具函数：每次动态取当前按钮引用（避免 replaceWith 后旧引用失效）
+    const getBtn = () => document.getElementById('interactionButton') || document.querySelector('.interaction-btn');
+    const guestList = document.getElementById('guestList');
+    let isGuestListVisible = false;
   
-  if (interactionButton) {
-    console.log('Interaction button found, adding event listeners');
-    // 同时支持点击和触摸
-    const handleInteractionClick = function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('Interaction button clicked/touched');
-      
-      // 切换滚轮选项的显示/隐藏
-      if (isGuestListVisible) {
-        guestList.classList.remove('show');
+    // ===== 交互按钮：统一用 pointerup，兼容触摸/鼠标 =====
+    (() => {
+      const btn = getBtn();
+      if (!btn) {
+        console.warn('Interaction button not found');
+        return;
+      }
+  
+      // 处理函数
+      const handleInteraction = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isGuestListVisible = !isGuestListVisible;
+        if (guestList) guestList.classList.toggle('show', isGuestListVisible);
+        console.log(isGuestListVisible ? 'Guest list shown' : 'Guest list hidden');
+      };
+  
+      // 去除旧监听，最稳妥方式：克隆替换一次，再重新拿引用
+      btn.replaceWith(btn.cloneNode(true));
+      const newBtn = getBtn();
+      newBtn.style.pointerEvents = 'auto';
+      newBtn.style.zIndex = '999';
+      newBtn.addEventListener('pointerup', handleInteraction, { passive: false });
+      console.log('Interaction event listener (pointerup) added');
+    })();
+  
+    // ===== 点击空白处收起滚轮 =====
+    const dismissGuest = (e) => {
+      if (!isGuestListVisible || !guestList) return;
+      const btnNow = getBtn();
+      const clickOnButton = btnNow && btnNow.contains(e.target);
+      const clickOnPanel = guestList.contains(e.target);
+      if (!clickOnButton && !clickOnPanel) {
         isGuestListVisible = false;
-        console.log('Guest list hidden');
-      } else {
-        guestList.classList.add('show');
-        isGuestListVisible = true;
-        console.log('Guest list shown');
+        guestList.classList.remove('show');
+        console.log('Guest list hidden by outside click');
       }
     };
-    
-    // 确保按钮可以接收事件
-    interactionButton.style.pointerEvents = 'auto';
-    interactionButton.style.zIndex = '20'; // 确保按钮在最上层
-    
-    interactionButton.addEventListener('click', handleInteractionClick);
-    interactionButton.addEventListener('touchend', handleInteractionClick);
-    console.log('Interaction button event listeners added');
-  } else {
-    console.error('Interaction button not found');
-  }
+    document.addEventListener('pointerup', dismissGuest, { passive: true });
   
-  // 点击空白收起客单滚轮
-  const dismissGuest = (e) => {
-    if (!isGuestListVisible) return;
-    const clickOnButton = interactionButton && interactionButton.contains(e.target);
-    const clickOnPanel = guestList && guestList.contains(e.target);
-    if (!clickOnButton && !clickOnPanel) {
-      isGuestListVisible = false;
-      guestList.classList.remove('show');
-    }
-  };
-  document.addEventListener('click', dismissGuest);
-  document.addEventListener('touchend', dismissGuest);
-  
-  // 保存article层级会话的函数
-  function saveArticleHierarchySession() {
-    const session = {
-      timestamp: Date.now(),
-      expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
+    // ===== 滚轮选项点击跳转（同样用 pointerup）=====
+    const saveArticleHierarchySession = () => {
+      const session = {
+        timestamp: Date.now(),
+        expiry: Date.now() + 30 * 60 * 1000, // 30分钟
+      };
+      sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
+      console.log('Article层级会话已保存');
     };
-    sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
-    console.log('Article层级会话已保存');
-  }
   
-  // 滚轮选项点击跳转
-  const guestItems = document.querySelectorAll('.guest-item');
-  guestItems.forEach(item => {
-    const handleGuestItemClick = function() {
-      const articleFile = this.getAttribute('data-article');
-      if (articleFile) {
-        console.log('Jumping to article:', articleFile);
-        // 保存article层级会话后跳转
-        saveArticleHierarchySession();
-        window.location.href = `../../article/private/${articleFile}`;
-      }
-    };
-    
-    item.addEventListener('click', handleGuestItemClick);
-    item.addEventListener('touchend', handleGuestItemClick);
+    document.querySelectorAll('.guest-item').forEach((item) => {
+      const handleGuestItem = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = item.getAttribute('data-article');
+        if (file) {
+          saveArticleHierarchySession();
+          window.location.href = `../../article/private/${file}`;
+        }
+      };
+      item.addEventListener('pointerup', handleGuestItem, { passive: false });
+    });
+  
+    // ===== 调试输出 =====
+    console.log('=== Page Elements Check ===');
+    console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
+    console.log('interactionButton:', !!getBtn());
+    console.log('guestList:', !!guestList);
+    console.log('========================');
   });
-  
-  // 初始化页面元素检查
-  console.log('=== Page Elements Check ===');
-  console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
-  console.log('interactionButton:', interactionButton ? 'Found' : 'Not found');
-  console.log('========================');
-});
-</script>
+  </script>
 </body>
 </html>
-
