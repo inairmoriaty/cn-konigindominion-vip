@@ -62,8 +62,6 @@ export default async function handler(req) {
     const contact  = sanitize(form.get('contact'));
     const type     = sanitize(form.get('type'));
     const budget   = sanitize(form.get('budget'));
-    const deadline = sanitize(form.get('deadline'));
-    const refs     = sanitize(form.get('refs'));
     const message  = sanitize(form.get('message'));
     const agree    = form.get('agree');
 
@@ -81,8 +79,6 @@ export default async function handler(req) {
       `联系方式: ${contact}`,
       `类型: ${type || '-'}`,
       `预算: ${budget || '-'}`,
-      `截止: ${deadline || '-'}`,
-      `参考: ${refs || '-'}`,
       `——`,
       message,
       `——`,
@@ -96,8 +92,6 @@ export default async function handler(req) {
         <p><b>联系方式：</b>${escapeHtml(contact)}</p>
         <p><b>类型：</b>${escapeHtml(type || '-')}</p>
         <p><b>预算：</b>${escapeHtml(budget || '-')}</p>
-        <p><b>截止：</b>${escapeHtml(deadline || '-')}</p>
-        <p><b>参考：</b>${escapeHtml(refs || '-')}</p>
         <hr />
         <pre style="white-space:pre-wrap;font-family:inherit">${escapeHtml(message)}</pre>
         <hr />

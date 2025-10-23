@@ -20,7 +20,7 @@
   height: clamp(56px, calc(var(--vh) * 9), 72px);
   padding-bottom: var(--safe-bottom);
 
-  /* ✅ 默认不透明背景（兜底） */
+  /* ✅ 兜底不透明背景：即使不支持毛玻璃也能看 */
   background: #191919;
 
   border-radius: 20px;
@@ -30,12 +30,16 @@
   justify-content: center;
   align-items: center;
   z-index: 999;
+
+  /* 防止被误判为“覆盖层”阻塞点击 */
+  pointer-events: auto;
 }
 
 /* ✅ 支持 backdrop-filter 的浏览器再启用毛玻璃 */
-@supports (backdrop-filter: blur(10px)) {
+@supports ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
   .bottom-nav {
     background: #191919cc; /* 半透明黑 */
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
   }
 }
@@ -71,10 +75,10 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  position: relative; /* 避免内部绝对定位元素脱离上下文 */
 }
 
-/* 底部元素点击不被遮挡 */
-.bottom-nav { pointer-events: auto; }
+/* 底部遮罩若存在，不影响点击 */
 .bottom-mask { pointer-events: none; }
 
 /* ---------- 内部布局与按钮 ---------- */
@@ -85,18 +89,22 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: clamp(8px, 3vw, 16px);
+  /* 用 vmin 替代 vw，避免横屏/宽屏放大过度 */
+  gap: clamp(8px, 3vmin, 16px);
 }
 
 .bottom-nav .nav-btn {
-  width: clamp(48px, 12vw, 56px);
-  height: clamp(48px, 12vw, 56px);
+  /* 用 vmin 替代 vw，并用 clamp 限制上限，避免巨屏变大 */
+  width: clamp(48px, 10vmin, 56px);
+  height: clamp(48px, 10vmin, 56px);
   border-radius: 16px;
   background: #232323;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: background .2s, transform .15s;
+  touch-action: manipulation; /* 提升触控浏览器点击响应 */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .bottom-nav .nav-btn:active,
@@ -106,10 +114,12 @@ body {
 }
 
 .bottom-nav .nav-btn img {
-  width: clamp(24px, 7vw, 32px);
-  height: clamp(24px, 7vw, 32px);
+  /* 关键修复：改用 vmin，稳定在 24~32px 之间 */
+  width: clamp(24px, 4.5vmin, 32px);
+  height: clamp(24px, 4.5vmin, 32px);
   object-fit: contain;
   display: block;
+  pointer-events: none; /* 图片不拦截点击，交互落到父按钮 */
 }
 
 @media (max-width: 390px) {
@@ -120,5 +130,14 @@ body {
   .bottom-nav nav {
     width: 90vw;
     min-width: 280px;
+  }
+}
+
+/* ---------- 附加小优化（可留可去） ---------- */
+/* 降低动画对弱机/弱网影响 */
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav,
+  .bottom-nav .nav-btn {
+    transition: none !important;
   }
 }
