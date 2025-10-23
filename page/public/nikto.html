@@ -308,6 +308,8 @@ body {
    .nikto-container {
      padding: 15px;
      padding-top: 60px;
+     /* 保持底部导航栏的间距，避免卡片被遮挡 */
+     padding-bottom: calc(clamp(56px, 9vh, 72px) + var(--safe-bottom) + 20px);
      /* 确保移动端全屏滚动 */
      width: 100% !important;
      height: 100% !important;
@@ -327,6 +329,8 @@ body {
      row-gap: 30px;
      column-gap: 30px;
      padding: 15px 0;
+     /* 确保最后一张卡片有足够的底部间距 */
+     margin-bottom: 20px;
    }
 
    .work-card {

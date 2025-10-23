@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KÖNIGIN - Keegan 公开篇目</title>
+  <title>KÖNIGIN - Krueger 公开篇目</title>
   <link rel="stylesheet" href="../../style/home.css">
   <link rel="stylesheet" href="../../style/footer.css">
   <link rel="stylesheet" href="../../style/mobile.css">
@@ -393,7 +393,7 @@ body {
     <div class="keegan-container">
     <!-- 页面标题 -->
     <div class="header-section">
-      <h1 class="header-title">Keegan 公开篇目</h1>
+      <h1 class="header-title">Krueger 公开篇目</h1>
       <p class="header-subtitle">KÖNIGIN系列作品集</p>
     </div>
 
@@ -600,7 +600,7 @@ body {
     // 加载作品数据
     async function loadWorks() {
       try {
-      const response = await fetch('../../json/keegan.json');
+      const response = await fetch('../../json/krueger.json');
         const works = await response.json();
         renderWorks(works);
       } catch (error) {
