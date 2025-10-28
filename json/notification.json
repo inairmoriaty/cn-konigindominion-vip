@@ -1,6 +1,16 @@
 {
     "items": [
       {
+        "id": "2025-10-28",
+        "date": "2025-10-28 13:31",
+        "title": "10/28 更新 · 内容更新",
+        "summary": "新增了文章内容。",
+        "badge": "更新",
+        "detail": "<p>本次更新包含：</p><ul class=\"changes\"><li>新增了文章内容。</li></ul><p>入口：<a href=\"/article/private/domestication/catalog.html\">驯化</a></p>"
+      }
+      ,
+
+      {
         "id": "2025-10-21",
         "date": "2025-10-21 1:02",
         "title": "10/21 更新 · 内部测试",
