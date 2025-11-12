@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>KÖNIGIN - 小安</title>
+  <title>KÖNIGIN - 瓜瓜</title>
   <link rel="stylesheet" href="../style/home.css">
   <link rel="stylesheet" href="../style/footer.css">
   <style>
@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('DOMContentLoaded', function() {
   const passwordInput = document.getElementById('passwordInput');
   const enterBtn = document.getElementById('enterBtn');
-  const correctPassword = '0420';  // 这里更改密码
+  const correctPassword = '1318';  // 这里更改密码
   
   // 验证密码的函数
   function validatePassword() {
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (enteredPassword === correctPassword) {
       // 密码正确，保存Tab会话并跳转到目标页面
       saveTabSession();
-      window.location.href = '../page/private/224alva.html';    // 这里更改跳转页面路径
+      window.location.href = '../page/private/225guagua.html';    // 这里更改跳转页面路径
     } else {
       // 密码错误
       alert('密码错误，请重试。');
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
       timestamp: Date.now(),
       expiry: Date.now() + (30 * 60 * 1000) // 30分钟过期
     };
-    sessionStorage.setItem('alva_tab_session', JSON.stringify(session));
+    sessionStorage.setItem('guagua_tab_session', JSON.stringify(session));
     
     // 同时保存private层级会话
     const privateSession = {

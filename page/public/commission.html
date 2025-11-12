@@ -50,6 +50,31 @@
 
     /* 蜜罐（反机器人） */
     .hp{position:absolute;left:-9999px;visibility:hidden}
+
+    /* --- 修复“同意条款”被竖排的问题 + 居中 --- */
+.row .agree-label,
+.row .agree-label * {
+  writing-mode: horizontal-tb !important;   /* 强制横排 */
+  text-orientation: mixed !important;
+  transform: none !important;               /* 防止被旋转 */
+  white-space: normal !important;
+}
+
+.row .agree-label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;       /* 水平居中 */
+  gap: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* 让复选框更清晰（可选） */
+.agree-label input[type="checkbox"]{
+  width: 18px; height: 18px;
+  accent-color: #fff; /* iOS/现代浏览器 */
+}
+
   </style>
 </head>
 <body>
