@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - 莱尔的房间</title>
+
+  <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="/style/mobile.css">
+  <style>
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --vh: 1vh;
+}
+@supports (height: 100svh){
+  :root{ --vh: 1svh; }
+}
+
+html, body{
+  margin:0; padding:0;
+  width:100%;
+  min-height: calc(var(--vh) * 100);
+  background:#191919;
+  overflow-x:hidden;       /* 只禁水平滚动 */
+  overflow-y:auto;         /* 允许竖向滚动 */
+}
+
+
+.app-frame{
+  width:100%;
+  max-width:1440px;
+  min-height: calc(var(--vh) * 100);
+  position:relative;
+  margin:0 auto;
+  box-shadow:none;
+  background:#191919;
+  border-radius:0;
+  overflow:visible;        /* 让内部元素能显示/滚动 */
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom); /* 底栏额外留白由 footer.css 统一处理 */
+  box-sizing:border-box;
+}
+
+    /* 静态背景容器 */
+.static-bg-container,
+.bg-static{
+  position:absolute;
+  left:0; top:0;
+  width:100%; height:100%;
+  overflow:hidden;
+  z-index:1;
+}
+
+    /* 背景图片容器 - 静态显示 */
+.bg-static{      background-image: url('../../img/guest/227bg.png');
+      background-size: cover; /* 覆盖整个容器 */
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    /* 内容层 */
+    .content-layer {
+      position: absolute;
+      left: 0; 
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .content-layer > * {
+      pointer-events: auto;
+    }
+
+    /* 标题 */
+    .page-title {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+
+    /* 交互按钮 */
+    .interaction-btn {
+      position: absolute;
+      z-index: 10;
+      display: block;
+      cursor: pointer;
+      top: 72%; /* 按钮位置，大约75%从顶部 */
+      left: 46%; /* 按钮位置，居中 */
+      transform: translate(-50%, -50%);
+    }
+
+.interaction-btn img{
+  /* 56px 到 100px，随视口缩放 */
+  width: clamp(56px, 12vmin, 100px);
+  height: clamp(56px, 12vmin, 100px);
+  display:block;
+  pointer-events:auto;
+  transition: transform .2s ease, filter .2s ease;
+}
+    .interaction-btn:hover img {
+      filter: brightness(1.2);
+      transform: scale(1.05);
+    }
+
+    .interaction-btn:active img {
+      filter: brightness(0.8);
+      transform: scale(0.95);
+    }
+
+    /* 按钮显示/隐藏控制 */
+    .interaction-btn {
+      opacity: 1; /* 静态显示，始终可见 */
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      pointer-events: auto;
+    }
+
+    /* 底部遮罩 */
+.bottom-mask{
+  position:absolute; left:0; bottom:0; width:100%;
+  height:92px; background:#191919; z-index:3; pointer-events:none;
+}
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      /* 移动端背景图优化 */
+      .bg-static {
+        background-size: cover;
+        background-position: center center;
+      }
+    }
+
+    
+    
+
+    .interaction-btn:active img {
+  /* 可选：按下变暗或缩放 */
+  filter: brightness(0.8);
+  transform: scale(0.92);
+}
+@keyframes btn-blink {
+  0%   { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+  40%  { opacity: 0.6; filter: drop-shadow(0 0 8px #e6f3ff) brightness(1.3);}
+  60%  { opacity: 1; filter: drop-shadow(0 0 16px #b5e2ff) brightness(1.5);}
+  100% { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+}
+.interaction-btn.blink img {
+  animation: btn-blink 1.2s infinite;
+  /* 可选：动画节奏平滑 */
+  animation-timing-function: ease-in-out;
+}
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="bg-static"></div>
+    <div class="guest-title"></div>
+    
+    <!-- 交互按钮 -->
+    <a href="#" class="interaction-btn blink" title="Interaction" id="interactionButton">
+      <img src="../../img/default btn.png" alt="Interaction Button"/>
+    </a>
+      
+    
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../../js/mobile-optimization.js"></script>
+<script src="../../js/footer.js"></script>
+<script>
+// 页面初始化
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('liar page loaded');
+  
+  // 检查footer是否加载
+  setTimeout(() => {
+    const footer = document.querySelector('.bottom-nav');
+    if (footer) {
+      console.log('Footer loaded successfully');
+    } else {
+      console.log('Footer not found, checking placeholder');
+      const placeholder = document.getElementById('footer-placeholder');
+      console.log('Footer placeholder:', placeholder);
+    }
+  }, 1000);
+  
+  // 交互按钮点击事件
+    const interactionButton = document.getElementById('interactionButton');
+  if (interactionButton) {
+    console.log('Interaction button found, adding event listener');
+
+    // ✅ 只绑定一次 pointerup（兼容触摸+鼠标），避免 touchend/click 冲突
+    const handleInteraction = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Interaction triggered →  redirecting to permission.html');
+      
+      // 直接跳转到 unsatisfied.html
+        window.location.href = '../../article/private/permission.html';
+    };
+    
+    // 清理旧事件
+    interactionButton.replaceWith(interactionButton.cloneNode(true));
+    const newBtn = document.getElementById('interactionButton') || document.querySelector('.interaction-btn');
+
+    // 确保按钮可点
+    newBtn.style.pointerEvents = 'auto';
+    newBtn.style.zIndex = '999';
+
+    // 使用 pointerup 代替 click/touchend
+    newBtn.addEventListener('pointerup', handleInteraction, { passive: false });
+
+    console.log('Interaction button event listener (pointerup) added');
+  } else {
+    console.error('Interaction button not found');
+  }
+
+  
+  
+  // 初始化页面元素检查
+  console.log('=== Page Elements Check ===');
+  console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
+  console.log('interactionButton:', interactionButton ? 'Found' : 'Not found');
+  console.log('========================');
+});
+</script>
+</body>
+</html>
+
