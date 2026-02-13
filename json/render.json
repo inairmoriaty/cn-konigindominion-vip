@@ -14,9 +14,27 @@
       "nsfw": false
     },
     {
-      "id": "domestication",
-      "src": "../../img/render/domestication.png",
-      "thumb": "../../img/render/domestication.png",
+      "id": "domestication-cover",
+      "src": "../../img/render/domestication-cover1.png",
+      "thumb": "../../img/render/domestication-cover1.png",
+      "variants": [
+        "../../img/render/domestication-cover1.png",
+        "../../img/render/domestication-cover2.png"
+      ],
+      "title": "驯化 - 封面",
+      "caption": "《驯化》(2025.5.24版)封面\n\n服装场景出自晚宴篇章节",
+      "author": "inair",
+      "tags": ["König"],
+      "width": 2048,
+      "height": 2048,
+      "nsfw": false,
+      "articleUrl": "../../article/private/domestication/catalog.html"
+    },
+
+    {
+      "id": "hunt",
+      "src": "../../img/render/hunt.png",
+      "thumb": "../../img/render/hunt.png",
       "title": "驯化 - chapter 1",
       "caption": "你被他扔在地上，却不是粗暴地摔下去，而是以某种精准到近乎故意的力道，让你刚好跪下。\n\n 你下意识想站起来，却立刻被一只手按回原地……",
       "author": "inair",
