@@ -1,6 +1,15 @@
 {
     "items": [
       {
+        "id": "2026-03-14",
+        "date": "2026-03-14 00:00",
+        "title": "03/14 更新 · 内容更新",
+        "summary": "《驯化》章节更新",
+        "badge": "更新",
+        "detail": "<p>本次更新包含：</p><ul class=\"changes\"><li>新增《驯化》第十九、二十章。</li></ul><p>入口：<a href=\"/page/private/domestication.catalog.html\">公开篇目</a></p>"
+      },
+
+      {
         "id": "2026-03-03",
         "date": "2026-03-03 17:00",
         "title": "03/03 更新 · 功能更新",
