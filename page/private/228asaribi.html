@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KÖNIGIN - 渔火的房间</title>
+
+  <link rel="stylesheet" href="/style/footer.css">
+  <link rel="stylesheet" href="/style/mobile.css">
+  <style>
+:root{
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --vh: 1vh;
+}
+@supports (height: 100svh){
+  :root{ --vh: 1svh; }
+}
+
+/* ✅ 允许页面自然滚动，避免锁死 */
+html, body{
+  margin:0; padding:0;
+  width:100%;
+  min-height: calc(var(--vh) * 100);
+  background:#191919;
+  overflow-x:hidden;       /* 只禁水平滚动 */
+  overflow-y:auto;         /* 允许竖向滚动 */
+}
+
+/* ✅ 容器用 min-height，别用固定 100vh/overflow:hidden */
+.app-frame{
+  width:100%;
+  max-width:1440px;
+  min-height: calc(var(--vh) * 100);
+  position:relative;
+  margin:0 auto;
+  box-shadow:none;
+  background:#191919;
+  border-radius:0;
+  overflow:visible;        /* 让内部元素能显示/滚动 */
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom); /* 底栏额外留白由 footer.css 统一处理 */
+  box-sizing:border-box;
+}
+
+/* 背景仍可用绝对定位，不影响滚动 */
+.static-bg-container,
+.bg-static{
+  position:absolute;
+  left:0; top:0;
+  width:100%; height:100%;
+  overflow:hidden;
+  z-index:1;
+}
+
+    /* 背景图片容器 - 静态显示 */
+    .bg-static {
+      background-image: url('../../img/guest/guest_bg.png');
+      background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+    }
+
+    /* 内容层 */
+    .content-layer{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+}
+.content-layer > *{ pointer-events:auto; }
+
+
+    /* 标题 */
+    .page-title {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    /* 门牌 */
+    .guest-title {
+      position: absolute;
+      top: -3%; 
+      left: 50%;
+      transform: translateX(-50%);
+      width: 750px; 
+      height: 300px;
+      background: url('../../img/guest/asaribi.png') center center/contain no-repeat;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 1; /* 静态显示，始终可见 */
+    }
+
+/* ✅ 交互按钮尺寸更稳：不要纯 vw */
+.interaction-btn{
+  position:absolute;
+  z-index:10;
+  top:65%;
+  left:35%;
+  transform:translate(-50%,-50%);
+  cursor:pointer;
+}
+.interaction-btn img{
+  /* 56px 到 100px，随视口缩放 */
+  width: clamp(56px, 12vmin, 100px);
+  height: clamp(56px, 12vmin, 100px);
+  display:block;
+  pointer-events:auto;
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.interaction-btn:hover img{ filter:brightness(1.2); transform:scale(1.05); }
+.interaction-btn:active img{ filter:brightness(.85); transform:scale(.95); }
+
+/* 底部遮罩可留，但务必在底栏下层（z-index < 999） */
+.bottom-mask{
+  position:absolute; left:0; bottom:0; width:100%;
+  height:92px; background:#191919; z-index:3; pointer-events:none;
+}
+
+/* 移动端细化（可保留） */
+@media (max-width:768px){
+  .bg-static{ background-size:cover; background-position:center; }
+}
+
+    
+/* 客单滚轮选项区域 —— 默认不接收点击，显示时再打开 */
+.guest-list-wrapper{
+  position: absolute;
+  left: 53%;
+  transform: translateX(-50%);
+  top: 22%;
+  width: 180px;
+
+  /* 统一可视高度为 3 行*72 = 216px（行高稳定，手感类似 iOS） */
+  height: 216px;
+
+  z-index: 20;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;              /* 👈 隐藏时不抢事件 */
+  transition: opacity .3s ease, visibility .3s ease;
+
+  /* 性能优化 */
+  will-change: opacity, transform;
+}
+.guest-list-wrapper.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;              /* 👈 显示时可点 */
+}
+
+/* 容器内层：保留渐隐蒙版，让中间区域更聚焦 */
+.guest-list{
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden;
+
+  /* 上下渐隐（36px 边缘） */
+  -webkit-mask-image: linear-gradient(to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,1) 36px,
+    rgba(0,0,0,1) calc(100% - 36px),
+    rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,1) 36px,
+    rgba(0,0,0,1) calc(100% - 36px),
+    rgba(0,0,0,0) 100%);
+}
+
+/* 视口：3 行可见（216px），吸附滚动、触摸滚动增强 */
+.guest-list-viewport{
+  height: 216px;                     /* 👈 固定 3 行可见 */
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: none;             /* Firefox 隐藏滚动条 */
+
+  /* 触摸优化 */
+  -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
+  overscroll-behavior: contain;      /* 防父级联动 */
+  touch-action: pan-y;               /* 告诉浏览器这是纵向滚动 */
+
+  /* 吸附滚动：停在“行中心”附近 */
+  scroll-snap-type: y mandatory;
+}
+.guest-list-viewport::-webkit-scrollbar{ display: none; }
+
+/* 单项：行高稳定（72px = 48 + 上下各 12px） */
+.guest-item{
+  /* 尽量占满，命中率更高 */
+  width: 100%;
+  box-sizing: border-box;
+
+  height: 48px;          /* 元素本体高度 */
+  padding: 0 10px;
+  margin: 12px 0;        /* 上下各 12px，总行距=72px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #fff;
+  font-size: 16px;
+  font-family: "SimSun","宋体",serif;
+  letter-spacing: .5px;
+  user-select: none;
+  cursor: pointer;
+
+  /* 视觉 */
+  background: linear-gradient(180deg, #5a5a5a 0%, #4a4a4a 45%, #414141 100%);
+  border: 1px solid #696969;
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -2px 4px rgba(0,0,0,.35),
+    0 2px 10px rgba(0,0,0,.25);
+  transition: transform .15s ease, background .2s ease;
+
+  /* 吸附对齐到容器中心线 */
+  scroll-snap-align: center;
+
+  /* 移动端体验 */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  will-change: transform;
+}
+.guest-item:hover {
+  background: linear-gradient(180deg, #6a6a6a 0%, #5a5a5a 45%, #515151 100%);
+  transform: scale(1.02);
+}
+.guest-item:active {
+  transform: scale(0.98);
+}    
+
+    .interaction-btn:active img {
+  /* 可选：按下变暗或缩放 */
+  filter: brightness(0.8);
+  transform: scale(0.92);
+}
+@keyframes btn-blink {
+  0%   { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+  40%  { opacity: 0.6; filter: drop-shadow(0 0 8px #e6f3ff) brightness(1.3);}
+  60%  { opacity: 1; filter: drop-shadow(0 0 16px #b5e2ff) brightness(1.5);}
+  100% { opacity: 1; filter: drop-shadow(0 0 0px #fff6) brightness(1); }
+}
+.interaction-btn.blink img {
+  animation: btn-blink 1.2s infinite;
+  /* 可选：动画节奏平滑 */
+  animation-timing-function: ease-in-out;
+}
+  </style>
+</head>
+<body>
+  <div class="app-frame">
+    <div class="bg-static"></div>
+    <div class="guest-title"></div>
+    
+    <!-- 交互按钮 -->
+    <a href="#" class="interaction-btn blink" title="Interaction" id="interactionButton">
+      <img src="../../img/default btn.png" alt="Interaction Button"/>
+    </a>
+      
+    <!-- 客单滚轮选项（默认隐藏） -->
+    <div class="guest-list-wrapper" id="guestList">
+      <div class="guest-list">
+        <div class="guest-list-viewport" id="guestViewport">
+            <div class="guest-item" data-article="affogato.html">阿芙佳朵</div>
+            <div class="guest-item" data-article="sight.html">准星</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bottom-mask"></div>
+  </div>
+
+  <!-- Footer自动插入点 -->
+  <div id="footer-placeholder"></div>
+<script src="../../js/mobile-optimization.js"></script>
+<script src="../../js/footer.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('oatmeal page loaded');
+  
+    // （可选）检查 footer 是否注入
+    setTimeout(() => {
+      const footer = document.querySelector('.bottom-nav');
+      console.log(footer ? 'Footer loaded successfully' : 'Footer not found');
+    }, 1000);
+  
+    // 工具函数：每次动态取当前按钮引用（避免 replaceWith 后旧引用失效）
+    const getBtn = () => document.getElementById('interactionButton') || document.querySelector('.interaction-btn');
+    const guestList = document.getElementById('guestList');
+    let isGuestListVisible = false;
+  
+    // ===== 交互按钮：统一用 pointerup，兼容触摸/鼠标 =====
+    (() => {
+      const btn = getBtn();
+      if (!btn) {
+        console.warn('Interaction button not found');
+        return;
+      }
+  
+      // 处理函数
+      const handleInteraction = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        isGuestListVisible = !isGuestListVisible;
+        if (guestList) guestList.classList.toggle('show', isGuestListVisible);
+        console.log(isGuestListVisible ? 'Guest list shown' : 'Guest list hidden');
+      };
+  
+      // 去除旧监听，最稳妥方式：克隆替换一次，再重新拿引用
+      btn.replaceWith(btn.cloneNode(true));
+      const newBtn = getBtn();
+      newBtn.style.pointerEvents = 'auto';
+      newBtn.style.zIndex = '999';
+      newBtn.addEventListener('pointerup', handleInteraction, { passive: false });
+      console.log('Interaction event listener (pointerup) added');
+    })();
+  
+    // ===== 点击空白处收起滚轮 =====
+    const dismissGuest = (e) => {
+      if (!isGuestListVisible || !guestList) return;
+      const btnNow = getBtn();
+      const clickOnButton = btnNow && btnNow.contains(e.target);
+      const clickOnPanel = guestList.contains(e.target);
+      if (!clickOnButton && !clickOnPanel) {
+        isGuestListVisible = false;
+        guestList.classList.remove('show');
+        console.log('Guest list hidden by outside click');
+      }
+    };
+    document.addEventListener('pointerup', dismissGuest, { passive: true });
+  
+    // ===== 滚轮选项点击跳转（同样用 pointerup）=====
+    const saveArticleHierarchySession = () => {
+      const session = {
+        timestamp: Date.now(),
+        expiry: Date.now() + 30 * 60 * 1000, // 30分钟
+      };
+      sessionStorage.setItem('article_hierarchy_session', JSON.stringify(session));
+      console.log('Article层级会话已保存');
+    };
+  
+    document.querySelectorAll('.guest-item').forEach((item) => {
+      const handleGuestItem = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const file = item.getAttribute('data-article');
+        if (file) {
+          saveArticleHierarchySession();
+          window.location.href = `../../article/private/${file}`;
+        }
+      };
+      item.addEventListener('pointerup', handleGuestItem, { passive: false });
+    });
+  
+    // ===== 调试输出 =====
+    console.log('=== Page Elements Check ===');
+    console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
+    console.log('interactionButton:', !!getBtn());
+    console.log('guestList:', !!guestList);
+    console.log('========================');
+  });
+  </script>
+  </body>
+</html>
+
