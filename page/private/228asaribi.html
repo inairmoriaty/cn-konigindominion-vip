@@ -262,6 +262,30 @@ html, body{
   </style>
 </head>
 <body>
+<script>
+(function() {
+  var ROOM_ID = '228';
+  var token = sessionStorage.getItem('token_' + ROOM_ID);
+
+  if (!token) {
+    window.location.href = '/locked_files/228.html';
+    return;
+  }
+
+  fetch('/api/validate-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token: token, room: ROOM_ID })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (!data.valid) {
+      sessionStorage.removeItem('token_' + ROOM_ID);
+      window.location.href = '/locked_files/228.html';
+    }
+  });
+})();
+</script>
   <div class="app-frame">
     <div class="bg-static"></div>
     <div class="guest-title"></div>
