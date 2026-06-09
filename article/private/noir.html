@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <title>皮格马利翁效应</title>
+    <link rel="stylesheet" href="../style/article.css">
+    <style>
+                * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            font-family: "SimSun", "宋体", serif;
+        }
+
+        .app-frame {
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            max-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-container {
+            width: 100%;
+            height: 100%;
+            padding: 0 8.2%; /* 32px / 390px ≈ 8.2% */
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-top: 20%;
+        }
+
+        .article-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .article-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .chapter-title {
+            width: 80%;
+            height: 80px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 40px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .author-info {
+            width: 60%;
+            height: 40px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #000;
+            margin-bottom: 15px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .separator {
+            width: 100%;
+            height: 0;
+            border-top: 3px solid #000;
+            margin-bottom: 15px;
+            margin-top: 15px;
+            display: block;
+        }
+
+        .content-area {
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            font-family: "SimSun", "宋体", serif;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #000;
+            padding: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 20px;
+        }
+
+        /* 收藏按钮样式 */
+        .favourite-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .favourite-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+
+        .favourite-btn:active {
+            transform: scale(0.95);
+        }
+
+        .favourite-icon {
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+        <div class="article-container">
+            <div class="chapter-title">皮格马利翁效应</div>
+            <div class="author-info">Inair for Knox</div>
+            
+            <div class="separator"></div>
+            
+            <div class="content-area">
+                我们一起去了瓦卢瓦廊街142号。
+                以复古式的金尖端栏杆相隔，这个世界被沉默的屏障生生切成了两半：左侧是高大的梧桐，阳光穿过枝叶，细碎地洒在那些欢声笑语、来往穿梭的游客身上，那是皇家宫殿花园里蒸腾着的、最浓郁的世俗烟火；而右侧，则是名廊下那些安静内敛得近乎自闭的精品店与古董店。
+                世俗的烟火气与幻想的代言明明处于同一空间，呼吸着同样的空气，却被那一排冰冷的金尖端栏杆轻易地分割。那一端是热烈的现实，这一端是寂静的深渊。我走在他的阴影里，突然觉得这种距离感异常讽刺——他们在那一端，而我们在这一端，又近，又远。
+                巴黎的街道狭窄得局促，Ghost的身形几乎占据了三分之二的行道空间。我刻意落后他半个肩膀的距离，观察着她的爱人。
+                他走路时肩膀几乎没有起伏，目光始终保持着一种职业性的警惕，扫视着四周的屋顶和巷口。这种极度的防御姿态让我意识到，即便在休假，他也从未真正解下过那身沉重的、由硝烟与创伤编织而成的隐形防弹衣。
+                “Travel alone?（一个人旅行？）”
+                他突然开口，低沉的嗓音打破了沉闷。虽然他在问我，但我很清楚，他是在问：为什么她没有一起来？
+                这种尴尬感几乎将我的社交焦虑推向了临界点。和朋友的爱人共处，尤其是在当事人不在场的情况下，每一秒钟的沉默都像是在我背上加重的一块巨石。我点了点头，手指搅在一起，脑海中已经闪过无数个调头逃跑的借口，表面上则不打算和他过多解释。
+                一路无言。
+                那是一间紫色的小店，门廊上的招牌极尽低调，若不是刻意寻找，谁也不会想到这扇黑色橡木门之后，是连接现实与感官幻象的交汇点；黑色的蜂巢展示架与东方艺伎面具分别占据了橱窗的视觉中心，独一无二的玻璃吊钟设计香水瓶在射灯下折射出冷冽的光，如同一颗颗凝固的眼泪。
+                踏入142 Galerie de Valois的瞬间，现实世界被彻底隔绝。
+                这里的空气粘稠得仿佛某种液态的丝绒，冷色调射灯在深色木质柜台上投下晦暗的光影，空气中弥漫着香料独特的气息，别具一格，却并不讨人厌。浅紫色的墙体刻画着如塔罗牌阵一般的星宿图案，新鲜的蝴蝶兰沿路盛放，让我们几乎以为误入了一间神秘学占卜馆。
+                我能感觉到Ghost的局促。外套下的肌肉微微紧绷，那双习惯了扣动扳机的手此刻虚握着，身躯在狭小的店内显得异常笨重，仿佛只要他稍微大步一点，就会撞碎那些幻想。
+                并不是因为价格，也不是因为与我共处一室，而是因为我们都太清楚他在她生命中的分量，才让今天的任务变成了一种感性的意义非凡，而非可以用数据与分析衡量之物。
+                
+                
+                “We’d like to choose a perfume for his lover.”
+                我下意识地将戒指从中指拨转到食指，指环擦过皮肤的轻微阻力让我稍微找回了一点掌控感。我避开SA礼貌却锐利的审视，转而看向身侧如阴影般沉默的Ghost，又迅速垂下眼帘看向柜台，“Is there anything... only limited for Paris?（有没有……巴黎限定的款式？）”
+                当我意识到需要用香味去形容一个人时，才发现那是多么徒劳的尝试。
+                调香师习惯将气味粗暴地拆分为前、中、后调，试图用线性的逻辑去驯服这种感官，翻译成大众能听懂的语言。但一个人又怎么可能被几个笼统的词汇概括？生命是流动的暗涌，而非试香纸上静止的刻度。
+                “当然。这边便是。”SA的指尖在一个个圆滚滚的吊钟瓶顶划过，“她喜欢什么香调呢？”
+                我和Ghost一怔，意识到我们似乎没有直接问过她这个问题。
+                如果问了……意图就太明显了。
+                “她是个独立且坚强的女性，有自己的事业。”Ghost 终于开口，低沉的英国口音在静谧的店内引起了细微的共振，“年轻，但谈吐有着超越年龄的成熟。”
+                “是的，”我补充道，试图在SA的引导下寻找那个精准的坐标，“她像我的姐姐，或者说，‘妈妈’。你知道的，‘妈妈’不一定指血缘，那更像是一种……感觉。”
+                一种我想成为的，包容她人、保护她人，成为她人可依赖的后盾的感觉。
+                闻言，SA看着我，微微一笑“那么，Louve（母狼）？与卢浮宫同源的命名，杏仁、玫瑰与茉莉的变奏。它像是一种危险而温柔的庇护，很符合你描述的那种‘母性’。”
+                我凑近试香纸，鼻腔里却只感受到一种过分的洁净感，却迟疑地摇了摇头，“……不，这太纯净了。她曾在无数次混乱中为我兜底，她的力量感绝不是这种轻飘飘的温柔。”
+                “那么我会推荐Sarrasins（萨拉森人）和……Iris silver mist（鸢尾银雾）。”
+                两支试香棒递到了我们面前。Ghost掀起了一小部分面罩，露出了一截线条硬朗、带着陈年伤痕的下颌。他微微皱眉，琥珀色的瞳孔在这些香气中搜寻着记忆的残片。我也衔起其中一支闻了闻，但我们之间并没有产生那种心照不宣的默契——这都不是她。
+                “我不喜欢这个颜色。”我将试香棒放回凹槽，视线装着鸢尾银雾的瓶子，知道这是卖得最好的一款，却又只觉得颜色太淡。
+                或许她给人的第一感觉是高冷的，不容接近的，但相处之后，她的人格底色是与之相反的。她爱我，她爱他，她用冰蓝色的成熟与从容藏起内心柔软的一面，薄的，却恰到好处覆盖了灵魂深处那子夜、紫罗兰、鸽血红的蓬勃与激情，不容外人窥见。
+                鸢尾银雾是她，但又不是真正的她。
+                “更危险一点。”Ghost的声音在我耳畔沉沉响起，他琥珀色的瞳孔在紫色灯影中微微收缩，仿佛正穿过巴黎交错的街道，回到了曼彻斯特那个湿冷潮湿的雨夜。他想起那双上扬的、如刀锋般锐利却又在对视瞬间化作春水的眼睛，骄俏，又不失妩媚，“像黑猫。”
+                SA的眼神瞬间亮了，她像是终于找到了那枚契合的职业性齿轮，轻轻推出几瓶，无声地排列在台面上。
+                我拿起Serge Noire，闭上眼，仔细感受着赫赫有名的黑赛吉。丁香与烟熏率先涌出，随后是咖啡与广藿香压住阵脚，像一座没有窗的建筑，不甜，不柔，散发出带着攻击性的烟熏感。我看到了Ghost，穿着他那套标志性的黑水作战套装，在雨夜穿过暗巷，最终停在她的住所楼下，抬头仰望她的那一扇亮着的窗。他或许会看着她，看她倚靠在窗前静静地抽完一支烟，任由尼古丁在指尖明灭。而他自己只是贪婪地注视着爱人的侧影，却因为心底那份甚至算得上“胆怯”的克制而不敢上前相见。
+                那气味是黑色的、有棱角的、湿漉漉的雨夜，闻起来像某个决定，而不是某种情感；这是Ghost的香气，不是她自己的。
+                相比之下，Fourreau Noir（黑色曼陀罗）就更为低调许多，你甚至不能在香港中环或者芦丹氏的官网找到它。它有着黑猫皮毛般丝滑的流动感。薰衣草开场，却没有普罗旺斯的明媚——它是夜晚的薰衣草，带着露水和黑土，像是一件贴身的黑丝绒长裙——那是她只在他面前展露的、带有危险诱惑力的妩媚。
+                人们常说薰衣草能镇静安神，但在这一层并不张扬的烟熏质感之下，我竟捕捉到了一抹几乎要被感官忽略的温柔。
+                那一瞬间，我的眼眶毫无预兆地湿润了。
+                这种味道穿透了巴黎紫色的迷雾，强行拽出了我脑海中关于她最后一次告别的残影。我想起那天她紧紧拥抱我时，身上那股如出一辙的、混合着清冷与暖意的余香。
+                那时候的我，甚至不敢回头看一眼，只是僵硬着脊梁，机械地迈步走向酒店阴冷的旋转门。我怕她看到我落泪，更害怕自己无法面对那样一个在我心中从未崩塌、始终如神明般强大的存在，在那一刻竟也会流露出易碎的泪光。
+                那种强大与柔软交织的矛盾感，悉数封存在了这瓶深邃的液体里。
+                我放下试香棒，深吸了一口气，强忍着泪意，去看最后一瓶De Profundis（深渊书简/自深处）。
+                深紫色的液体在一众瓶中在第一秒便抓住了所有人的目光，哪怕不为它那富有争议的味道所吸引，或许也会本能地为如同矿脉般神秘深邃的颜色所折服，动摇想要购买的心理。冷冽的菊花香气带着潮湿的泥土感，像是从深渊中向上攀爬出的藤蔓。让我想起了去年夏末，关于我的那一场悲剧，是她为我“兜底”时的那种决绝与坚韧——在最幽暗的绝境中，她是身着黑袍，举着幽冷蓝火的引路人，带我走出那段阴霾。
+                她很喜欢Lana Del Rey的那首《Born to die》。
+                这种向死而生的、在绝望中盛放的华丽感，在这瓶深紫色的液体里得到了完美的共振。
+                但唯一的缺点不在味道，而是……这是热门的代购款。
+                对我这个旁观者来说，她的感情是我从未见过的异类——如此真挚，浓郁的色彩之下是纯净得不掺一点杂质的长久余韵。久到在世界与众人的介入，让他们产生距离感，将他们分开之前，他们的羁绊就已在易碎的瓶中纠结地生长，开出绝望与不甘的花。
+                Ghost想给她独一无二的一份礼物，能够恰到好处地拓印出她在心里的轮廓、他们的关系；又不能是在其他地方可以找到的等同替代品，那样证明不了他曾经来过她的世界，
+                在这个瞬间，我意识到皮格马利翁不再仅仅是神话。这个本该与精致沙龙绝缘的男人，正用他那双甚至无法完全掌控细碎试香棒的、布满老茧的手，在这一方小小的、充满紫色幻想的空间里，凭借着残存的嗅觉记忆，一寸一寸地雕琢出他的爱人。
+                他并不只是在选香，而是在借着这些液体的芬芳，去触碰那个即便站在身侧、也依然让他感到战栗和渴望的真实灵魂。
+                我和Ghost最终不约而同地选定了属于她的那一瓶，没有再产生分歧。
+                “Do you offer engraving services?（你们提供刻字服务吗？）”
+                “你想刻什么？”我抬头看向身旁如阴影般伫立的男人，脑海中浮现出那些落入俗套却又热烈直白的浪漫，“比如…… ‘Simon to KnoX’？”
+                这个提议在空气中短暂停留。作为一个习惯了在黑暗中隐匿行踪、将“Ghost”作为唯一代号的男人，将自己的名字刻在她的私属物上，本该是一种宣告主权的、最具占有欲的证明。
+                Ghost垂下眼睑，瞳孔在与他瞳色相同的湖泊液体映照下，呈现出一种近乎沉思的深邃。他沉默了很久，久到我几乎以为他在用沉默拒绝这个提议，久到我那该死的焦虑又开始在手心里分泌细汗。
+                “No.（不）”他终于开口，沙哑的嗓音透着一种不可动摇的决绝，“Just her name.（只刻她的名字。）”
+                Ghost抬起头，目光越过橱窗里那些诡谲的艺伎面具，望向长廊外那个被金尖端栏杆分割开的、充满了梧桐树影与喧嚣人潮的现实世界。
+                “她不是我的附属品，Inair。”他叫我的名字时，语气里带着一种沉甸甸的、属于成年男性的自省，“我不该用一个名字把她绑在身边，那太自私了。”
+                我突然读懂了这个男人那份近乎笨拙的温柔。在皮格马利翁的神话里，雕塑师赋予了雕塑少女生命，却也试图将其占为己有；但西蒙·莱利却在这一刻，亲手剪断了那根名为“占有”的隐形丝线。
+                对他而言，她是一个完整的、独立的灵魂。她拥有那种在曼彻斯特雨夜里直视他的骄傲，也拥有在夏末悲剧里为我“兜底”的坚韧。她不属于任何人，她只属于她自己。
+                “I’ll find her.（我会找到她的）”
+                他低头看向那瓶即将被刻上她名字的Fourreau Noir，语气平淡得像是在回报一段作战记录，却又带着某种宿命论式的狂热，“就算没有名字，只要这抹香气还在，我也能再次从人群中把她找出来。”
+                Noir。 
+                法语中的“黑色”。
+                它是所有色彩最终沉淀后的寂静，是深渊，也是归宿。在这一刻，这瓶香水不再仅仅是一件商品，它成了西蒙·莱利在现实荒原上锚定那个灵魂的唯一坐标。
+                我回过头看向镶嵌着浮雕的长长回廊，视野被两侧的围栏与店面不断压缩，在视线尽头交汇成一个深邃的黑点。一片光影斑驳的迷雾中，如黑丝绒般薰衣草香气流动，我似乎看到了一个瘦削高挑的女人，穿着修身的黑色长裙，踩着坚定的步点，从回廊深处的阴影中缓缓走出，一步步向着这个高大、沉默、满身硝烟味的男人。           
+</div>
+</div>
+</div>
+
+<!-- 收藏按钮 -->
+<div id="favourite-button-container"></div>
+
+    <script src="../../js/favourite-manager.js"></script>
+    <script src="../../js/password-protection.js"></script>
+    <script>
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('文章页面加载完成');
+            
+            // 初始化收藏按钮
+            const articleInfo = {
+                title: '皮格马利翁效应',
+                url: window.location.href,
+                author: 'Inair for Knox',
+                category: 'private'
+            };
+            
+            const favouriteContainer = document.getElementById('favourite-button-container');
+            if (favouriteContainer && window.createFavouriteButton) {
+                const favouriteBtn = createFavouriteButton(articleInfo);
+                favouriteContainer.appendChild(favouriteBtn);
+            }
+    
+    // 添加右滑返回手势支持（兼容iOS和Android）
+    let startX = 0;
+    let startY = 0;
+    let isSwiping = false;
+    let startTime = 0;
+    
+    // 防止页面滚动冲突
+    document.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        startTime = Date.now();
+        isSwiping = false;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        if (!startX || !startY) return;
+        
+        let currentX = e.touches[0].clientX;
+        let currentY = e.touches[0].clientY;
+        let diffX = startX - currentX;
+        let diffY = startY - currentY;
+        
+        // 检测是否为水平滑动（水平距离大于垂直距离）
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+            isSwiping = true;
+            // 如果是边缘滑动，阻止页面滚动
+            if (startX < 50) {
+                e.preventDefault();
+            }
+        }
+    }, { passive: false });
+    
+    document.addEventListener('touchend', function(e) {
+        if (!isSwiping) return;
+        
+        let endX = e.changedTouches[0].clientX;
+        let diffX = startX - endX;
+        let endTime = Date.now();
+        let duration = endTime - startTime;
+        
+        // 从左边缘开始向右滑动（返回手势）
+        // 支持iOS和Android的返回手势
+        if (startX < 50 && diffX < -80 && duration < 500) {
+            window.history.back();
+        }
+    }, { passive: true });
+});
+</script>
+</body>
+</html>
+
+

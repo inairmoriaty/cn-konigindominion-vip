@@ -16,6 +16,7 @@ function initSidebar() {
   const privatePath    = '/page/private.html';
   const renderPath     = '/page/public/render.html';
   const commissionPath = '/page/public/commission.html'; // ★ 新增
+  const otherPath      = '/page/public/other.html';
 
   // 侧边栏结构
   const sidebarHTML = `
@@ -42,6 +43,10 @@ function initSidebar() {
             <img src="/img/commission.png" alt="Commission" />
             <span>合作联系</span>
           </a>
+          <a href="${otherPath}" class="sidebar-btn" id="sidebarOtherLink">
+            <img src="/img/other.png" alt="Other" />
+            <span>其他篇目</span>
+          </a>
         </div>
       </div>
 
@@ -55,6 +60,7 @@ function initSidebar() {
             <a href="/page/public/nikto.html"   class="character-btn">Nikto</a>
             <a href="/page/public/keegan.html"  class="character-btn">Keegan</a>
             <a href="/page/public/krueger.html" class="character-btn">Krueger</a>
+            <a href="${otherPath}" class="character-btn">其他篇目</a>
           </nav>
         </div>
       </section>
