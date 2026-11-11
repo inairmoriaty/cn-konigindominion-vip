@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - Nieves的房间</title>
 
-  <link rel="stylesheet" href="/style/footer.css">
   <link rel="stylesheet" href="/style/mobile.css">
   <style>
 :root{
@@ -25,7 +24,6 @@ html, body{
   overflow-x:hidden;       /* 只禁水平滚动 */
   overflow-y:auto;         /* 允许竖向滚动 */
 }
-
 
 .app-frame{
   width:100%;
@@ -138,11 +136,7 @@ html, body{
     }
 
     /* 底部遮罩 */
-.bottom-mask{
-  position:absolute; left:0; bottom:0; width:100%;
-  height:92px; background:#191919; z-index:3; pointer-events:none;
-}
-    /* 响应式调整 */
+/* 响应式调整 */
     @media (max-width: 768px) {
       /* 移动端背景图优化 */
       .bg-static {
@@ -151,7 +145,6 @@ html, body{
       }
     }
 
-    
 /* 客单滚轮选项区域 —— 默认不接收点击，显示时再打开 */
 .guest-list-wrapper{
   position: absolute;
@@ -327,13 +320,12 @@ html, body{
       </div>
     </div>
     
-    <div class="bottom-mask"></div>
-  </div>
+    </div>
 
   <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
+  
 <script src="../../js/mobile-optimization.js"></script>
-<script src="../../js/footer.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     console.log('nieves page loaded');
@@ -420,6 +412,7 @@ html, body{
     console.log('========================');
   });
   </script>
+<script src="../../js/swipe-back.js"></script>
 </body>
 </html>
 

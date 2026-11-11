@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - 瓜瓜</title>
   <link rel="stylesheet" href="../style/home.css">
-  <link rel="stylesheet" href="../style/footer.css">
+  
   <style>
 :root{
       --safe-top: env(safe-area-inset-top, 0px);
@@ -111,18 +111,7 @@
       transform: translateX(-50%) scale(0.95);
     }
     
-    .bottom-mask {
-      position: absolute;
-      left: 0; bottom: 0;
-      width: 100%;
-      height: 92px;
-      background: #000000;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      z-index: 3;
-      pointer-events: none;
-}
-  </style>
+    </style>
 </head>
 <body>
   <div class="app-frame">
@@ -131,12 +120,10 @@
     <div class="password-prompt">输入密码以解锁此房间</div>
     <input type="password" class="password-input" id="passwordInput" placeholder="请输入密码" maxlength="4">
     <button class="enter-btn" id="enterBtn"></button>
-    <div class="bottom-mask"></div>
-  </div>
+    </div>
 
   <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
-<script src="../js/footer.js"></script>
+
 <script>
 // 确保footer正确加载
 document.addEventListener('DOMContentLoaded', function() {
@@ -216,5 +203,6 @@ document.getElementById('passwordInput').addEventListener('keypress', (e) => {
   if (e.key === 'Enter') validatePassword();
 });
 </script>
+<script src="../js/swipe-back.js"></script>
 </body>
 </html>

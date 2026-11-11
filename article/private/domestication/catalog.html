@@ -236,6 +236,7 @@
     }
     
   </style>
+  <link rel="stylesheet" href="../../../style/reading.css">
 </head>
 <body>
   <a class="back-btn" href="../../../page/public/konig.html"><span class="back-btn-icon">←</span><span>返回</span></a>
@@ -276,16 +277,20 @@
       <button class="chapter-btn" data-chapter="27">第二十七章 · 飞地极夜（1）</button>
       <button class="chapter-btn" data-chapter="28">第二十八章 · 飞地极夜（2）</button>
       <button class="chapter-btn" data-chapter="29">第二十九章 · 飞地极夜（3）</button>
+      <button class="chapter-btn" data-chapter="30">第三十章 · 陌生的蓝眼睛</button>
+      <button class="chapter-btn" data-chapter="31">第三十一章 · Bad Girls Do It Well</button>
+      <button class="chapter-btn" data-chapter="32">第三十二章 · All I Want Is You</button>
+      <button class="chapter-btn" data-chapter="33">第三十三章 · Diamonds Are A Girl's Best Friend</button>
+      <button class="chapter-btn" data-chapter="34">第三十四章 · 女巫的毒药（上）</button>
    </div>
     
-  </div>
+  </div>  
 
   <!-- 收藏按钮 -->
   <div id="favourite-button-container"></div>
 
   <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
-<script src="../../../js/footer.js"></script>
+
 <script src="../../../js/favourite-manager.js"></script>
 <script src="../../../js/password-protection.js"></script>
 <script>
@@ -304,8 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const favouriteBtn = createFavouriteButton(articleInfo);
     favouriteContainer.appendChild(favouriteBtn);
   }
-  
-  
+
   // 章节按钮点击事件
   const chapterBtns = document.querySelectorAll('.chapter-btn');
   chapterBtns.forEach(btn => {
@@ -372,6 +376,16 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'chapter28.html';
       } else if (chapter === '29') {
         window.location.href = 'chapter29.html';
+      } else if (chapter === '30') {
+        window.location.href = 'chapter30.html';
+      } else if (chapter === '31') {
+        window.location.href = 'chapter31.html';
+      } else if (chapter === '32') {
+        window.location.href = 'chapter32.html';
+      } else if (chapter === '33') {
+        window.location.href = 'chapter33.html';
+      } else if (chapter === '34') {
+        window.location.href = 'chapter34.html';
       } else {
         alert(`第${chapter}章 - ${this.textContent} 正在开发中...`);
       }
@@ -379,5 +393,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+<script src="../../../js/swipe-back.js"></script>
+<script src="../../../js/reading.js" defer></script>
+<script src="../../../js/wordcount.js" defer></script>
 </body>
 </html>

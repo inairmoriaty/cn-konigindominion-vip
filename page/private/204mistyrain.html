@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - Misty Rain</title>
 
-  <link rel="stylesheet" href="/style/footer.css">
   <link rel="stylesheet" href="/style/mobile.css">
   <style>
 :root{
@@ -70,7 +69,6 @@ html, body{
 }
 .content-layer > *{ pointer-events:auto; }
 
-
     /* 标题 */
     .page-title {
       position: absolute;
@@ -119,18 +117,11 @@ html, body{
 .interaction-btn:active img{ filter:brightness(.85); transform:scale(.95); }
 
 /* 底部遮罩可留，但务必在底栏下层（z-index < 999） */
-.bottom-mask{
-  position:absolute; left:0; bottom:0; width:100%;
-  height:92px; background:#191919; z-index:3; pointer-events:none;
-}
-
 /* 移动端细化（可保留） */
 @media (max-width:768px){
   .bg-static{ background-size:cover; background-position:center; }
 }
 
-
-    
     .interaction-btn:active img {
       /* 可选：按下变暗或缩放 */
       filter: brightness(0.8);
@@ -184,16 +175,13 @@ html, body{
     <a href="#" class="interaction-btn blink" title="Interaction" id="interactionButton">
       <img src="../../img/default btn.png" alt="Interaction Button"/>
     </a>
-      
 
-    
-    <div class="bottom-mask"></div>
-  </div>
+    </div>
 
   <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
+  
 <script src="../../js/mobile-optimization.js"></script>
-<script src="../../js/footer.js"></script>
+
 <script>
   // 页面初始化
   document.addEventListener('DOMContentLoaded', function() {
@@ -241,9 +229,7 @@ html, body{
     } else {
       console.error('Interaction button not found');
     }
-  
-    
-    
+
     // 初始化页面元素检查
     console.log('=== Page Elements Check ===');
     console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
@@ -251,6 +237,7 @@ html, body{
     console.log('========================');
   });
   </script>
-  </body>
+  <script src="../../js/swipe-back.js"></script>
+</body>
 </html>
 

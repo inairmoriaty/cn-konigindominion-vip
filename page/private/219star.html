@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - 星辰的房间</title>
 
-  <link rel="stylesheet" href="/style/footer.css">
   <link rel="stylesheet" href="/style/mobile.css">
   <style>
 :root{
@@ -25,7 +24,6 @@ html, body{
   overflow-x:hidden;       /* 只禁水平滚动 */
   overflow-y:auto;         /* 允许竖向滚动 */
 }
-
 
 .app-frame{
   width:100%;
@@ -138,11 +136,7 @@ html, body{
     }
 
     /* 底部遮罩 */
-.bottom-mask{
-  position:absolute; left:0; bottom:0; width:100%;
-  height:92px; background:#191919; z-index:3; pointer-events:none;
-}
-    /* 响应式调整 */
+/* 响应式调整 */
     @media (max-width: 768px) {
       /* 移动端背景图优化 */
       .bg-static {
@@ -150,9 +144,6 @@ html, body{
         background-position: center center;
       }
     }
-
-    
-    
 
     .interaction-btn:active img {
   /* 可选：按下变暗或缩放 */
@@ -205,15 +196,13 @@ html, body{
     <a href="#" class="interaction-btn blink" title="Interaction" id="interactionButton">
       <img src="../../img/default btn.png" alt="Interaction Button"/>
     </a>
-      
-    
-    <div class="bottom-mask"></div>
-  </div>
+
+    </div>
 
   <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
+  
 <script src="../../js/mobile-optimization.js"></script>
-<script src="../../js/footer.js"></script>
+
 <script>
 // 页面初始化
 document.addEventListener('DOMContentLoaded', function() {
@@ -262,8 +251,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('Interaction button not found');
   }
 
-  
-  
   // 初始化页面元素检查
   console.log('=== Page Elements Check ===');
   console.log('bgStatic:', document.querySelector('.bg-static') ? 'Found' : 'Not found');
@@ -271,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('========================');
 });
 </script>
+<script src="../../js/swipe-back.js"></script>
 </body>
 </html>
 

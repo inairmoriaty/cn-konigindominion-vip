@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KÖNIGIN - Inair</title>
 
-  <link rel="stylesheet" href="../../style/footer.css">
   <link rel="stylesheet" href="../../style/mobile.css">
   <style>
 :root{
@@ -249,11 +248,7 @@
     }
 
     /* 底部遮罩 */
-.bottom-mask{
-  position:absolute; left:0; bottom:0; width:100%;
-  height:92px; background:#191919; z-index:3; pointer-events:none;
-}
-    /* 边界提示效果 */
+/* 边界提示效果 */
     .boundary-hint {
       position: absolute;
       top: 50%;
@@ -331,9 +326,7 @@
         width: 90vw;
         height: 12vh;
       }
-      
 
-      
       /* 移动端客单列表优化 */
       .guest-list-wrapper {
         width: 60vw;
@@ -419,7 +412,6 @@
     .guest-item:active {
       transform: scale(0.98);
     }
-    
 
     .interaction-btn:active img {
   /* 可选：按下变暗或缩放 */
@@ -490,13 +482,12 @@
       </div>
     </div>
     
-    <div class="bottom-mask"></div>
-  </div>
+    </div>
 
     <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
+  
     <script src="../../js/mobile-optimization.js"></script>
-  <script src="../../js/footer.js"></script>
+  
   <script>
     // 页面初始化
     document.addEventListener('DOMContentLoaded', function () {
@@ -757,5 +748,6 @@
       window.addEventListener('resize', setVH);
     });
     </script>
-    </body>
+    <script src="../../js/swipe-back.js"></script>
+</body>
 </html>

@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>KÖNIGIN - Private</title>
   <link rel="stylesheet" href="../style/private.css">
-  <link rel="stylesheet" href="../style/footer.css">
+  
   <style>
 :root{
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* 滚轮参数 */
-  --item-h: 44px;         /* 单项高度（iOS感） */
-  --visible: 5;           /* 可视条数（奇数，确保中间有高亮条） */
+  --item-h: 46px;         /* 单项高度（iOS感） */
+  --visible: 7;           /* 可视条数（奇数，让中心高亮条两边各有 3 行） */
   --wheel-h: calc(var(--item-h) * var(--visible));
 }
 
@@ -62,9 +62,13 @@ html, body {
   position: relative;
   height: 100%;
   overflow-y: auto;
-  scroll-snap-type: y mandatory;     /* 吸附 */
+  overscroll-behavior: contain;      /* 防止触发页面滚动 */
+  scroll-snap-type: y mandatory;     /* CSS 原生吸附 —— 顺滑 */
+  scroll-behavior: smooth;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  touch-action: pan-y;               /* 明确只接管竖向滑动 */
+  will-change: scroll-position;
 }
 .wheel-viewport::-webkit-scrollbar { display: none; }
 
@@ -102,27 +106,40 @@ html, body {
 .wheel-item {
   height: var(--item-h);
   display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size:15px; letter-spacing:.5px;
+  color:#bfbfbf; font-size:15px; letter-spacing:.06em;
   user-select:none; cursor:pointer;
-  scroll-snap-align: center;           /* 让每项吸附到中线 */
-  transition: transform .12s ease, color .12s ease;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;            /* 滚动时每一格都吸附，不连跳 */
+  opacity: .55;
+  transform: scale(.94);
+  transition: transform .22s cubic-bezier(.22,.9,.32,1),
+              color .22s ease,
+              opacity .22s ease;
+  will-change: transform, opacity;
 }
+.wheel-item.dist-1 { opacity: .78; transform: scale(.98); color: #e0e0e0; }
 .wheel-item.is-center {
-  transform: scale(1.06);
+  transform: scale(1.12);
   color: #fff;
   font-weight: 600;
+  opacity: 1;
+  letter-spacing: .1em;
 }
 
-/* 右侧自定义细滚条（同步视觉，不可拖拽） */
+/* 右侧自定义细滚条（同步视觉，不可拖拽；空闲时淡出） */
 .guest-scrollbar{
-  position: relative; width: 14px; height: 100%;
+  position: relative; width: 4px; height: 100%;
+  opacity: .35;
+  transition: opacity .3s ease, width .25s ease;
 }
+.guest-scrollbar.is-active { opacity: 1; width: 6px; }
 .guest-scrollbar .track{
-  position: absolute; inset: 0; background: #333; border-radius: 4px; opacity:.9;
+  position: absolute; inset: 0; background: rgba(255,255,255,.08); border-radius: 3px;
 }
 .guest-scrollbar .thumb{
-  position: absolute; left: 0; right: 0; height: 40px; background: #666; border-radius: 4px;
-  transition: top .08s linear;
+  position: absolute; left: 0; right: 0; height: 40px;
+  background: rgba(255,255,255,.55); border-radius: 3px;
+  will-change: top, height;
 }
 
 /* 门透明热点 */
@@ -134,11 +151,6 @@ html, body {
 }
 
 /* 其他 */
-.bottom-mask {
-  position: absolute; left: 0; bottom: 0; width: 100%; height: 92px;
-  background: #191919; z-index: 3; pointer-events: none;
-}
-
 .nav-circle-btn { position: absolute; z-index: 10; display: block; }
   </style>
 </head>
@@ -194,12 +206,9 @@ html, body {
       </div>
     </div>
 
-    <div class="bottom-mask"></div>
-  </div>
+    </div>
   </div>
   <!-- Footer自动插入点 -->
-  <div id="footer-placeholder"></div>
-  <script src="../js/footer.js"></script>
 
   <script>
 /* —— 门热点 —— */
@@ -212,157 +221,192 @@ html, body {
   });
 })();
 
-/* —— iOS 无限滚轮 —— */
+/* —— 顺滑 iOS 风格无限滚轮 ——
+   原则：
+   1) 用 CSS `scroll-snap-type: y mandatory` 做吸附，JS 不再干扰滚动。
+   2) 滚动中只在 rAF 里更新视觉（高亮 / thumb），不改 scrollTop。
+   3) 无限回环只在滚动空闲时静默跳帧，用户永远感知不到。
+   4) 支持 滚轮 / 触控 / 键盘 ↑↓ / PageUp/Down / 回车 四种输入。
+*/
 (function(){
   const viewport = document.getElementById('wheelViewport');
   const listEl   = document.getElementById('wheelList');
   const thumb    = document.getElementById('guestThumb');
-  const track    = document.getElementById('guestScrollbar');
+  const barEl    = document.getElementById('guestScrollbar');
 
-  if (!viewport || !listEl || !thumb || !track) return;
+  if (!viewport || !listEl || !thumb || !barEl) return;
 
-  // 读出初始数据
+  // ---------- 1. 构建数据 ----------
   const baseItems = Array.from(listEl.querySelectorAll('.wheel-item')).map(n => ({
     text: n.textContent.trim(),
     link: n.getAttribute('data-link') || '#'
   }));
   const N = baseItems.length;
 
-  // 重建：为了无限滚动，复制三份
+  // 复制 3 份用于无限回环（上 / 中 / 下）
   listEl.innerHTML = '';
   const COPIES = 3;
-  const data = [];
+  const frag = document.createDocumentFragment();
   for (let c = 0; c < COPIES; c++){
-    baseItems.forEach((it, idx) => {
-      const d = { ...it, baseIndex: idx };
-      data.push(d);
+    baseItems.forEach((it) => {
       const div = document.createElement('div');
       div.className = 'wheel-item';
       div.textContent = it.text;
       div.dataset.link = it.link;
-      listEl.appendChild(div);
+      frag.appendChild(div);
     });
   }
+  listEl.appendChild(frag);
+  const allItems = Array.from(listEl.children);
+  const total    = allItems.length;
 
-  const ITEM_H = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--item-h')) || 44;
-  const VISIBLE = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--visible')) || 5;
-  const WHEEL_H = ITEM_H * VISIBLE;
+  const css = getComputedStyle(document.documentElement);
+  const ITEM_H  = parseFloat(css.getPropertyValue('--item-h')) || 46;
+  const VISIBLE = parseInt(css.getPropertyValue('--visible'))  || 7;
+  const CENTER_OFFSET = Math.floor(VISIBLE / 2);
 
-  // 初始位置：滚到第二份的首项（中间那份），方便两边回环
-  const startIndex = N; // 第二份的开始
-  viewport.scrollTop = startIndex * ITEM_H;
+  // 初始位置：定位到第二份首项，两侧都有 1 份缓冲
+  viewport.scrollTop = N * ITEM_H;
 
-  // 根据 scrollTop 映射到 0..N-1 的“当前中心项”
-  function getCenterIndex(){
-    const top = viewport.scrollTop;
-    const rawIndexTop = Math.round(top / ITEM_H);           // 对齐到最接近的项
-    const centerOffset = Math.floor(VISIBLE/2);              // 中心位置偏移
-    const centerRaw = rawIndexTop + centerOffset;            // 视口中心行的 raw 索引
-    const baseIndex = ((centerRaw % (N*COPIES)) + (N*COPIES)) % (N*COPIES);
-    return data[baseIndex].baseIndex;                        // 映射到原始索引 0..N-1
+  // ---------- 2. 工具函数 ----------
+  // 当前视口中心在 allItems 里的下标（含余数）
+  function currentCenterRawIndex(){
+    const raw = viewport.scrollTop / ITEM_H + CENTER_OFFSET;
+    return Math.round(raw);
+  }
+  // 映射到原始 0..N-1 下标
+  function toBaseIndex(rawIdx){
+    return ((rawIdx % N) + N) % N;
   }
 
-   // 高亮中心项（添加/移除 is-center）
-   function highlightCenter(){
-     const all = listEl.querySelectorAll('.wheel-item');
-     all.forEach(n => n.classList.remove('is-center'));
-     
-     // 计算视口中心位置对应的item
-     const top = viewport.scrollTop;
-     const centerRowRaw = Math.round(top / ITEM_H) + Math.floor(VISIBLE/2);
-     const centerIndex = ((centerRowRaw % all.length) + all.length) % all.length;
-     const centerItem = all[centerIndex];
-     
-     if (centerItem) {
-       centerItem.classList.add('is-center');
-     }
-   }
-
-  // 无限回环逻辑：滚到边缘时把 scrollTop 拉回中间那份
-  function loopGuard(){
-    const total = N * COPIES;
-    const min = ITEM_H * (N * 0.5);                      // 稍微留些缓冲
-    const max = ITEM_H * (total - N * 0.5);
-    if (viewport.scrollTop < min){
-      viewport.scrollTop += ITEM_H * N;                  // 向下平移一份
-    }else if (viewport.scrollTop > max){
-      viewport.scrollTop -= ITEM_H * N;                  // 向上平移一份
+  // 更新高亮 + dist-1 柔和过渡（只在中心变化时写 DOM）
+  let lastCenterRaw = -1;
+  function updateHighlight(){
+    const c = currentCenterRawIndex();
+    if (c === lastCenterRaw) return;
+    lastCenterRaw = c;
+    for (let i = 0; i < total; i++){
+      const el = allItems[i];
+      const d = Math.abs(i - c);
+      el.classList.toggle('is-center', d === 0);
+      el.classList.toggle('dist-1',    d === 1);
     }
   }
 
-  // 吸附到最近项
-  let snapTimer = null;
-  function snapToNearest(){
-    if (snapTimer) clearTimeout(snapTimer);
-    snapTimer = setTimeout(() => {
-      const idx = Math.round(viewport.scrollTop / ITEM_H);
-      viewport.scrollTo({ top: idx * ITEM_H, behavior: 'smooth' });
-    }, 80);
-  }
-
-  // 同步右侧小滚条（只是视觉提示）
-  function syncThumb(){
-    const totalH = ITEM_H * (N * COPIES);
-    const trackH = track.clientHeight;
-    const viewH  = viewport.clientHeight;
-    const thumbH = Math.max(24, Math.round(viewH * viewH / Math.max(totalH, 1)));
-    const maxTop = Math.max(trackH - thumbH, 0);
-    const top = (viewport.scrollTop / Math.max(totalH - viewH, 1)) * maxTop;
+  // 自定义小滚条（每份 N 项作为可视范围，循环时视觉重置）
+  function updateThumb(){
+    const perCopyH = ITEM_H * N;
+    const trackH   = barEl.clientHeight;
+    const viewH    = viewport.clientHeight;
+    const thumbH   = Math.max(28, Math.round(viewH * viewH / perCopyH));
+    const maxTop   = Math.max(trackH - thumbH, 0);
+    // 用在「单份」里的相对位置映射到小滚条上
+    const relTop   = ((viewport.scrollTop - N * ITEM_H) % perCopyH + perCopyH) % perCopyH;
     thumb.style.height = thumbH + 'px';
-    thumb.style.top    = top + 'px';
+    thumb.style.top    = (relTop / Math.max(perCopyH - viewH, 1) * maxTop) + 'px';
   }
 
-   // 点击某一项：直接跳转到对应页面
-   listEl.addEventListener('click', (e) => {
-     const item = e.target.closest('.wheel-item');
-     if (!item) return;
-     
-     // 获取当前中心项的索引
-     const centerIndex = getCenterIndex();
-     const all = Array.from(listEl.children);
-     const itemIndex = all.indexOf(item);
-     
-     // 计算当前点击项相对于中心的位置
-     const centerRowRaw = Math.round(viewport.scrollTop / ITEM_H) + Math.floor(VISIBLE/2);
-     const currentCenterItem = all[((centerRowRaw % all.length) + all.length) % all.length];
-     const currentCenterIndex = all.indexOf(currentCenterItem);
-     
-     // 如果点击的不是中心项，先滚动到中心
-     if (itemIndex !== currentCenterIndex) {
-       const delta = itemIndex - currentCenterIndex;
-       const targetTop = viewport.scrollTop + delta * ITEM_H;
-       viewport.scrollTo({ top: targetTop, behavior: 'smooth' });
-       
-       // 滚动完成后跳转
-       setTimeout(() => {
-         const link = item.dataset.link || '#';
-         if (link && link !== '#') {
-           window.location.href = link;
-         }
-       }, 300);
-     } else {
-       // 如果已经是中心项，直接跳转
-       const link = item.dataset.link || '#';
-       if (link && link !== '#') {
-         window.location.href = link;
-       }
-     }
-   });
+  // ---------- 3. 空闲时才做无限回环 ----------
+  function loopGuardIdle(){
+    const min = ITEM_H * (N * 0.5);
+    const max = ITEM_H * (N * COPIES - N * 0.5);
+    if (viewport.scrollTop < min){
+      viewport.scrollTop += ITEM_H * N;
+    } else if (viewport.scrollTop > max){
+      viewport.scrollTop -= ITEM_H * N;
+    }
+  }
 
-  // 滚动事件
-  viewport.addEventListener('scroll', () => {
-    loopGuard();
-    highlightCenter();
-    syncThumb();
-    snapToNearest();
-  }, { passive: true });
+  // ---------- 4. 滚动节流（rAF）+ 空闲检测 ----------
+  let ticking = false;
+  let scrollEndTimer = null;
+  function onScroll(){
+    if (!ticking){
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateHighlight();
+        updateThumb();
+        ticking = false;
+      });
+    }
+    barEl.classList.add('is-active');
 
-  // 初始同步
+    // 用 scrollend 的 polyfill：200ms 无事件视为停止
+    clearTimeout(scrollEndTimer);
+    scrollEndTimer = setTimeout(onScrollEnd, 200);
+  }
+  function onScrollEnd(){
+    loopGuardIdle();
+    updateHighlight();
+    updateThumb();
+    barEl.classList.remove('is-active');
+  }
+  viewport.addEventListener('scroll', onScroll, { passive: true });
+
+  // ---------- 5. 点击某项：平滑滚到中心，再跳转 ----------
+  function smoothScrollTo(targetTop, cb){
+    viewport.scrollTo({ top: targetTop, behavior: 'smooth' });
+    if (cb){
+      // 等 scrollend 或 350ms 兜底
+      const fallback = setTimeout(done, 380);
+      const handler = () => { clearTimeout(fallback); done(); };
+      viewport.addEventListener('scrollend', handler, { once: true });
+      function done(){ cb(); }
+    }
+  }
+
+  listEl.addEventListener('click', (e) => {
+    const item = e.target.closest('.wheel-item');
+    if (!item) return;
+    const idx = allItems.indexOf(item);
+    const centerIdx = currentCenterRawIndex();
+    const link = item.dataset.link || '#';
+
+    if (idx === centerIdx){
+      if (link && link !== '#') window.location.href = link;
+    } else {
+      const targetTop = (idx - CENTER_OFFSET) * ITEM_H;
+      smoothScrollTo(targetTop, () => {
+        if (link && link !== '#') window.location.href = link;
+      });
+    }
+  });
+
+  // ---------- 6. 鼠标滚轮：每 tick 走一格 ----------
+  let wheelLock = false;
+  viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (wheelLock) return;
+    wheelLock = true;
+    const dir  = e.deltaY > 0 ? 1 : -1;
+    const next = Math.round(viewport.scrollTop / ITEM_H) + dir;
+    viewport.scrollTo({ top: next * ITEM_H, behavior: 'smooth' });
+    setTimeout(() => { wheelLock = false; }, 140);
+  }, { passive: false });
+
+  // ---------- 7. 键盘支持 ----------
+  viewport.tabIndex = 0;
+  viewport.addEventListener('keydown', (e) => {
+    const step = { ArrowUp: -1, ArrowDown: 1, PageUp: -VISIBLE, PageDown: VISIBLE }[e.key];
+    if (step != null){
+      e.preventDefault();
+      const next = Math.round(viewport.scrollTop / ITEM_H) + step;
+      viewport.scrollTo({ top: next * ITEM_H, behavior: 'smooth' });
+    } else if (e.key === 'Enter'){
+      e.preventDefault();
+      const centerItem = allItems[currentCenterRawIndex()];
+      const link = centerItem?.dataset.link;
+      if (link && link !== '#') window.location.href = link;
+    }
+  });
+
+  // ---------- 8. 初始化视觉 ----------
   requestAnimationFrame(() => {
-    highlightCenter();
-    syncThumb();
+    updateHighlight();
+    updateThumb();
   });
 })();
   </script>
+<script src="../js/swipe-back.js"></script>
 </body>
 </html>
